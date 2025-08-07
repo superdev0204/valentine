@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Hospital extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'valentine_opt_in',
+        'organization_name',
+        'organization_type',
+        'contact_person_name',
+        'email',
+        'how_to_address',
+        'valentine_card_count',
+        'extra_staff_cards',
+        'street',
+        'city',
+        'state',
+        'zip',
+        'phone',
+        'standing_order',
+        'question',
+        'introducer',
+        'prefilled_link',
+        'update_status',
+    ];
+
+    protected $casts = [
+        'valentine_card_count' => 'integer',
+        'extra_staff_cards' => 'integer',
+        'standing_order' => 'boolean',
+        'email_status' => 'boolean',
+        'update_status' => 'boolean',
+    ];
+}
