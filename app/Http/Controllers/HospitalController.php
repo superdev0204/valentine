@@ -42,12 +42,11 @@ class HospitalController extends Controller
             'valentine_card_count' => 'required|integer|min:0',
             'street' => 'required|string|max:255',
             'city' => 'required|string|max:255',
-            'state' => 'required|string|size:20',
-            'zip' => 'required|string|size:20',
+            'state' => 'required|string|max:20',
+            'zip' => 'required|string|max:20',
             'phone' => 'required|string|max:255',
             'standing_order' => 'boolean',
             'prefilled_link' => 'nullable|string',
-            'update_status' => 'boolean',
         ]);
 
         Hospital::create($request->all());
@@ -69,12 +68,11 @@ class HospitalController extends Controller
             'valentine_card_count' => 'required|integer|min:0',
             'street' => 'required|string|max:255',
             'city' => 'required|string|max:255',
-            'state' => 'required|string|size:20',
-            'zip' => 'required|string|size:20',
+            'state' => 'required|string|max:20',
+            'zip' => 'required|string|max:20',
             'phone' => 'required|string|max:255',
             'standing_order' => 'boolean',
             'prefilled_link' => 'nullable|string',
-            'update_status' => 'boolean',
         ]);
 
         $hospital->update($request->all());

@@ -242,7 +242,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    {{-- <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="update_status" name="update_status" value="1" {{ old('update_status') ? 'checked' : '' }}>
@@ -251,7 +251,7 @@
                                 </label>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="d-flex justify-content-between">
                         <a href="{{ route('admin.hospitals') }}" class="btn btn-secondary btn-lg">

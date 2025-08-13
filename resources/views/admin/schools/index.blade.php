@@ -14,10 +14,15 @@
                         <small class="opacity-75">Manage participating schools and organizations</small>
                     </div>
                 </div>
-                <button type="button" class="btn btn-light btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#importModal">
-                    <i class="bi bi-upload me-2"></i> Import
-                </button>
-            </div>
+                <div class="d-flex">
+                    <a href="{{ route('admin.schools.create') }}" class="btn btn-light btn-lg shadow-sm me-2">
+                        <i class="bi bi-plus-lg me-2"></i> Add Record
+                    </a>
+                    <button type="button" class="btn btn-light btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#importModal">
+                        <i class="bi bi-upload me-2"></i> Import
+                    </button>
+                </div>
+            </div>            
             <div class="card-body p-0">
                 <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                     <table class="table table-hover align-middle mb-0">
@@ -73,7 +78,7 @@
                                     <td>
                                         <div class="d-flex flex-column">
                                             <div class="fw-semibold text-dark">{{ $school->organization_name }}</div>
-                                            <small class="text-primary">{{ $school->participation }}</small>
+                                            {{-- <small class="text-primary">{{ $school->participation }}</small> --}}
                                         </div>
                                     </td>
                                     <td>

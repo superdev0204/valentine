@@ -41,12 +41,11 @@ class SchoolController extends Controller
             'envelope_quantity' => 'required|integer|min:0',
             'street' => 'required|string|max:255',
             'city' => 'required|string|max:255',
-            'state' => 'required|string|size:20',
-            'zip' => 'required|string|size:20',
+            'state' => 'required|string|max:20',
+            'zip' => 'required|string|max:20',
             'phone' => 'required|string|max:255',
             'standing_order' => 'boolean',
             'prefilled_link' => 'nullable|string',
-            'update_status' => 'boolean',
         ]);
 
         School::create($request->all());
@@ -67,12 +66,11 @@ class SchoolController extends Controller
             'envelope_quantity' => 'required|integer|min:0',
             'street' => 'required|string|max:255',
             'city' => 'required|string|max:255',
-            'state' => 'required|string|size:20',
-            'zip' => 'required|string|size:20',
+            'state' => 'required|string|max:20',
+            'zip' => 'required|string|max:20',
             'phone' => 'required|string|max:255',
             'standing_order' => 'boolean',
             'prefilled_link' => 'nullable|string',
-            'update_status' => 'boolean',
         ]);
 
         $school->update($request->all());

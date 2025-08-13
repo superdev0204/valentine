@@ -14,9 +14,14 @@
                         <small class="opacity-75">Manage participating hospitals and healthcare organizations</small>
                     </div>
                 </div>
-                <button type="button" class="btn btn-light btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#importModal">
-                    <i class="bi bi-upload me-2"></i> Import
-                </button>
+                <div class="d-flex">
+                    <a href="{{ route('admin.hospitals.create') }}" class="btn btn-light btn-lg shadow-sm me-2">
+                        <i class="bi bi-plus-lg me-2"></i> Add Record
+                    </a>
+                    <button type="button" class="btn btn-light btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#importModal">
+                        <i class="bi bi-upload me-2"></i> Import
+                    </button>
+                </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">

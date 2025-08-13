@@ -19,31 +19,20 @@
                     @method('PUT')
                     
                     <div class="row">
-                        <!-- Basic Information -->
-                        <div class="col-md-6 mb-3">
-                            <label for="participation" class="form-label fw-semibold">
-                                <i class="bi bi-flag me-1"></i>Participation Type
-                            </label>
-                            <input type="text" class="form-control @error('participation') is-invalid @enderror" 
-                                   id="participation" name="participation" value="{{ old('participation', $school->participation) }}" 
-                                   placeholder="e.g., School, Organization, Club">
-                            @error('participation')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
+                        <!-- Organization Name -->
+                        <div class="col-md-12 mb-3">
                             <label for="organization_name" class="form-label fw-semibold">
                                 <i class="bi bi-building me-1"></i>Organization Name
                             </label>
                             <input type="text" class="form-control @error('organization_name') is-invalid @enderror" 
-                                   id="organization_name" name="organization_name" value="{{ old('organization_name', $school->organization_name) }}" 
+                                   id="organization_name" name="organization_name" 
+                                   value="{{ old('organization_name', $school->organization_name) }}" 
                                    placeholder="e.g., Lincoln Elementary School">
                             @error('organization_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                    </div>
+                    </div>                    
 
                     <div class="row">
                         <!-- Contact Information -->
@@ -231,7 +220,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    {{-- <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="update_status" name="update_status" value="1" {{ old('update_status', $school->update_status) ? 'checked' : '' }}>
@@ -240,7 +229,7 @@
                                 </label>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="d-flex justify-content-between">
                         <a href="{{ route('admin.schools') }}" class="btn btn-secondary btn-lg">
