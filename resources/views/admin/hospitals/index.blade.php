@@ -6,27 +6,39 @@
 <div class="row justify-content-center">
     <div class="col-12">
         <div class="card shadow-lg border-0">
-            <div class="card-header bg-gradient-danger text-white d-flex justify-content-between align-items-center py-3">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-heart-pulse display-6 me-3"></i>
-                    <div>
-                        <h4 class="mb-0 fw-bold">Hospital Management</h4>
-                        <small class="opacity-75">Manage participating hospitals and healthcare organizations</small>
+            <div class="card-header bg-gradient-danger text-white py-3">
+                <div class="d-flex align-items-center justify-content-between flex-wrap">
+            
+                    <!-- Left: Title -->
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-heart-pulse display-6 me-3"></i>
+                        <div>
+                            <h4 class="mb-0 fw-bold">Hospital Management</h4>
+                            <small class="opacity-75">Manage participating hospitals and healthcare organizations</small>
+                        </div>
                     </div>
-                </div>
-                <div class="d-flex">
-                    <a href="{{ route('admin.hospitals.create') }}" class="btn btn-light btn-lg shadow-sm me-2">
-                        <i class="bi bi-plus-lg me-2"></i> Add Record
-                    </a>
-                    <button type="button" class="btn btn-light btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#importModal">
-                        <i class="bi bi-upload me-2"></i> Import
-                    </button>
+            
+                    <!-- Buttons: all in one row -->
+                    <div class="d-flex flex-grow-1 flex-wrap justify-content-end gap-2">
+                        <button class="btn btn-light btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#reportsModal">
+                            <i class="bi bi-bar-chart-line me-2"></i> Reports
+                        </button>
+                        <a href="{{ route('admin.hospitals.sendgrid.export') }}" class="btn btn-light btn-lg shadow-sm">
+                            <i class="bi bi-download me-2"></i> SendGrid CSV
+                        </a>
+                        <a href="{{ route('admin.hospitals.create') }}" class="btn btn-light btn-lg shadow-sm">
+                            <i class="bi bi-plus-lg me-2"></i> Add Record
+                        </a>
+                        <button type="button" class="btn btn-light btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#importModal">
+                            <i class="bi bi-upload me-2"></i> Import
+                        </button>
+                    </div>            
                 </div>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-danger">
+                <div class="table-responsive">
+                    <table id="datalist" class="table table-hover align-middle mb-0">
+                        <thead>
                             <tr>
                                 <th scope="col" class="text-center" style="width: 60px;">
                                     <i class="bi bi-hash"></i>
@@ -229,17 +241,21 @@
         border-radius: 0.375rem !important;
         margin: 0 2px;
     }
-    thead th {
+    /* thead th {
         position: sticky;
         top: 0;
-        background-color: #f8d7da; /* match .table-danger */
+        background-color: #f8d7da;
         z-index: 3;
     }
     .sticky-action-col {
         position: sticky;
         right: 0;
-        z-index: 2; /* ensure it's above other cells */
-        background: inherit; /* or use bg-light/bg-white */
+        z-index: 2;
+        background: inherit;
+    } */
+    .card-header .btn-lg {
+        padding: 0.5rem 0.6rem;
+        font-size: 1rem;
     }
 </style>
 
@@ -264,4 +280,182 @@
     </div>
   </div>
 </div>
+
+{{-- REPORTS MODAL --}}
+<div class="modal fade" id="reportsModal" tabindex="-1" aria-labelledby="reportsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reportsModalLabel">Reports & Exports</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+  
+        <div class="modal-body">
+          {{-- Filters --}}
+          <form id="report-filters" class="row g-2 mb-3">
+            <div class="col-md-2">
+              <label class="form-label">State</label>
+              <input type="text" name="state" class="form-control" placeholder="CA">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Hospital Name</label>
+              <input type="text" name="name" class="form-control" placeholder="Search name">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Min Valentine Cards</label>
+              <input type="number" name="min_valentine_cards" class="form-control" min="0">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Max Valentine Cards</label>
+              <input type="number" name="max_valentine_cards" class="form-control" min="0">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Standing Order</label>
+              <select name="standing_order" class="form-select">
+                <option value="">Any</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+          </form>
+  
+          <div class="d-flex justify-content-between mb-2">
+            <div>
+              <button id="run-report" class="btn btn-danger">
+                <i class="bi bi-filter-circle me-1"></i> Run Report
+              </button>
+            </div>
+            <div class="btn-group">
+              <a id="export-csv" class="btn btn-outline-secondary"><i class="bi bi-download me-1"></i>CSV</a>
+              <a id="export-xlsx" class="btn btn-outline-secondary"><i class="bi bi-download me-1"></i>Excel</a>
+              <a id="export-pdf" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</a>
+              {{-- Optional Google Sheets --}}
+              {{-- <button id="export-sheets" class="btn btn-outline-secondary"><i class="bi bi-google me-1"></i>Google Sheets</button> --}}
+            </div>
+          </div>
+  
+          <table id="reportTable" class="table table-striped table-bordered w-100">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Organization</th>
+                <th>Contact Info</th>
+                {{-- <th>Email</th>
+                <th>Phone</th> --}}
+                <th>Address</th>
+                {{-- <th>State</th>
+                <th>ZIP</th> --}}
+                <th>Valentine Cards</th>
+                <th>Staff Cards</th>
+                <th>Box</th>
+                <th>Empty</th>
+                <th>Weight</th>
+                {{-- <th>Standing</th>
+                <th>Updated</th> --}}
+              </tr>
+            </thead>
+          </table>
+        </div>
+  
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>  
+
+<script>
+    let reportTable;
+
+    function filtersQS() {
+        const data = $('#report-filters').serialize();
+        return data ? ('?' + data) : '';
+    }
+
+    function initOrReloadTable() {
+        const url = "{{ route('admin.hospitals.reports.data') }}" + filtersQS();
+        
+        if (reportTable) {
+            reportTable.ajax.url(url).load();
+            return;
+        }
+
+        reportTable = $('#reportTable').DataTable({
+            processing: true,
+            serverSide: false,
+            ajax: url,
+            columns: [
+                { data: 'id' },
+                { data: 'organization_name' },
+                {
+                    data: null,
+                    render: d => `
+                        <strong>${d.contact_person_name || ''}</strong><br>
+                        <small>${d.email || ''}</small><br>
+                        <small>${d.phone || ''}</small>
+                    `
+                },
+                {
+                    data: null,
+                    render: d => `${d.street || ''}, ${d.city || ''}, ${d.state || ''} ${d.zip || ''}`
+                },
+                { data: 'valentine_card_count' },
+                { data: 'extra_staff_cards' },
+                {
+                    data: null,
+                    render: d => `
+                        ${d.box_style || ''}<br>
+                        ${d.length}x${d.width}x${d.height}
+                    `
+                },
+                { data: 'empty_box' },
+                { data: 'weight' },
+                // { data: 'standing_order', render: v => v ? 'Yes' : 'No' },
+                // { data: 'update_status', render: v => v ? 'Updated' : '—' },
+            ],
+            order: [[0,'asc']],
+            pageLength: 10
+        });
+    }
+
+    $('#run-report').on('click', function() {
+        initOrReloadTable();
+    });
+
+    function exportUrl(type) {
+        return "{{ route('admin.hospitals.reports.export', ['type' => '___']) }}".replace('___', type) + filtersQS();
+    }
+
+    $('#export-csv').on('click', () => window.location.href = exportUrl('csv'));
+    $('#export-xlsx').on('click', () => window.location.href = exportUrl('xlsx'));
+    $('#export-pdf').on('click', () => window.location.href = exportUrl('pdf'));
+
+    // Optional Google Sheets (POST to keep credentials out of URL)
+    // $('#export-sheets').on('click', function() {
+    //   const form = $('<form>', {method:'POST', action: "{{ route('admin.hospitals.reports.export.sheets') }}"});
+    //   form.append('@csrf');
+    //   const pairs = $('#report-filters').serializeArray();
+    //   pairs.forEach(p => form.append($('<input>', {type:'hidden', name:p.name, value:p.value})));
+    //   $('body').append(form); form.submit();
+    // });
+
+    $(document).ready(function() {
+        $('#datalist').DataTable({
+            scrollX: true,
+            scrollY: '400px',      // set table height
+            scrollCollapse: true,  // shrink table if fewer rows
+            paging: true,          // enable pagination
+            searching: true,       // enable search
+            ordering: true,        // enable column sorting
+            info: true,            // show "Showing X of Y" info
+            pageLength: 10,        // default rows per page
+            columnDefs: [
+                { orderable: false, targets: -1 }, // disable sorting for the Actions column
+            ],
+            fixedColumns: {
+                rightColumns: 1  // freeze the last column
+            }
+        });
+    });
+</script>
 @endsection 

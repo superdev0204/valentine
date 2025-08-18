@@ -134,7 +134,7 @@ class HospitalController extends Controller
                     'extra_staff_cards' => intval($data["If we have enough cards, how many extra cards would you like for your wonderful staff?"] ?? 0),
                     'street' => $data["Street address for delivery to you (no city, state, zip here)"] ?? '',
                     'city' => $data["City"] ?? '',
-                    'state' => $data["State/District:"] ?? '',
+                    'state' => strtoupper($data["State/District:"]) ?? '',
                     'zip' => $data["Zip Code:"] ?? '',
                     'phone' => $data["Phone (Fedex requires in case they have an issue - enter 10 digits only - no dashes, no hyphens, spaces, or parentheses):"] ?? '',
                     'standing_order' => ($data["Do you want to make this a standing order (we send you the same amount each year) so you don't need to worry about remembering?"] == "Yes" ? 1 : 0),
@@ -158,5 +158,52 @@ class HospitalController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('admin.hospitals')->with('error', 'Error importing data: ' . $e->getMessage());
         }
+    }
+
+    public function exportSendgridCsv()
+    {
+        $fileName = 'Hospital Sendgrid Upload Format.csv';
+        $hospitals = Hospital::all();
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = [
+            'Organization Name', 'ContactName', 'Email', 'DearWhom', 
+            'HospPatientCardQty', 'HospStaffCardsQty', 'address_line_1', 'City', 'state_province_region', 
+            'postal_code', 'phone_number', 'TotalHospRequested', 'CustomURL'
+        ];
+
+        $callback = function() use ($hospitals, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($hospitals as $hospital) {
+                fputcsv($file, [
+                    $hospital->organization_name,
+                    $hospital->contact_person_name,
+                    $hospital->email,
+                    "",
+                    $hospital->valentine_card_count,
+                    $hospital->extra_staff_cards,
+                    $hospital->street,
+                    $hospital->city,
+                    $hospital->state,
+                    $hospital->zip,
+                    $hospital->phone,
+                    ($hospital->valentine_card_count + $hospital->extra_staff_cards),
+                    $hospital->prefilled_link,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

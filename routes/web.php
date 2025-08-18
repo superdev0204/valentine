@@ -6,6 +6,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BoxMatrixController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\HospitalController;
+use App\Http\Controllers\SchoolReportController;
+use App\Http\Controllers\HospitalReportController;
 
 Route::get('/', function () {
     return view('home');
@@ -57,4 +59,35 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/hospitals/{hospital}', [HospitalController::class, 'updateHospital'])->name('admin.hospitals.update');
     Route::delete('/admin/hospitals/{hospital}', [HospitalController::class, 'deleteHospital'])->name('admin.hospitals.delete');
     Route::post('/admin/hospitals/import', [HospitalController::class, 'importHospitals'])->name('admin.hospitals.import');
+
+
+    // Export routes
+    Route::get('/admin/schools/sendgrid/export', [SchoolController::class, 'exportSendgridCsv'])->name('admin.schools.sendgrid.export');
+    Route::get('/admin/schools/fedex/export', [SchoolController::class, 'exportFedexCsv'])->name('admin.schools.fedex.export');
+    Route::get('/admin/hospitals/sendgrid/export', [HospitalController::class, 'exportSendgridCsv'])->name('admin.hospitals.sendgrid.export');
+
+    Route::prefix('admin/schools')->name('admin.schools.')->group(function () {
+        Route::get('reports', [SchoolReportController::class, 'index'])
+            ->name('reports'); // page (or modal content)
+        Route::get('reports/data', [SchoolReportController::class, 'data'])
+            ->name('reports.data'); // JSON for DataTables
+        Route::get('reports/export/{type}', [SchoolReportController::class, 'export'])
+            ->whereIn('type', ['csv','xlsx','pdf'])
+            ->name('reports.export');
+        Route::post('reports/export/sheets', [SchoolReportController::class, 'exportToSheets'])
+            ->name('reports.export.sheets'); // optional Google Sheets
+    });
+
+    Route::prefix('admin/hospitals')->name('admin.hospitals.')->group(function () {
+        Route::get('reports', [HospitalReportController::class, 'index'])
+            ->name('reports'); // page (or modal content)
+        Route::get('reports/data', [HospitalReportController::class, 'data'])
+            ->name('reports.data'); // JSON for DataTables
+        Route::get('reports/export/{type}', [HospitalReportController::class, 'export'])
+            ->whereIn('type', ['csv','xlsx','pdf'])
+            ->name('reports.export');
+        Route::post('reports/export/sheets', [HospitalReportController::class, 'exportToSheets'])
+            ->name('reports.export.sheets'); // optional Google Sheets
+    });
+    
 });

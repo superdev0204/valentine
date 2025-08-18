@@ -131,7 +131,7 @@ class SchoolController extends Controller
                     'instructions_cards' => intval($data["Each teacher will receive an instructions card.  How many instructions cards shall we include?"] ?? 0),
                     'street' => $data["Street Address for delivery of envelopes to you: (without city/state -- just the street address)"] ?? '',
                     'city' => $data['City'] ?? '',
-                    'state' => $data['State/District'] ?? '',
+                    'state' => strtoupper($data['State/District']) ?? '',
                     'zip' => $data['Zip Code'] ?? '',
                     'phone' => $data["Phone (Fedex requires in case they have an issue - enter digits only, no spaces, dashes, or parentheses):"] ?? '',
                     'standing_order' => ($data["Do you want to make this a standing order (we just send you the same amount in future years), so you don't have to remember (makes it easier for you and for us)?"] == "Yes" ? 1 : 0),
@@ -156,4 +156,160 @@ class SchoolController extends Controller
             return redirect()->route('admin.schools')->with('error', 'Error importing data: ' . $e->getMessage());
         }
     }
+
+    public function exportSendgridCsv()
+    {
+        $fileName = 'School Sendgrid Upload Format.csv';
+        $schools = School::all();
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = [
+            'SchoolName', 'ContactName', 'email', 'DearWhom', 
+            'EnvelopesDesired2022', 'QtyInstSheets', 'address_line_1', 'city', 'state_province_region', 
+            'postal_code', 'phone_number', 'StandingOrder', 'CustomURL'
+        ];
+
+        $callback = function() use ($schools, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($schools as $school) {
+                fputcsv($file, [
+                    $school->organization_name,
+                    $school->contact_person_name,
+                    $school->email,
+                    $school->how_to_address,
+                    $school->envelope_quantity,
+                    $school->instructions_cards,                    
+                    $school->street,
+                    $school->city,
+                    $school->state,
+                    $school->zip,
+                    $school->phone,
+                    $school->standing_order ? 'Yes' : 'No',
+                    $school->prefilled_link,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+
+    public function exportFedexCsv()
+    {
+        $fileName = 'Fedex Formatted School Import '. now()->format('m-d-Y') .'.csv';
+        $schools = School::all();
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = [
+            'Nickname', 'FullName', 'FirstName', 'LastName', 'Title', 'Company', 
+            'Department', 'AddressOne', 'AddressTwo', 'City', 'State', 'Zip', 
+            'PhoneNumber', 'ExtensionNumber', 'FAXNumber', 'PagerNumber', 'MobilePhoneNumber', 'CountryCode', 
+            'EmailAddress', 'VerifiedFlag', 'AcceptedFlag', 'ValidFlag', 'ResidentialFlag', 'CustomsIDEIN', 
+            'ReferenceDescription', 'ServiceTypeCode', 'PackageTypeCode', 'CollectionMethodCode', 'BillCode', 'BillAccountNumber', 
+            'DutyBillCode', 'DutyBillAccountNumber', 'CurrencyTypeCode', 'InsightIDNumber', 'GroundReferenceDescription', 'ShipmentNotificationRecipientEmail', 
+            'RecipientEmailLanguage', 'RecipientEmailShipmentnotification', 'RecipientEmailExceptionnotification', 'RecipientEmailDeliverynotification', 'PartnerTypeCodes', 'NetReturnBillAccountNumber', 
+            'CustomsIDTypeCode', 'AddressTypeCode', 'ShipmentNotificationSenderEmail', 'SenderEmailLanguage', 'SenderEmailShipmentnotification', 'SenderEmailExceptionnotification', 
+            'SenderEmailDeliverynotification', 'RecipientEmailPickupnotification', 'SenderEmailPickupnotification', 'OpCoTypeCd', 'BrokerAccounttID', 'BrokerTaxID', 
+            'DefaultBrokerID', 'RecipientEmailTenderednotification', 'SenderEmailTenderednotification', 'UserAccountNumber', 'DeliveryInstructions', 'EstimatedDeliveryFlag', 
+            'SenderEstimatedDeliveryFlag', 'ShipmentNotificationSenderDeliveryChannel', 'ShipmentNotificationSenderMobileNo', 'ShipmentNotificationSenderMobileNoCountry', 'ShipmentNotificationSenderMobileNoLanguage'
+        ];
+
+        $callback = function() use ($schools, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($schools as $school) {
+                fputcsv($file, [
+                    $school->contact_person_name,
+                    $school->contact_person_name,
+                    "",
+                    "",
+                    $school->organization_name,
+                    $school->organization_name,
+                    $school->envelope_quantity,
+                    $school->street,
+                    "",
+                    $school->city,
+                    $school->state,
+                    $school->zip,
+                    $school->phone,
+                    $school->instructions_cards,
+                    "",
+                    "",
+                    "",
+                    "US",                    
+                    $school->email,
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    $school->email,
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    $school->email,
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
 }
