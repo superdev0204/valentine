@@ -20,7 +20,7 @@
                     
                     <div class="row">
                         <!-- Basic Information -->
-                        <div class="col-md-6 mb-3">
+                        {{-- <div class="col-md-6 mb-3">
                             <label for="valentine_opt_in" class="form-label fw-semibold">
                                 <i class="bi bi-heart me-1"></i>Valentine Opt In
                             </label>
@@ -30,7 +30,7 @@
                             @error('valentine_opt_in')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div> --}}
                         
                         <div class="col-md-6 mb-3">
                             <label for="organization_name" class="form-label fw-semibold">
@@ -194,7 +194,8 @@
                         <!-- Status and Additional Information -->
                         <div class="col-md-6 mb-3">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="standing_order" name="standing_order" value="1" {{ old('standing_order', $hospital->standing_order) ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" 
+                                    id="standing_order" name="standing_order" value="1" {{ old('standing_order', $hospital->standing_order) ? 'checked' : '' }}>
                                 <label class="form-check-label fw-semibold" for="standing_order">
                                     <i class="bi bi-check-circle me-1"></i>Standing Order
                                 </label>
@@ -218,7 +219,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-12 mb-3">
                             <label for="introducer" class="form-label fw-semibold">
                                 <i class="bi bi-person-plus me-1"></i>Introducer
                             </label>
@@ -230,7 +231,7 @@
                             @enderror
                         </div>
                         
-                        <div class="col-md-6 mb-3">
+                        {{-- <div class="col-md-6 mb-3">
                             <label for="prefilled_link" class="form-label fw-semibold">
                                 <i class="bi bi-link-45deg me-1"></i>Prefilled Link
                             </label>
@@ -240,7 +241,7 @@
                             @error('prefilled_link')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div> --}}
                     </div>
 
                     {{-- <div class="row">

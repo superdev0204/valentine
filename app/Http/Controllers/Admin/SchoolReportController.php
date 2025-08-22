@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\School;
@@ -25,6 +25,9 @@ class SchoolReportController extends Controller
             ->leftJoin('school_box_size_matrices as sb', function ($join) {
                 $join->on(DB::raw('schools.envelope_quantity'), '>', DB::raw('sb.greater_than'))
                     ->on(DB::raw('schools.envelope_quantity'), '<=', DB::raw('sb.qty_of_env'));
+            })
+            ->leftJoin('volunteers as v', function ($join) {
+                $join->on(DB::raw('schools.volunteer_id'), '=', DB::raw('v.id'));
             });
 
         // Filters (extend as needed)
@@ -51,14 +54,18 @@ class SchoolReportController extends Controller
     public function data(Request $request)
     {
         try {
-            $rows = $this->baseQuery($request)->select([
-                'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
-                'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
-                'schools.envelope_quantity','schools.instructions_cards',
-                'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
-                'schools.prefilled_link','schools.standing_order','schools.update_status',
-            ])->get();
-    
+            $rows = $this->baseQuery($request)
+                ->with('volunteer')
+                ->select([
+                    'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
+                    'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
+                    'schools.envelope_quantity','schools.instructions_cards',
+                    'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
+                    'v.name as volunteer_name','v.phone as volunteer_phone',
+                    'schools.prefilled_link','schools.standing_order','schools.update_status',
+                ])
+                ->get();
+
             return response()->json(['data' => $rows]);
         } catch (\Throwable $e) {
             logger()->error($e);

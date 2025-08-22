@@ -21,7 +21,7 @@
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
     <!-- FixedColumns JS -->
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
-    
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -32,7 +32,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-danger shadow-sm">
             <div class="container">
-                <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/admin/dashboard">
+                <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/">
                     <i class="bi bi-heart-fill me-1 text-white" style="font-size: 1.2rem;"></i>
                     <span style="font-weight: 700; color: #fff;">Valen</span><span style="font-weight: 400; color: #ffd6d6;">tine</span>
                 </a>

@@ -2,16 +2,27 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\BoxMatrixController;
-use App\Http\Controllers\SchoolController;
-use App\Http\Controllers\HospitalController;
-use App\Http\Controllers\SchoolReportController;
-use App\Http\Controllers\HospitalReportController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BoxMatrixController;
+use App\Http\Controllers\Admin\SchoolController;
+use App\Http\Controllers\Admin\HospitalController;
+use App\Http\Controllers\Admin\SchoolReportController;
+use App\Http\Controllers\Admin\HospitalReportController;
+use App\Http\Controllers\Admin\VolunteerController;
 
 Route::get('/', function () {
     return view('home');
 });
+
+Route::get('/register/school', [App\Http\Controllers\SchoolController::class, 'create'])->name('school.register');
+Route::post('/register/school', [App\Http\Controllers\SchoolController::class, 'store'])->name('school.register.store');
+Route::get('/school/{school}/edit', [App\Http\Controllers\SchoolController::class, 'edit'])->name('school.edit');
+Route::put('/school/{school}', [App\Http\Controllers\SchoolController::class, 'update'])->name('school.update');
+
+Route::get('/register/hospital', [App\Http\Controllers\HospitalController::class, 'create'])->name('hospital.register');
+Route::post('/register/hospital', [App\Http\Controllers\HospitalController::class, 'store'])->name('hospital.register.store');
+Route::get('/hospital/{hospital}/edit', [App\Http\Controllers\HospitalController::class, 'edit'])->name('hospital.edit');
+Route::put('/hospital/{hospital}', [App\Http\Controllers\HospitalController::class, 'update'])->name('hospital.update');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -65,6 +76,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/schools/sendgrid/export', [SchoolController::class, 'exportSendgridCsv'])->name('admin.schools.sendgrid.export');
     Route::get('/admin/schools/fedex/export', [SchoolController::class, 'exportFedexCsv'])->name('admin.schools.fedex.export');
     Route::get('/admin/hospitals/sendgrid/export', [HospitalController::class, 'exportSendgridCsv'])->name('admin.hospitals.sendgrid.export');
+    Route::get('/admin/hospitals/fedex/export', [HospitalController::class, 'exportFedexCsv'])->name('admin.hospitals.fedex.export');
 
     Route::prefix('admin/schools')->name('admin.schools.')->group(function () {
         Route::get('reports', [SchoolReportController::class, 'index'])
@@ -89,5 +101,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::post('reports/export/sheets', [HospitalReportController::class, 'exportToSheets'])
             ->name('reports.export.sheets'); // optional Google Sheets
     });
+
+    // Volunteers routes
+    Route::get('/admin/volunteers', [VolunteerController::class, 'volunteerList'])->name('admin.volunteers');
+    Route::get('/admin/volunteers/create', [VolunteerController::class, 'create'])->name('admin.volunteers.create');
+    Route::post('/admin/volunteers', [VolunteerController::class, 'store'])->name('admin.volunteers.store');
+    Route::get('/admin/volunteers/{volunteer}/edit', [VolunteerController::class, 'edit'])->name('admin.volunteers.edit');
+    Route::put('/admin/volunteers/{volunteer}', [VolunteerController::class, 'update'])->name('admin.volunteers.update');
+    Route::delete('/admin/volunteers/{volunteer}', [VolunteerController::class, 'delete'])->name('admin.volunteers.delete');
     
 });

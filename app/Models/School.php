@@ -25,7 +25,10 @@ class School extends Model
         'standing_order',
         'question',
         'introducer',
-        'prefilled_link',
+        'qty_sent_last_year',
+        'qty_received_last_year',
+        'volunteer_id',
+        // 'prefilled_link',
         'update_status',
     ];
 
@@ -36,4 +39,8 @@ class School extends Model
         'email_status' => 'boolean',
         'update_status' => 'boolean',
     ];
+
+    public function volunteer() {
+        return $this->belongsTo(Volunteer::class);
+    }
 }

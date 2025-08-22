@@ -75,10 +75,22 @@
                                     <i class="bi bi-weight me-1"></i>Weight
                                 </th>
                                 <th scope="col" style="min-width: 200px;">
+                                    <i class="bi bi-box-arrow-up me-1"></i>Qty Sent Last Year
+                                </th>
+                                <th scope="col" style="min-width: 210px;">
+                                    <i class="bi bi-box-arrow-down me-1"></i>Qty Received Last Year
+                                </th>
+                                <th scope="col" style="min-width: 200px;">
+                                    <i class="bi bi-person-badge me-1"></i>Volunteer
+                                </th>                                
+                                <th scope="col" style="min-width: 200px;">
                                     <i class="bi bi-link-45deg me-1"></i>Prefilled Link
                                 </th>
                                 <th scope="col" class="text-center" style="min-width: 200px;">
                                     <i class="bi bi-toggle-on me-1"></i>Status
+                                </th>
+                                <th scope="col" style="min-width: 200px;">
+                                    <i class="bi bi-clock-history me-1"></i>Last Updated
                                 </th>
                                 <th scope="col" class="sticky-action-col text-center" style="z-index:3; min-width: 120px;">
                                     <i class="bi bi-gear me-1"></i>Actions
@@ -142,9 +154,25 @@
                                     <td>
                                         <span class="fw-semibold text-info">{{ $school->weight }}g</span>
                                     </td>
+                                    <td class="text-center">
+                                        <span class="fw-semibold text-primary">{{ $school->qty_sent_last_year ?? '—' }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="fw-semibold text-info">{{ $school->qty_received_last_year ?? '—' }}</span>
+                                    </td>
+                                    <td>
+                                        @if($school->volunteer)
+                                            <div class="d-flex flex-column">
+                                                <div class="fw-semibold">{{ $school->volunteer->name }}</div>
+                                                <small class="text-muted">{{ $school->volunteer->email }}</small>
+                                            </div>
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>                                    
                                     <td>
                                         @if($school->prefilled_link)
-                                            <a href="{{ $school->prefilled_link }}" target="_blank" class="text-decoration-none">
+                                            <a href="{{ route('school.edit', $school->id) }}" target="_blank" class="text-decoration-none">
                                                 <i class="bi bi-box-arrow-up-right me-1"></i>Open Form
                                             </a>
                                         @else
@@ -169,6 +197,12 @@
                                             @endif
                                         </div>
                                     </td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <span class="fw-semibold">{{ $school->updated_at->format('M d, Y') }}</span>
+                                            <small class="text-muted">{{ $school->updated_at->diffForHumans() }}</small>
+                                        </div>
+                                    </td>
                                     <td class="sticky-action-col bg-light text-center">
                                         <div class="btn-group" role="group">
                                             <a href="{{ route('admin.schools.edit', $school) }}" class="btn btn-outline-primary btn-sm" title="Edit School">
@@ -186,7 +220,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="13" class="text-center py-5">
+                                    <td colspan="17" class="text-center py-5">
                                         <div class="d-flex flex-column align-items-center">
                                             <i class="bi bi-building display-1 text-muted mb-3"></i>
                                             <h5 class="text-muted mb-3">No schools found</h5>
@@ -338,18 +372,20 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Organization</th>
-                <th>Contact Info</th>
+                <th style="min-width: 200px;">Organization</th>
+                <th style="min-width: 200px;">Contact Info</th>
                 {{-- <th>Email</th>
                 <th>Phone</th> --}}
-                <th>Address</th>
-                {{-- <th>State</th>
-                <th>ZIP</th> --}}
-                <th>Envelopes</th>
-                <th>Cards</th>
-                <th>Box</th>
-                <th>Empty</th>
-                <th>Weight</th>
+                <th style="min-width: 100px;">Street</th>
+                <th style="min-width: 100px;">City</th>
+                <th style="min-width: 100px;">State</th>
+                <th style="min-width: 100px;">ZIP</th>
+                <th style="min-width: 100px;">Envelopes</th>
+                <th style="min-width: 100px;">Cards</th>
+                <th style="min-width: 100px;">Box</th>
+                <th style="min-width: 100px;">Empty</th>
+                <th style="min-width: 100px;">Weight</th>
+                <th style="min-width: 200px;">Volunteer</th>
                 {{-- <th>Standing</th>
                 <th>Updated</th> --}}
               </tr>
@@ -395,10 +431,10 @@
                         <small>${d.phone || ''}</small>
                     `
                 },
-                {
-                    data: null,
-                    render: d => `${d.street || ''}, ${d.city || ''}, ${d.state || ''} ${d.zip || ''}`
-                },
+                { data: 'street' },
+                { data: 'city' },
+                { data: 'state' },
+                { data: 'zip' },
                 { data: 'envelope_quantity' },
                 { data: 'instructions_cards' },
                 {
@@ -410,6 +446,13 @@
                 },
                 { data: 'empty_box' },
                 { data: 'weight' },
+                {
+                    data: null,
+                    render: d => `
+                        <strong>${d.volunteer_name || '-'}</strong><br>
+                        <small>${d.volunteer_phone || ''}</small>
+                    `
+                }
                 // { data: 'standing_order', render: v => v ? 'Yes' : 'No' },
                 // { data: 'update_status', render: v => v ? 'Updated' : '—' },
             ],

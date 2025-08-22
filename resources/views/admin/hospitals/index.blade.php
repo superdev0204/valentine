@@ -26,6 +26,9 @@
                         <a href="{{ route('admin.hospitals.sendgrid.export') }}" class="btn btn-light btn-lg shadow-sm">
                             <i class="bi bi-download me-2"></i> SendGrid CSV
                         </a>
+                        <a href="{{ route('admin.hospitals.fedex.export') }}" class="btn btn-light btn-lg shadow-sm">
+                            <i class="bi bi-download me-2"></i> Fedex CSV
+                        </a>
                         <a href="{{ route('admin.hospitals.create') }}" class="btn btn-light btn-lg shadow-sm">
                             <i class="bi bi-plus-lg me-2"></i> Add Record
                         </a>
@@ -76,8 +79,14 @@
                                 <th scope="col" style="min-width: 200px;">
                                     <i class="bi bi-link-45deg me-1"></i>Prefilled Link
                                 </th>
+                                <th scope="col" style="min-width: 200px;">
+                                    <i class="bi bi-person-badge me-1"></i>Volunteer
+                                </th>
                                 <th scope="col" class="text-center" style="min-width: 200px;">
                                     <i class="bi bi-toggle-on me-1"></i>Status
+                                </th>
+                                <th scope="col" style="min-width: 200px;">
+                                    <i class="bi bi-clock-history me-1"></i>Last Updated
                                 </th>
                                 <th scope="col" class="sticky-action-col text-center" style="z-index:3; min-width: 120px;">
                                     <i class="bi bi-gear me-1"></i>Actions
@@ -144,9 +153,19 @@
                                     </td>
                                     <td>
                                         @if($hospital->prefilled_link)
-                                            <a href="{{ $hospital->prefilled_link }}" target="_blank" class="text-decoration-none">
+                                            <a href="{{ route('hospital.edit', $hospital->id) }}" target="_blank" class="text-decoration-none">
                                                 <i class="bi bi-box-arrow-up-right me-1"></i>Open Form
                                             </a>
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($hospital->volunteer)
+                                            <div class="d-flex flex-column">
+                                                <div class="fw-semibold">{{ $hospital->volunteer->name }}</div>
+                                                <small class="text-muted">{{ $hospital->volunteer->email }}</small>
+                                            </div>
                                         @else
                                             <span class="text-muted">—</span>
                                         @endif
@@ -169,6 +188,12 @@
                                             @endif
                                         </div>
                                     </td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <span class="fw-semibold">{{ $hospital->updated_at->format('M d, Y') }}</span>
+                                            <small class="text-muted">{{ $hospital->updated_at->diffForHumans() }}</small>
+                                        </div>
+                                    </td>
                                     <td class="sticky-action-col bg-light text-center">
                                         <div class="btn-group" role="group">
                                             <a href="{{ route('admin.hospitals.edit', $hospital) }}" class="btn btn-outline-primary btn-sm" title="Edit Hospital">
@@ -186,7 +211,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="14" class="text-center py-5">
+                                    <td colspan="16" class="text-center py-5">
                                         <div class="d-flex flex-column align-items-center">
                                             <i class="bi bi-heart-pulse display-1 text-muted mb-3"></i>
                                             <h5 class="text-muted mb-3">No hospitals found</h5>
@@ -338,18 +363,19 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Organization</th>
-                <th>Contact Info</th>
+                <th style="min-width: 200px;">Organization</th>
+                <th style="min-width: 200px;">Contact Info</th>
                 {{-- <th>Email</th>
                 <th>Phone</th> --}}
-                <th>Address</th>
-                {{-- <th>State</th>
-                <th>ZIP</th> --}}
-                <th>Valentine Cards</th>
-                <th>Staff Cards</th>
-                <th>Box</th>
-                <th>Empty</th>
-                <th>Weight</th>
+                <th style="min-width: 100px;">Street</th>
+                <th style="min-width: 100px;">City</th>
+                <th style="min-width: 100px;">State</th>
+                <th style="min-width: 100px;">ZIP</th>
+                <th style="min-width: 100px;">Valentine Cards</th>
+                <th style="min-width: 100px;">Staff Cards</th>
+                <th style="min-width: 100px;">Box</th>
+                <th style="min-width: 100px;">Empty</th>
+                <th style="min-width: 100px;">Weight</th>
                 {{-- <th>Standing</th>
                 <th>Updated</th> --}}
               </tr>
@@ -395,10 +421,10 @@
                         <small>${d.phone || ''}</small>
                     `
                 },
-                {
-                    data: null,
-                    render: d => `${d.street || ''}, ${d.city || ''}, ${d.state || ''} ${d.zip || ''}`
-                },
+                { data: 'street' },
+                { data: 'city' },
+                { data: 'state' },
+                { data: 'zip' },
                 { data: 'valentine_card_count' },
                 { data: 'extra_staff_cards' },
                 {
@@ -434,7 +460,7 @@
     // $('#export-sheets').on('click', function() {
     //   const form = $('<form>', {method:'POST', action: "{{ route('admin.hospitals.reports.export.sheets') }}"});
     //   form.append('@csrf');
-    //   const pairs = $('#report-filters').serializeArray();
+    //   const pairs = $('#report-filters').serializeArraysmall flame april receive struggle near autumn enforce stuff enforce cube armed();
     //   pairs.forEach(p => form.append($('<input>', {type:'hidden', name:p.name, value:p.value})));
     //   $('body').append(form); form.submit();
     // });

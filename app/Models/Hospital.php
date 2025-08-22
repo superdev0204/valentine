@@ -37,4 +37,8 @@ class Hospital extends Model
         'email_status' => 'boolean',
         'update_status' => 'boolean',
     ];
+
+    public function volunteer() {
+        return $this->belongsTo(Volunteer::class);
+    }
 }
