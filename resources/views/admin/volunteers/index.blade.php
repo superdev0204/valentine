@@ -91,11 +91,16 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="9" class="text-center text-muted py-4">
-                                <i class="bi bi-person-slash fs-4 d-block mb-2"></i>
-                                No volunteers found.
-                            </td>
+                        <tr class="text-center text-muted py-4">
+                            <td colspan="9"><i class="bi bi-person-slash fs-4 d-block mb-2"></i>No volunteers found.</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     @endforelse
                     </tbody>
