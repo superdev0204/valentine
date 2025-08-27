@@ -74,7 +74,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Export routes
     Route::get('/admin/schools/sendgrid/export', [SchoolController::class, 'exportSendgridCsv'])->name('admin.schools.sendgrid.export');
-    Route::get('/admin/schools/fedex/export', [SchoolController::class, 'exportFedexCsv'])->name('admin.schools.fedex.export');
+    Route::get('/admin/schools/fedex/export/{type}', [SchoolController::class, 'exportFedexCsv'])->whereIn('type', ['outgoing', 'return'])->name('admin.schools.fedex.export');
     Route::get('/admin/hospitals/sendgrid/export', [HospitalController::class, 'exportSendgridCsv'])->name('admin.hospitals.sendgrid.export');
     Route::get('/admin/hospitals/fedex/export', [HospitalController::class, 'exportFedexCsv'])->name('admin.hospitals.fedex.export');
 

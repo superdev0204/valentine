@@ -5,267 +5,260 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-lg-10">
-        <div class="card shadow-lg border-0">
-            <div class="card-header bg-danger text-white d-flex align-items-center py-3">
-                <i class="bi bi-heart-pulse display-6 me-3"></i>
-                <div>
-                    <h4 class="mb-0 fw-bold">Edit Hospital</h4>
-                    <small class="opacity-75">Update hospital or healthcare organization information</small>
+        <form action="{{ route('admin.hospitals.update', $hospital) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <!-- Hospital Information Card (including Address) -->
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-danger text-white py-3">
+                    <i class="bi bi-heart-pulse display-6 me-2"></i>
+                    <span class="fs-5 fw-bold">Hospital Information</span>
                 </div>
-            </div>
-            <div class="card-body p-4">
-                <form action="{{ route('admin.hospitals.update', $hospital) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    
-                    <div class="row">
-                        <!-- Basic Information -->
+                <div class="card-body">
+
+                    <!-- Organization & Contact -->
+                    <div class="row mb-3">
                         {{-- <div class="col-md-6 mb-3">
                             <label for="valentine_opt_in" class="form-label fw-semibold">
                                 <i class="bi bi-heart me-1"></i>Valentine Opt In
                             </label>
                             <input type="text" class="form-control @error('valentine_opt_in') is-invalid @enderror" 
-                                   id="valentine_opt_in" name="valentine_opt_in" value="{{ old('valentine_opt_in', $hospital->valentine_opt_in) }}" 
-                                   placeholder="e.g., Yes, No, Pending">
+                                id="valentine_opt_in" name="valentine_opt_in" value="{{ old('valentine_opt_in', $hospital->valentine_opt_in) }}" 
+                                placeholder="e.g., Yes, No, Pending">
                             @error('valentine_opt_in')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div> --}}
                         
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
                             <label for="organization_name" class="form-label fw-semibold">
                                 <i class="bi bi-heart-pulse me-1"></i>Organization Name
                             </label>
                             <input type="text" class="form-control @error('organization_name') is-invalid @enderror" 
-                                   id="organization_name" name="organization_name" value="{{ old('organization_name', $hospital->organization_name) }}" 
-                                   placeholder="e.g., Memorial Hospital">
+                                id="organization_name" name="organization_name" value="{{ old('organization_name', $hospital->organization_name) }}" 
+                                maxlength="30" pattern="[A-Za-z0-9 .-]+">
                             @error('organization_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
                             <label for="organization_type" class="form-label fw-semibold">
                                 <i class="bi bi-building me-1"></i>Organization Type
                             </label>
                             <input type="text" class="form-control @error('organization_type') is-invalid @enderror" 
-                                   id="organization_type" name="organization_type" value="{{ old('organization_type', $hospital->organization_type) }}" 
-                                   placeholder="e.g., Hospital, Clinic, Medical Center">
+                                id="organization_type" name="organization_type" value="{{ old('organization_type', $hospital->organization_type) }}" 
+                                placeholder="e.g., Hospital, Clinic, Medical Center">
                             @error('organization_type')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="contact_person_name" class="form-label fw-semibold">
-                                <i class="bi bi-person me-1"></i>Contact Person Name
-                            </label>
-                            <input type="text" class="form-control @error('contact_person_name') is-invalid @enderror" 
-                                   id="contact_person_name" name="contact_person_name" value="{{ old('contact_person_name', $hospital->contact_person_name) }}" 
-                                   placeholder="e.g., Dr. Smith">
-                            @error('contact_person_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="contact_person_name" class="form-label fw-semibold">
+                                <i class="bi bi-person me-1"></i>Contact Person Name
+                            </label>
+                            <input type="text" class="form-control @error('contact_person_name') is-invalid @enderror" 
+                                id="contact_person_name" name="contact_person_name" value="{{ old('contact_person_name', $hospital->contact_person_name) }}" 
+                                maxlength="35" pattern="[A-Za-z0-9 .-]+">
+                            @error('contact_person_name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
                             <label for="how_to_address" class="form-label fw-semibold">
                                 <i class="bi bi-person-badge me-1"></i>How to Address You
                             </label>
                             <input type="text" class="form-control @error('how_to_address') is-invalid @enderror" 
-                                   id="how_to_address" name="how_to_address" value="{{ old('how_to_address', $hospital->how_to_address) }}" 
-                                   placeholder="e.g., Dr. Smith, Ms. Jones">
+                                id="how_to_address" name="how_to_address" value="{{ old('how_to_address', $hospital->how_to_address) }}" 
+                                placeholder="e.g., Dr. Smith, Ms. Jones">
                             @error('how_to_address')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+                    </div>
+
+                    <!-- Email & Phone -->
+                    <div class="row mb-3">
                         <div class="col-md-6 mb-3">
                             <label for="email" class="form-label fw-semibold">
                                 <i class="bi bi-envelope me-1"></i>Email Address
                             </label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                   id="email" name="email" value="{{ old('email', $hospital->email) }}" 
-                                   placeholder="contact@hospital.com">
+                                id="email" name="email" value="{{ old('email', $hospital->email) }}" 
+                                placeholder="contact@hospital.com">
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
                             <label for="phone" class="form-label fw-semibold">
                                 <i class="bi bi-telephone me-1"></i>Phone Number
                             </label>
                             <input type="text" class="form-control @error('phone') is-invalid @enderror" 
-                                   id="phone" name="phone" value="{{ old('phone', $hospital->phone) }}" 
-                                   placeholder="(555) 123-4567">
+                                id="phone" name="phone" value="{{ old('phone', $hospital->phone) }}" 
+                                maxlength="10" pattern="[0-9]{10}">
                             @error('phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="valentine_card_count" class="form-label fw-semibold">
-                                <i class="bi bi-heart me-1"></i>Valentine Card Count
-                            </label>
-                            <input type="number" class="form-control @error('valentine_card_count') is-invalid @enderror" 
-                                   id="valentine_card_count" name="valentine_card_count" value="{{ old('valentine_card_count', $hospital->valentine_card_count) }}" 
-                                   placeholder="100" min="0">
-                            @error('valentine_card_count')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="extra_staff_cards" class="form-label fw-semibold">
-                                <i class="bi bi-people me-1"></i>Extra Staff Cards
-                            </label>
-                            <input type="number" class="form-control @error('extra_staff_cards') is-invalid @enderror" 
-                                   id="extra_staff_cards" name="extra_staff_cards" value="{{ old('extra_staff_cards', $hospital->extra_staff_cards) }}" 
-                                   placeholder="50" min="0">
-                            @error('extra_staff_cards')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <!-- Address Information -->
-                        <div class="col-md-12 mb-3">
+                    <!-- Address -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
                             <label for="street" class="form-label fw-semibold">
                                 <i class="bi bi-geo-alt me-1"></i>Street Address
                             </label>
                             <input type="text" class="form-control @error('street') is-invalid @enderror" 
-                                   id="street" name="street" value="{{ old('street', $hospital->street) }}" 
-                                   placeholder="123 Medical Center Drive">
+                                id="street" name="street" value="{{ old('street', $hospital->street) }}" 
+                                maxlength="30" pattern="[A-Za-z0-9 .-]+">
                             @error('street')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
                             <label for="city" class="form-label fw-semibold">
                                 <i class="bi bi-building me-1"></i>City
                             </label>
                             <input type="text" class="form-control @error('city') is-invalid @enderror" 
-                                   id="city" name="city" value="{{ old('city', $hospital->city) }}" 
-                                   placeholder="Anytown">
+                                id="city" name="city" value="{{ old('city', $hospital->city) }}" 
+                                maxlength="35" pattern="[A-Za-z0-9 .-]+">
                             @error('city')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-4">
                             <label for="state" class="form-label fw-semibold">
                                 <i class="bi bi-map me-1"></i>State
                             </label>
                             <input type="text" class="form-control @error('state') is-invalid @enderror" 
-                                   id="state" name="state" value="{{ old('state', $hospital->state) }}" 
-                                   placeholder="CA" maxlength="2">
+                                id="state" name="state" value="{{ old('state', $hospital->state) }}" 
+                                pattern="[A-Za-z]{2}" maxlength="2">
                             @error('state')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-4">
                             <label for="zip" class="form-label fw-semibold">
                                 <i class="bi bi-pin-map me-1"></i>ZIP Code
                             </label>
                             <input type="text" class="form-control @error('zip') is-invalid @enderror" 
-                                   id="zip" name="zip" value="{{ old('zip', $hospital->zip) }}" 
-                                   placeholder="12345" maxlength="5">
+                                id="zip" name="zip" value="{{ old('zip', $hospital->zip) }}" maxlength="5">
                             @error('zip')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
-
-                    <div class="row">
-                        <!-- Status and Additional Information -->
-                        <div class="col-md-6 mb-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" 
-                                    id="standing_order" name="standing_order" value="1" {{ old('standing_order', $hospital->standing_order) ? 'checked' : '' }}>
-                                <label class="form-check-label fw-semibold" for="standing_order">
-                                    <i class="bi bi-check-circle me-1"></i>Standing Order
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <!-- Text Areas -->
-                        <div class="col-md-12 mb-3">
-                            <label for="question" class="form-label fw-semibold">
-                                <i class="bi bi-question-circle me-1"></i>Questions or Comments
-                            </label>
-                            <textarea class="form-control @error('question') is-invalid @enderror" 
-                                      id="question" name="question" rows="3" 
-                                      placeholder="Any questions or additional information...">{{ old('question', $hospital->question) }}</textarea>
-                            @error('question')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label for="introducer" class="form-label fw-semibold">
-                                <i class="bi bi-person-plus me-1"></i>Introducer
-                            </label>
-                            <textarea class="form-control @error('introducer') is-invalid @enderror" 
-                                      id="introducer" name="introducer" rows="3" 
-                                      placeholder="How did you hear about us?">{{ old('introducer', $hospital->introducer) }}</textarea>
-                            @error('introducer')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        
-                        {{-- <div class="col-md-6 mb-3">
-                            <label for="prefilled_link" class="form-label fw-semibold">
-                                <i class="bi bi-link-45deg me-1"></i>Prefilled Link
-                            </label>
-                            <textarea class="form-control @error('prefilled_link') is-invalid @enderror" 
-                                      id="prefilled_link" name="prefilled_link" rows="3" 
-                                      placeholder="Any prefilled links or references...">{{ old('prefilled_link', $hospital->prefilled_link) }}</textarea>
-                            @error('prefilled_link')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div> --}}
-                    </div>
-
-                    {{-- <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="update_status" name="update_status" value="1" {{ old('update_status', $hospital->update_status) ? 'checked' : '' }}>
-                                <label class="form-check-label fw-semibold" for="update_status">
-                                    <i class="bi bi-arrow-clockwise me-1"></i>Update Status
-                                </label>
-                            </div>
-                        </div>
-                    </div> --}}
-
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ route('admin.hospitals') }}" class="btn btn-secondary btn-lg">
-                            <i class="bi bi-arrow-left me-2"></i>Cancel
-                        </a>
-                        <button type="submit" class="btn btn-danger btn-lg">
-                            <i class="bi bi-check-circle me-2"></i>Update Hospital
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
+
+            <!-- Cards / Staff -->
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-header bg-success text-white py-3">
+                    <i class="bi bi-card-checklist display-6 me-2"></i>
+                    <span class="fs-5 fw-bold">Cards & Staff</span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="valentine_card_count" class="form-label fw-semibold">
+                                <i class="bi bi-heart me-1"></i>Valentine Card Count
+                            </label>
+                            <input type="number" class="form-control @error('valentine_card_count') is-invalid @enderror" 
+                                id="valentine_card_count" name="valentine_card_count" value="{{ old('valentine_card_count', $hospital->valentine_card_count) }}" 
+                                placeholder="100" min="0">
+                            @error('valentine_card_count')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="extra_staff_cards" class="form-label fw-semibold">
+                                <i class="bi bi-people me-1"></i>Extra Staff Cards
+                            </label>
+                            <input type="number" class="form-control @error('extra_staff_cards') is-invalid @enderror" 
+                                id="extra_staff_cards" name="extra_staff_cards" value="{{ old('extra_staff_cards', $hospital->extra_staff_cards) }}" 
+                                placeholder="50" min="0">
+                            @error('extra_staff_cards')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="form-check form-switch mt-3">
+                        <input class="form-check-input" type="checkbox" 
+                            id="standing_order" name="standing_order" value="1" {{ old('standing_order', $hospital->standing_order) ? 'checked' : '' }}>
+                        <label class="form-check-label fw-semibold" for="standing_order">
+                            <i class="bi bi-check-circle me-1"></i>Standing Order
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes / Comments -->
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-header bg-secondary text-white py-3">
+                    <i class="bi bi-chat-left-text display-6 me-2"></i>
+                    <span class="fs-5 fw-bold">Questions / Comments</span>
+                </div>
+                <div class="card-body">
+                    <!-- Text Areas -->
+                    <div class="mb-3">
+                        <label for="question" class="form-label fw-semibold">
+                            <i class="bi bi-question-circle me-1"></i>Questions or Comments
+                        </label>
+                        <textarea class="form-control @error('question') is-invalid @enderror" 
+                                id="question" name="question" rows="3" 
+                                placeholder="Any questions or additional information...">{{ old('question', $hospital->question) }}</textarea>
+                        @error('question')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    {{-- <div class="mb-3">
+                        <label for="introducer" class="form-label fw-semibold">
+                            <i class="bi bi-person-plus me-1"></i>Introducer
+                        </label>
+                        <textarea class="form-control @error('introducer') is-invalid @enderror" 
+                                id="introducer" name="introducer" rows="3" 
+                                placeholder="How did you hear about us?">{{ old('introducer', $hospital->introducer) }}</textarea>
+                        @error('introducer')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div> --}}
+                </div>
+            </div>
+                    
+            <div class="d-flex justify-content-between mb-5">
+                <a href="{{ route('admin.hospitals') }}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-arrow-left me-2"></i>Cancel
+                </a>
+                <button type="submit" class="btn btn-danger btn-lg">
+                    <i class="bi bi-check-circle me-2"></i>Update Hospital
+                </button>
+            </div>                
+        </form>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll("input[type=text]").forEach(el => {
+        el.addEventListener("input", function() {
+            this.value = this.value.replace(/[^A-Za-z0-9 .-]/g, "");
+        });
+    });
+
+    document.getElementById("phone").addEventListener("input", function() {
+        this.value = this.value.replace(/\D/g, "").slice(0, 10);
+    });
+</script>
 @endsection 

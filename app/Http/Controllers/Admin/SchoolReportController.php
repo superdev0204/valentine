@@ -47,7 +47,7 @@ class SchoolReportController extends Controller
             $q->where('schools.standing_order', $standing === 'yes');
         }
 
-        return $q->orderBy('schools.id');
+        return $q->orderBy('unique_id');
     }
 
     // DataTables JSON (server-side)
@@ -63,6 +63,7 @@ class SchoolReportController extends Controller
                     'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
                     'v.name as volunteer_name','v.phone as volunteer_phone',
                     'schools.prefilled_link','schools.standing_order','schools.update_status',
+                    DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as unique_id'), 
                 ])
                 ->get();
 
@@ -82,6 +83,7 @@ class SchoolReportController extends Controller
             'schools.envelope_quantity','schools.instructions_cards',
             'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
             'schools.prefilled_link','schools.standing_order','schools.update_status',
+            DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as unique_id'), 
         ])->get();;
 
         if ($type === 'pdf') {

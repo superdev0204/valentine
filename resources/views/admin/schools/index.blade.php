@@ -23,19 +23,38 @@
                         <button class="btn btn-light btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#reportsModal">
                             <i class="bi bi-bar-chart-line me-2"></i> Reports
                         </button>
+                    
                         <a href="{{ route('admin.schools.sendgrid.export') }}" class="btn btn-light btn-lg shadow-sm">
                             <i class="bi bi-download me-2"></i> SendGrid CSV
                         </a>
-                        <a href="{{ route('admin.schools.fedex.export') }}" class="btn btn-light btn-lg shadow-sm">
-                            <i class="bi bi-download me-2"></i> Fedex CSV
-                        </a>
+                    
+                        <!-- FedEx Export Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-lg shadow-sm dropdown-toggle" type="button" id="fedexExportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-download me-2"></i> FedEx CSV
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="fedexExportDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.schools.fedex.export', ['type' => 'outgoing']) }}">
+                                        📤 School Outgoing
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.schools.fedex.export', ['type' => 'return']) }}">
+                                        📥 School Return
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    
                         <a href="{{ route('admin.schools.create') }}" class="btn btn-light btn-lg shadow-sm">
                             <i class="bi bi-plus-lg me-2"></i> Add Record
                         </a>
+                    
                         <button type="button" class="btn btn-light btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#importModal">
                             <i class="bi bi-upload me-2"></i> Import
                         </button>
-                    </div>            
+                    </div>                                
                 </div>
             </div>
                       
@@ -101,7 +120,7 @@
                             @forelse ($schools as $school)
                                 <tr class="border-bottom">
                                     <td class="text-center">
-                                        <span class="badge bg-secondary rounded-pill">{{ $school->id }}</span>
+                                        <span class="badge bg-secondary rounded-pill">{{ $school->unique_id }}</span>
                                     </td>
                                     <td>
                                         <div class="d-flex flex-column">
@@ -220,7 +239,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="17" class="text-center py-5">
+                                    <td colspan="5" class="text-center py-5">
                                         <div class="d-flex flex-column align-items-center">
                                             <i class="bi bi-building display-1 text-muted mb-3"></i>
                                             <h5 class="text-muted mb-3">No schools found</h5>
@@ -230,6 +249,22 @@
                                             </a>
                                         </div>
                                     </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                             @endforelse
                         </tbody>

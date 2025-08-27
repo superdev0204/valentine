@@ -18,20 +18,20 @@ class SchoolController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'organization_name'   => 'required|string|max:255',
-            'contact_person_name' => 'required|string|max:255',
+            'organization_name'   => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'contact_person_name' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'email'               => 'required|email|max:255',
             'how_to_address'      => 'required|string|max:255',
             'envelope_quantity'   => 'required|integer|min:0',
             'instructions_cards'  => 'nullable|integer|min:0',
-            'street'              => 'required|string|max:255',
-            'city'                => 'required|string|max:255',
-            'state'               => 'required|string|max:255',
+            'street'              => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'city'                => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'state'               => ['required', 'size:2', 'alpha'],
             'zip'                 => 'required|string|max:20',
-            'phone'               => 'required|string|max:20',
+            'phone'               => ['required', 'digits:10'],
             'standing_order'      => 'boolean',
             'question'            => 'nullable|string',
-            'introducer'          => 'nullable|string',
+            // 'introducer'          => 'nullable|string',
         ]);
 
         // Ensure standing_order is boolean
@@ -58,20 +58,20 @@ class SchoolController extends Controller
     public function update(Request $request, School $school)
     {
         $validated = $request->validate([
-            'organization_name'   => 'required|string|max:255',
-            'contact_person_name' => 'required|string|max:255',
+            'organization_name'   => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'contact_person_name' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'email'               => 'required|email|max:255',
             'how_to_address'      => 'required|string|max:255',
             'envelope_quantity'   => 'required|integer|min:0',
             'instructions_cards'  => 'nullable|integer|min:0',
-            'street'              => 'required|string|max:255',
-            'city'                => 'required|string|max:255',
-            'state'               => 'required|string|max:255',
+            'street'              => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'city'                => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'state'               => ['required', 'size:2', 'alpha'],
             'zip'                 => 'required|string|max:20',
-            'phone'               => 'required|string|max:20',
+            'phone'               => ['required', 'digits:10'],
             'standing_order'      => 'boolean',
             'question'            => 'nullable|string',
-            'introducer'          => 'nullable|string',
+            // 'introducer'          => 'nullable|string',
         ]);
 
         // Ensure standing_order is boolean

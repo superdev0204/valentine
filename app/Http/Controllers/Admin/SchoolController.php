@@ -18,12 +18,20 @@ class SchoolController extends Controller
     // Schools methods
     public function schoolList()
     {
-        $schools = School::select('schools.*', 'sb.id as matrix_id', 'sb.box_style', 'sb.length', 'sb.width', 'sb.height', 'sb.empty_box', 'sb.weight')
+        $schools = School::select('schools.*', 
+                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as unique_id'), 
+                'sb.id as matrix_id', 
+                'sb.box_style', 
+                'sb.length', 
+                'sb.width', 
+                'sb.height', 
+                'sb.empty_box', 
+                'sb.weight')
             ->leftJoin('school_box_size_matrices as sb', function ($join) {
-                $join->on(DB::raw('schools.envelope_quantity'), '>', DB::raw('sb.greater_than'))
-                    ->on(DB::raw('schools.envelope_quantity'), '<=', DB::raw('sb.qty_of_env'));
+                $join->on('schools.envelope_quantity', '>', 'sb.greater_than')
+                     ->on('schools.envelope_quantity', '<=', 'sb.qty_of_env');
             })
-            ->orderBy('schools.id')
+            ->orderBy('unique_id')
             ->get();
 
         return view('admin.schools.index', compact('schools'));
@@ -38,15 +46,15 @@ class SchoolController extends Controller
     public function storeSchool(Request $request)
     {
         $request->validate([
-            'organization_name' => 'required|string|max:255',
-            'contact_person_name' => 'required|string|max:255',
+            'organization_name' => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'contact_person_name' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'email' => 'required|email|max:255',
             'envelope_quantity' => 'required|integer|min:0',
-            'street' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:20',
+            'street' => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'city' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'state' => ['required', 'size:2', 'alpha'],
             'zip' => 'required|string|max:20',
-            'phone' => 'required|string|max:20',
+            'phone' => ['required', 'digits:10'],
             'standing_order' => 'boolean',
             // 'prefilled_link' => 'nullable|string',
         ]);
@@ -64,15 +72,15 @@ class SchoolController extends Controller
     public function updateSchool(Request $request, School $school)
     {
         $request->validate([
-            'organization_name' => 'required|string|max:255',
-            'contact_person_name' => 'required|string|max:255',
+            'organization_name' => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'contact_person_name' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'email' => 'required|email|max:255',
             'envelope_quantity' => 'required|integer|min:0',
-            'street' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:20',
+            'street' => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'city' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'state' => ['required', 'size:2', 'alpha'],
             'zip' => 'required|string|max:20',
-            'phone' => 'required|string|max:255',
+            'phone' => ['required', 'digits:10'],
             'standing_order' => 'boolean',
             // 'prefilled_link' => 'nullable|string',
         ]);
@@ -165,14 +173,22 @@ class SchoolController extends Controller
     public function exportSendgridCsv()
     {
         $fileName = 'School Sendgrid Upload Format.csv';
-        $schools = School::select('schools.*', 'sb.id as matrix_id', 'sb.box_style', 'sb.length', 'sb.width', 'sb.height', 'sb.empty_box', 'sb.weight')
+        $schools = School::select('schools.*', 
+                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as unique_id'), 
+                'sb.id as matrix_id', 
+                'sb.box_style', 
+                'sb.length', 
+                'sb.width', 
+                'sb.height', 
+                'sb.empty_box', 
+                'sb.weight')
             ->leftJoin('school_box_size_matrices as sb', function ($join) {
                 $join->on(DB::raw('schools.envelope_quantity'), '>', DB::raw('sb.greater_than'))
                     ->on(DB::raw('schools.envelope_quantity'), '<=', DB::raw('sb.qty_of_env'));
             })
             ->where('schools.update_status', 1)
-            ->where('schools.updated_at', '>=', now()->subDays(7))
-            ->orderBy('schools.id')
+            ->where('schools.updated_at', '>=', now()->subDays(30))
+            ->orderBy('unique_id')
             ->get();
 
         $headers = [
@@ -217,117 +233,168 @@ class SchoolController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    public function exportFedexCsv()
+    public function exportFedexCsv(string $type)
     {
-        $fileName = 'Fedex Formatted School Import '. now()->format('m-d-Y') .'.csv';
-        $schools = School::select('schools.*', 'sb.id as matrix_id', 'sb.box_style', 'sb.length', 'sb.width', 'sb.height', 'sb.empty_box', 'sb.weight')
+        $schools = School::select('schools.*', 
+                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as unique_id'), 
+                'sb.id as matrix_id', 
+                'sb.box_style', 
+                'sb.length', 
+                'sb.width', 
+                'sb.height', 
+                'sb.empty_box', 
+                'sb.weight')
             ->leftJoin('school_box_size_matrices as sb', function ($join) {
                 $join->on(DB::raw('schools.envelope_quantity'), '>', DB::raw('sb.greater_than'))
                     ->on(DB::raw('schools.envelope_quantity'), '<=', DB::raw('sb.qty_of_env'));
             })
             ->where('schools.update_status', 1)
-            ->where('schools.updated_at', '>=', now()->subDays(7))
-            ->orderBy('schools.id')
+            ->where('schools.updated_at', '>=', now()->subDays(30))
+            ->orderBy('unique_id')
             ->get();
 
-        $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename={$fileName}",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
+        if ($type === 'outgoing') {
+            $fileName = 'Fedex Formatted School Import '. now()->format('m-d-Y') .'.csv';
+            
+            $headers = [
+                "Content-type" => "text/csv",
+                "Content-Disposition" => "attachment; filename={$fileName}",
+                "Pragma" => "no-cache",
+                "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+                "Expires" => "0"
+            ];
 
-        $columns = [
-            'Nickname', 'FullName', 'FirstName', 'LastName', 'Title', 'Company', 
-            'Department', 'AddressOne', 'AddressTwo', 'City', 'State', 'Zip', 
-            'PhoneNumber', 'ExtensionNumber', 'FAXNumber', 'PagerNumber', 'MobilePhoneNumber', 'CountryCode', 
-            'EmailAddress', 'VerifiedFlag', 'AcceptedFlag', 'ValidFlag', 'ResidentialFlag', 'CustomsIDEIN', 
-            'ReferenceDescription', 'ServiceTypeCode', 'PackageTypeCode', 'CollectionMethodCode', 'BillCode', 'BillAccountNumber', 
-            'DutyBillCode', 'DutyBillAccountNumber', 'CurrencyTypeCode', 'InsightIDNumber', 'GroundReferenceDescription', 'ShipmentNotificationRecipientEmail', 
-            'RecipientEmailLanguage', 'RecipientEmailShipmentnotification', 'RecipientEmailExceptionnotification', 'RecipientEmailDeliverynotification', 'PartnerTypeCodes', 'NetReturnBillAccountNumber', 
-            'CustomsIDTypeCode', 'AddressTypeCode', 'ShipmentNotificationSenderEmail', 'SenderEmailLanguage', 'SenderEmailShipmentnotification', 'SenderEmailExceptionnotification', 
-            'SenderEmailDeliverynotification', 'RecipientEmailPickupnotification', 'SenderEmailPickupnotification', 'OpCoTypeCd', 'BrokerAccounttID', 'BrokerTaxID', 
-            'DefaultBrokerID', 'RecipientEmailTenderednotification', 'SenderEmailTenderednotification', 'UserAccountNumber', 'DeliveryInstructions', 'EstimatedDeliveryFlag', 
-            'SenderEstimatedDeliveryFlag', 'ShipmentNotificationSenderDeliveryChannel', 'ShipmentNotificationSenderMobileNo', 'ShipmentNotificationSenderMobileNoCountry', 'ShipmentNotificationSenderMobileNoLanguage'
-        ];
+            $columns = [
+                'reference', 'recipientContactName', 'recipientCompany', 'recipientLine2', 'recipientCity', 'recipientState', 
+                'recipientPostcode', 'recipientContactNumber', 'recipientEmail', 'invoiceNumber', 'packageWeight', 'length', 
+                'width', 'height', 'shipDate', 'recipientLine1', 'weightUnits', 'currencyType', 
+                'serviceType', '', 'packageType', 'numberOfPackages', 'senderContactName', 'senderCompany', 
+                'senderContactNumber', 'senderEmail', 'senderLine1', 'senderState', 'senderCity', 'senderPostcode', 
+                'senderCountry', 'recipientCountry', 'senderExceptionNotification', 'recipientDeliveryNotification', 'recipientExceptionNotification', 'recipientShipAlertNotification', 
+                'RecipientEmailLanguage', 'department', 'poNumber', 'ComodityType'
+            ];
 
-        $callback = function() use ($schools, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
+            $callback = function() use ($schools, $columns) {
+                $file = fopen('php://output', 'w');
+                fputcsv($file, $columns);
 
-            foreach ($schools as $school) {
-                fputcsv($file, [
-                    $school->contact_person_name,
-                    $school->contact_person_name,
-                    "",
-                    "",
-                    $school->organization_name,
-                    $school->organization_name,
-                    $school->envelope_quantity,
-                    $school->street,
-                    "",
-                    $school->city,
-                    $school->state,
-                    $school->zip,
-                    $school->phone,
-                    $school->instructions_cards,
-                    $school->box_style,
-                    "",
-                    "",
-                    "US",                    
-                    $school->email,
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    $school->email,
-                    "EN",
-                    "N",
-                    "Y",
-                    "Y",
-                    "",
-                    "277988410",
-                    "",
-                    "",
-                    "",
-                    "EN",
-                    "N",
-                    "Y",
-                    "N",
-                    "",
-                    "",
-                    "A",
-                    "",
-                    "",
-                    "",
-                    "Y",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                ]);
-            }
+                foreach ($schools as $school) {
+                    fputcsv($file, [
+                        $school->unique_id,
+                        $school->contact_person_name,
+                        $school->organization_name,
+                        $school->street,
+                        $school->city,
+                        $school->state,
+                        $school->zip,
+                        $school->phone,
+                        $school->email,
+                        $school->envelope_quantity . '/' . $school->instructions_cards . '/' . $school->box_style,
+                        $school->weight,
+                        $school->length,
+                        $school->width,
+                        $school->height,
+                        "20250929",
+                        "(or Principal, if unavailable)",
+                        "LBS",
+                        "USD",
+                        "FEDEX_GROUND",
+                        "",
+                        "YOUR_PACKAGING",
+                        "1",
+                        "Patrick Kaufmann",
+                        "Valentines By Kids",
+                        "2023286666",
+                        "Patrick@ValentinesByKids.org",
+                        "10116 Iron Gate Rd.",
+                        "MD",
+                        "Potomac",
+                        "20854",
+                        "US",
+                        "US",
+                        "Y",
+                        "Y",
+                        "Y",
+                        "Y",
+                        "EN",
+                        "",
+                        "",
+                        "",
+                    ]);
+                }
 
-            fclose($file);
-        };
+                fclose($file);
+            };
+        }
+
+        if ($type === 'return') {
+            $fileName = 'Fedex Formatted School Import '. now()->format('m-d-Y') .'.csv';
+            
+            $headers = [
+                "Content-type" => "text/csv",
+                "Content-Disposition" => "attachment; filename={$fileName}",
+                "Pragma" => "no-cache",
+                "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+                "Expires" => "0"
+            ];
+
+            $columns = [
+                'reference', 'senderContactName', 'senderCompany', 'senderLine2', 'senderCity', 'senderState', 
+                'senderPostcode', 'senderContactNumber', 'senderEmail', 'length', 'width', 'height', 
+                'packageWeight', 'shipDate', 'weightUnits', 'currencyType', 'serviceType', 'packageType', 
+                'numberOfPackages', 'recipientContactName', 'recipientCompany', 'recipientContactNumber', 'recipientEmail', 'recipientLine1', 
+                'recipientPostcode', 'recipientState', 'recipientCity', 'senderCountry', 'recipientCountry', 'senderExceptionNotification', 
+                'senderDeliveryNotification', 'recipientExceptionNotification', 'RecipientEmailLanguage', 'department', 'poNumber', 'commodityType'
+            ];
+
+            $callback = function() use ($schools, $columns) {
+                $file = fopen('php://output', 'w');
+                fputcsv($file, $columns);
+
+                foreach ($schools as $school) {
+                    fputcsv($file, [
+                        $school->unique_id,
+                        $school->contact_person_name,
+                        $school->organization_name,
+                        $school->street,
+                        $school->city,
+                        $school->state,
+                        $school->zip,
+                        $school->phone,
+                        $school->email,
+                        $school->length,
+                        $school->width,
+                        $school->height,
+                        $school->weight,
+                        "20250929",
+                        "LBS",
+                        "USD",
+                        "FEDEX_GROUND",
+                        "YOUR_PACKAGING",
+                        "1",
+                        "Patrick Kaufmann",
+                        "Valentines By Kids",
+                        "2023286666",
+                        "Patrick@ValentinesByKids.org",
+                        "10116 Iron Gate Rd.",
+                        "20854",
+                        "MD",
+                        "Potomac",
+                        "US",
+                        "US",
+                        "Y",
+                        "Y",
+                        "Y",
+                        "EN",
+                        "",
+                        "",
+                        "",
+                    ]);
+                }
+
+                fclose($file);
+            };
+        }
 
         return response()->stream($callback, 200, $headers);
     }

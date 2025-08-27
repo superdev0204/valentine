@@ -108,7 +108,8 @@
                         <div class="form-section">
                             <label for="organization_name" class="form-label">Name of Organization <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('organization_name') is-invalid @enderror" 
-                                id="organization_name" name="organization_name" value="{{ old('organization_name', $hospital->organization_name) }}">
+                                id="organization_name" name="organization_name" value="{{ old('organization_name', $hospital->organization_name) }}" 
+                                maxlength="30" pattern="[A-Za-z0-9 .-]+">
                             @error('organization_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -127,7 +128,8 @@
                         <div class="form-section">
                             <label for="contact_person_name" class="form-label">Contact Person's Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('organization_name') is-invalid @enderror" 
-                                id="contact_person_name" name="contact_person_name" value="{{ old('contact_person_name', $hospital->contact_person_name) }}">
+                                id="contact_person_name" name="contact_person_name" value="{{ old('contact_person_name', $hospital->contact_person_name) }}" 
+                                maxlength="35" pattern="[A-Za-z0-9 .-]+">
                             @error('contact_person_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -175,7 +177,8 @@
                         <div class="form-section">
                             <label for="street" class="form-label">Street address for delivery to you (no city, state, zip here) <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('street') is-invalid @enderror" 
-                                id="street" name="street" value="{{ old('street', $hospital->street) }}">
+                                id="street" name="street" value="{{ old('street', $hospital->street) }}" 
+                                maxlength="30" pattern="[A-Za-z0-9 .-]+">
                             @error('street')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -184,7 +187,8 @@
                         <div class="form-section">
                             <label for="city" class="form-label">City <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('city') is-invalid @enderror" 
-                                id="city" name="city" value="{{ old('city', $hospital->city) }}">
+                                id="city" name="city" value="{{ old('city', $hospital->city) }}" 
+                                maxlength="35" pattern="[A-Za-z0-9 .-]+">
                             @error('city')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -193,7 +197,8 @@
                         <div class="form-section">
                             <label for="state" class="form-label">State/District <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('state') is-invalid @enderror" 
-                                id="state" name="state" value="{{ old('state', $hospital->state) }}">
+                                id="state" name="state" value="{{ old('state', $hospital->state) }}" 
+                                pattern="[A-Za-z]{2}" maxlength="2">
                             @error('state')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -202,7 +207,7 @@
                         <div class="form-section">
                             <label for="zip" class="form-label">Zip Code <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('zip') is-invalid @enderror" 
-                                id="zip" name="zip" value="{{ old('zip', $hospital->zip) }}">
+                                id="zip" name="zip" value="{{ old('zip', $hospital->zip) }}" maxlength="5">
                             @error('zip')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -212,7 +217,8 @@
                         <div class="form-section">
                             <label for="phone" class="form-label">Phone (Fedex requires in case they have an issue - enter 10 digits only - no dashes, no hyphens, spaces, or parentheses): <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('phone') is-invalid @enderror"    
-                                id="phone" name="phone" value="{{ old('phone', $hospital->phone) }}">
+                                id="phone" name="phone" value="{{ old('phone', $hospital->phone) }}" 
+                                maxlength="10" pattern="[0-9]{10}">
                             @error('phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -237,14 +243,14 @@
                             @enderror
                         </div>
 
-                        <div class="form-section">
+                        {{-- <div class="form-section">
                             <label for="introducer" class="form-label">How did you hear about Valentine's By Kids?</label>
                             <textarea class="form-control @error('introducer') is-invalid @enderror" 
                                     id="introducer" name="introducer" rows="3">{{ old('introducer', $hospital->introducer) }}</textarea>
                             @error('introducer')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         <!-- Submit -->
                         <div class="form-section d-flex justify-content-between">
@@ -259,4 +265,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll("input[type=text]").forEach(el => {
+        el.addEventListener("input", function() {
+            this.value = this.value.replace(/[^A-Za-z0-9 .-]/g, "");
+        });
+    });
+
+    document.getElementById("phone").addEventListener("input", function() {
+        this.value = this.value.replace(/\D/g, "").slice(0, 10);
+    });
+</script>
 @endsection

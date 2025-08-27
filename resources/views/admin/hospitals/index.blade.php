@@ -97,7 +97,7 @@
                             @forelse ($hospitals as $hospital)
                                 <tr class="border-bottom">
                                     <td class="text-center">
-                                        <span class="badge bg-secondary rounded-pill">{{ $hospital->id }}</span>
+                                        <span class="badge bg-secondary rounded-pill">{{ $hospital->unique_id }}</span>
                                     </td>
                                     <td>
                                         <div class="fw-semibold text-dark">{{ $hospital->organization_name }}</div>
@@ -211,7 +211,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="16" class="text-center py-5">
+                                    <td colspan="5" class="text-center py-5">
                                         <div class="d-flex flex-column align-items-center">
                                             <i class="bi bi-heart-pulse display-1 text-muted mb-3"></i>
                                             <h5 class="text-muted mb-3">No hospitals found</h5>
@@ -221,6 +221,21 @@
                                             </a>
                                         </div>
                                     </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                             @endforelse
                         </tbody>

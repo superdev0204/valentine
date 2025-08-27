@@ -57,6 +57,7 @@ class HospitalReportController extends Controller
                 'hospitals.valentine_card_count','hospitals.extra_staff_cards',
                 'hb.box_style','hb.length','hb.width','hb.height','hb.empty_box','hb.weight',
                 'hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status',
+                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as unique_id'), 
             ])->get();
     
             return response()->json(['data' => $rows]);
@@ -75,6 +76,7 @@ class HospitalReportController extends Controller
             'hospitals.valentine_card_count','hospitals.extra_staff_cards',
             'hb.box_style','hb.length','hb.width','hb.height','hb.empty_box','hb.weight',
             'hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status',
+            DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as unique_id'), 
         ])->get();;
 
         if ($type === 'pdf') {

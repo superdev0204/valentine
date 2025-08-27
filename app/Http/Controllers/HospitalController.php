@@ -32,7 +32,7 @@ class HospitalController extends Controller
             'phone'                 => 'required|string|max:20',
             'standing_order'        => 'boolean',
             'question'              => 'nullable|string',
-            'introducer'            => 'nullable|string',
+            // 'introducer'            => 'nullable|string',
         ]);
 
         // Ensure standing_order is boolean
@@ -69,7 +69,7 @@ class HospitalController extends Controller
             'phone' => 'required|string|max:255',
             'standing_order' => 'boolean',
             'question'            => 'nullable|string',
-            'introducer'          => 'nullable|string',
+            // 'introducer'          => 'nullable|string',
         ]);
 
         // Ensure standing_order is boolean
