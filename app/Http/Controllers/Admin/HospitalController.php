@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\HospitalBoxSizeMatrix;
 use App\Models\Hospital;
+use App\Models\HospitalOutgoingFedexFieldMapping;
 use Google\Client;
 use Google\Service\Sheets;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class HospitalController extends Controller
 {
@@ -18,7 +20,8 @@ class HospitalController extends Controller
     public function hospitalList()
     {
         $hospitals = Hospital::select('hospitals.*', 
-                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as unique_id'), 
+                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
+                DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
                 'hb.id as matrix_id', 
                 'hb.box_style', 
                 'hb.length', 
@@ -30,7 +33,7 @@ class HospitalController extends Controller
                 $join->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '>', DB::raw('hb.greater_than'))
                     ->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '<=', DB::raw('hb.qty_of_env'));
             })
-            ->orderBy('unique_id')
+            ->orderBy('reference')
             ->get();
 
         return view('admin.hospitals.index', compact('hospitals'));
@@ -100,7 +103,7 @@ class HospitalController extends Controller
             $spreadsheetId = env('GOOGLE_SHEETS_HOSPITAL_ID', '1NJuNcffKR2KeJLkFSsCyICdUhKXCwNV8');
             
             // Try to access the sheet as a public CSV export
-            $csvUrl = "https://docs.google.com/spreadsheets/d/{$spreadsheetId}/export?format=csv&gid=1017171360";
+            $csvUrl = "https://docs.google.com/spreadsheets/d/{$spreadsheetId}/export?format=csv&gid=616306137";
             
             $response = Http::get($csvUrl);
             
@@ -121,8 +124,12 @@ class HospitalController extends Controller
             }
 
             // Skip first row and use second row as header
-            array_shift($rows); // Remove first row
+            // array_shift($rows); // Remove first row
             $header = array_map('trim', array_shift($rows)); // Use second row as header
+
+            for ($i = 0; $i < 2; $i++) {
+                array_shift($rows);
+            }
             
             // Now $rows contains only data rows (starting from third row)
             $imported = 0;
@@ -131,7 +138,6 @@ class HospitalController extends Controller
                 // Pad the row to match header length
                 $paddedRow = array_pad($row, count($header), '');
                 $data = array_combine($header, $paddedRow);
-
                 $hospitalData = [
                     'valentine_opt_in' => $data["May I send you some Valentine's Day cards?"] ?? '',
                     'organization_name' => $data["Name of Organization"] ?? '',
@@ -146,7 +152,7 @@ class HospitalController extends Controller
                     'state' => strtoupper($data["State/District:"]) ?? '',
                     'zip' => $data["Zip Code:"] ?? '',
                     'phone' => $data["Phone (Fedex requires in case they have an issue - enter 10 digits only - no dashes, no hyphens, spaces, or parentheses):"] ?? '',
-                    'standing_order' => ($data["Do you want to make this a standing order (we send you the same amount each year) so you don't need to worry about remembering?"] == "Yes" ? 1 : 0),
+                    'standing_order' => ($data["Do you want to make this a standing order (we send you the same amount each year) so you don't need to worry about remembering? (Easier for us and for you!)"] == "Yes" ? 1 : 0),
                     'question' => $data["Any other questions or comments?"] ?? null,
                     'introducer' => $data["How did you hear about Valentine's By Kids?"] ?? null,
                     'prefilled_link' => $data["Prefilled Link"] ?? null,
@@ -169,11 +175,12 @@ class HospitalController extends Controller
         }
     }
 
-    public function exportSendgridCsv()
+    public function exportSendgridCsv(Request $request)
     {
         $fileName = 'Hospital Sendgrid Upload Format.csv';
-        $hospitals = Hospital::select('hospitals.*', 
-                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as unique_id'), 
+        $query = Hospital::select('hospitals.*', 
+                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
+                DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
                 'hb.id as matrix_id', 
                 'hb.box_style', 
                 'hb.length', 
@@ -185,10 +192,15 @@ class HospitalController extends Controller
                 $join->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '>', DB::raw('hb.greater_than'))
                     ->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '<=', DB::raw('hb.qty_of_env'));
             })
-            ->where('hospitals.update_status', 1)
-            ->where('hospitals.updated_at', '>=', now()->subDays(30))
-            ->orderBy('unique_id')
-            ->get();
+            // ->where('hospitals.update_status', 1)
+            ->orderBy('reference');
+
+        if ($request->scope === 'since' && $request->has('since')) {
+            $sinceDate = Carbon::parse($request->since)->startOfDay();
+            $query->where('hospitals.updated_at', '>=', $sinceDate);
+        }
+
+        $hospitals = $query->get();
 
         $headers = [
             "Content-type" => "text/csv",
@@ -232,11 +244,12 @@ class HospitalController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    public function exportFedexCsv()
+    public function exportFedexCsv(Request $request)
     {
         $fileName = 'Fedex Formatted hospitals Import '. now()->format('m-d-Y') .'.csv';
-        $hospitals = Hospital::select('hospitals.*', 
-                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as unique_id'), 
+        $query = Hospital::select('hospitals.*', 
+                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
+                DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
                 'hb.id as matrix_id', 
                 'hb.box_style', 
                 'hb.length', 
@@ -248,10 +261,17 @@ class HospitalController extends Controller
                 $join->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '>', DB::raw('hb.greater_than'))
                     ->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '<=', DB::raw('hb.qty_of_env'));
             })
-            ->where('hospitals.update_status', 1)
-            ->where('hospitals.updated_at', '>=', now()->subDays(30))
-            ->orderBy('unique_id')
-            ->get();
+            // ->where('hospitals.update_status', 1)
+            ->orderBy('reference');
+
+        if ($request->scope === 'since' && $request->has('since')) {
+            $sinceDate = Carbon::parse($request->since)->startOfDay();
+            $query->where('hospitals.updated_at', '>=', $sinceDate);
+        }
+
+        $hospitals = $query->get();
+
+        $mappings = HospitalOutgoingFedexFieldMapping::all();
 
         $headers = [
             "Content-type" => "text/csv",
@@ -261,63 +281,34 @@ class HospitalController extends Controller
             "Expires" => "0"
         ];
 
-        $columns = [
-            'reference', 'recipientCompany', 'recipientContactName', 'recipientLine2', 'recipientCity', 'recipientState', 
-            'recipientPostcode', 'recipientContactNumber', 'recipientEmail', 'invoiceNumber', 'packageWeight', 'length', 
-            'width', 'height', 'shipDate', 'recipientLine1', 'numberOfPackages', 'recipientCountry', 
-            'packageType', 'serviceType', 'senderContactName', 'senderCo', 'senderContactNumber', 'senderEmail', 
-            'senderLine1', 'senderCity', 'senderState', 'senderPostcode', 'weightUnits', 'RecipientEmailLanguage', 
-            'RecipientEmailExceptionnotification', 'RecipientEmailDeliverynotification', 'SenderEmailExceptionnotification', 'department', 'poNumber', 'CommodityType'
-        ];
+        $columns = $mappings->pluck('fedex_field')->toArray();
 
-        $callback = function() use ($hospitals, $columns) {
+        $callback = function() use ($hospitals, $mappings, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
-
+        
             foreach ($hospitals as $hospital) {
-                fputcsv($file, [
-                    $hospital->unique_id,
-                    $hospital->organization_name,
-                    $hospital->contact_person_name,
-                    $hospital->street,
-                    $hospital->city,
-                    $hospital->state,
-                    $hospital->zip,
-                    $hospital->phone,
-                    $hospital->email,
-                    ($hospital->valentine_card_count + $hospital->extra_staff_cards) . '/' . $hospital->valentine_card_count . '/' . $hospital->extra_staff_cards . '/' . $hospital->box_style,
-                    $hospital->weight,
-                    $hospital->length,
-                    $hospital->width,
-                    $hospital->height,
-                    "20250925",
-                    "or Dir. of Patient/Client Services",
-                    "1",                    
-                    "US",
-                    "YOUR_PACKAGING",
-                    "FEDEX_GROUND",
-                    "Patrick Kaufmann",
-                    "Valentines By Kids",
-                    "2023286666",
-                    "Patrick@ValentinesByKids.org",
-                    "10116 Iron Gate Rd",
-                    "Potomac",
-                    "MD",
-                    "20854",
-                    "LBS",
-                    "EN",
-                    "Y",
-                    "Y",
-                    "Y",
-                    "",
-                    "",
-                    ""
-                ]);
+                $row = [];
+        
+                foreach ($mappings as $map) {
+                    if (!empty($map->our_field)) {
+                        // Pull value from the hospitals table dynamically
+                        $row[] = $hospital->{$map->our_field} ?? '';
+                    } elseif (!empty($map->common_value)) {
+                        // Use the static/common value
+                        $row[] = $map->common_value;
+                    } else {
+                        // Leave blank if neither
+                        $row[] = '';
+                    }
+                }
+        
+                fputcsv($file, $row);
             }
-
+        
             fclose($file);
         };
-
+        
         return response()->stream($callback, 200, $headers);
     }
 }

@@ -35,6 +35,15 @@
                     <a href="{{ route('admin.hospital-box-matrices') }}" class="btn btn-outline-primary btn-lg w-100">
                         <i class="bi bi-box me-2"></i> Hospital Box Size Matrix
                     </a>
+                    <a href="{{ route('admin.fedex_mappings.school_outgoing') }}" class="btn btn-outline-primary btn-lg w-100">
+                        <i class="bi bi-truck me-2"></i> School Outgoing FedEx Field Mappings
+                    </a>
+                    <a href="{{ route('admin.fedex_mappings.school_return') }}" class="btn btn-outline-primary btn-lg w-100">
+                        <i class="bi bi-arrow-return-left me-2"></i> School Return FedEx Field Mappings
+                    </a>
+                    <a href="{{ route('admin.fedex_mappings.hospital_outgoing') }}" class="btn btn-outline-primary btn-lg w-100">
+                        <i class="bi bi-hospital me-2"></i> Hospital Outgoing FedEx Field Mappings
+                    </a>
                 </div>
             </div>
         </div>

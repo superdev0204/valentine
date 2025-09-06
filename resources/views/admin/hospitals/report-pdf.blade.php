@@ -15,9 +15,9 @@
     th { background: #f5f5f5; }
   
     /* Custom column widths */
-    th.org, td.org { width: 20%; }
+    th.org, td.org { width: 18%; }
     th.contact, td.contact { width: 20%; }
-    th.address, td.address { width: 20%; }
+    th.address, td.address { width: 18%; }
   </style>  
 </head>
 <body>
@@ -31,6 +31,7 @@
         <th class="address">Address</th>
         <th>Valentine Cards</th>
         <th>Staff Cards</th>
+        <th>Total Cards</th>
         <th>Box</th>
         {{-- <th>Dim</th> --}}
         <th>Empty</th>
@@ -40,7 +41,7 @@
     <tbody>
       @foreach($rows as $r)
         <tr>
-          <td>{{ $r->id }}</td>
+          <td>{{ $r->reference }}</td>
           <td class="org">{{ $r->organization_name }}</td>
           <td class="contact">
             {{ $r->contact_person_name }}<br>{{ $r->email }}<br>{{ $r->phone }}
@@ -50,6 +51,7 @@
           </td>
           <td>{{ $r->valentine_card_count }}</td>
           <td>{{ $r->extra_staff_cards }}</td>
+          <td>{{ $r->valentine_card_count + $r->extra_staff_cards }}</td>
           <td>{{ $r->box_style }}<br>{{ $r->length }}x{{ $r->width }}x{{ $r->height }}</td>
           <td>{{ $r->empty_box }}</td>
           <td>{{ $r->weight }}</td>

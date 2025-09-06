@@ -8,10 +8,13 @@ use App\Models\User;
 use App\Models\Volunteer;
 use App\Models\SchoolBoxSizeMatrix;
 use App\Models\School;
+use App\Models\SchoolOutgoingFedexFieldMapping;
+use App\Models\SchoolReturnFedexFieldMapping;
 use Google\Client;
 use Google\Service\Sheets;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class SchoolController extends Controller
 {
@@ -19,7 +22,8 @@ class SchoolController extends Controller
     public function schoolList()
     {
         $schools = School::select('schools.*', 
-                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as unique_id'), 
+                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
+                DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
                 'sb.id as matrix_id', 
                 'sb.box_style', 
                 'sb.length', 
@@ -31,7 +35,7 @@ class SchoolController extends Controller
                 $join->on('schools.envelope_quantity', '>', 'sb.greater_than')
                      ->on('schools.envelope_quantity', '<=', 'sb.qty_of_env');
             })
-            ->orderBy('unique_id')
+            ->orderBy('reference')
             ->get();
 
         return view('admin.schools.index', compact('schools'));
@@ -170,11 +174,12 @@ class SchoolController extends Controller
         }
     }
 
-    public function exportSendgridCsv()
+    public function exportSendgridCsv(Request $request)
     {
         $fileName = 'School Sendgrid Upload Format.csv';
-        $schools = School::select('schools.*', 
-                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as unique_id'), 
+        $query = School::select('schools.*', 
+                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
+                DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
                 'sb.id as matrix_id', 
                 'sb.box_style', 
                 'sb.length', 
@@ -186,10 +191,15 @@ class SchoolController extends Controller
                 $join->on(DB::raw('schools.envelope_quantity'), '>', DB::raw('sb.greater_than'))
                     ->on(DB::raw('schools.envelope_quantity'), '<=', DB::raw('sb.qty_of_env'));
             })
-            ->where('schools.update_status', 1)
-            ->where('schools.updated_at', '>=', now()->subDays(30))
-            ->orderBy('unique_id')
-            ->get();
+            // ->where('schools.update_status', 1)
+            ->orderBy('reference');
+
+        if ($request->scope === 'since' && $request->has('since')) {
+            $sinceDate = Carbon::parse($request->since)->startOfDay();
+            $query->where('schools.updated_at', '>=', $sinceDate);
+        }
+        
+        $schools = $query->get();
 
         $headers = [
             "Content-type" => "text/csv",
@@ -233,10 +243,11 @@ class SchoolController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    public function exportFedexCsv(string $type)
+    public function exportFedexCsv(Request $request, string $type)
     {
-        $schools = School::select('schools.*', 
-                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as unique_id'), 
+        $query = School::select('schools.*', 
+                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
+                DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
                 'sb.id as matrix_id', 
                 'sb.box_style', 
                 'sb.length', 
@@ -248,153 +259,61 @@ class SchoolController extends Controller
                 $join->on(DB::raw('schools.envelope_quantity'), '>', DB::raw('sb.greater_than'))
                     ->on(DB::raw('schools.envelope_quantity'), '<=', DB::raw('sb.qty_of_env'));
             })
-            ->where('schools.update_status', 1)
-            ->where('schools.updated_at', '>=', now()->subDays(30))
-            ->orderBy('unique_id')
-            ->get();
+            // ->where('schools.update_status', 1)
+            ->orderBy('reference');
+
+            if ($request->scope === 'since' && $request->has('since')) {
+                $sinceDate = Carbon::parse($request->since)->startOfDay();
+                $query->where('schools.updated_at', '>=', $sinceDate);
+            }
+
+        $schools = $query->get();
 
         if ($type === 'outgoing') {
-            $fileName = 'Fedex Formatted School Import '. now()->format('m-d-Y') .'.csv';
-            
-            $headers = [
-                "Content-type" => "text/csv",
-                "Content-Disposition" => "attachment; filename={$fileName}",
-                "Pragma" => "no-cache",
-                "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-                "Expires" => "0"
-            ];
-
-            $columns = [
-                'reference', 'recipientContactName', 'recipientCompany', 'recipientLine2', 'recipientCity', 'recipientState', 
-                'recipientPostcode', 'recipientContactNumber', 'recipientEmail', 'invoiceNumber', 'packageWeight', 'length', 
-                'width', 'height', 'shipDate', 'recipientLine1', 'weightUnits', 'currencyType', 
-                'serviceType', '', 'packageType', 'numberOfPackages', 'senderContactName', 'senderCompany', 
-                'senderContactNumber', 'senderEmail', 'senderLine1', 'senderState', 'senderCity', 'senderPostcode', 
-                'senderCountry', 'recipientCountry', 'senderExceptionNotification', 'recipientDeliveryNotification', 'recipientExceptionNotification', 'recipientShipAlertNotification', 
-                'RecipientEmailLanguage', 'department', 'poNumber', 'ComodityType'
-            ];
-
-            $callback = function() use ($schools, $columns) {
-                $file = fopen('php://output', 'w');
-                fputcsv($file, $columns);
-
-                foreach ($schools as $school) {
-                    fputcsv($file, [
-                        $school->unique_id,
-                        $school->contact_person_name,
-                        $school->organization_name,
-                        $school->street,
-                        $school->city,
-                        $school->state,
-                        $school->zip,
-                        $school->phone,
-                        $school->email,
-                        $school->envelope_quantity . '/' . $school->instructions_cards . '/' . $school->box_style,
-                        $school->weight,
-                        $school->length,
-                        $school->width,
-                        $school->height,
-                        "20250929",
-                        "(or Principal, if unavailable)",
-                        "LBS",
-                        "USD",
-                        "FEDEX_GROUND",
-                        "",
-                        "YOUR_PACKAGING",
-                        "1",
-                        "Patrick Kaufmann",
-                        "Valentines By Kids",
-                        "2023286666",
-                        "Patrick@ValentinesByKids.org",
-                        "10116 Iron Gate Rd.",
-                        "MD",
-                        "Potomac",
-                        "20854",
-                        "US",
-                        "US",
-                        "Y",
-                        "Y",
-                        "Y",
-                        "Y",
-                        "EN",
-                        "",
-                        "",
-                        "",
-                    ]);
-                }
-
-                fclose($file);
-            };
+            $mappings = SchoolOutgoingFedexFieldMapping::all();
         }
 
         if ($type === 'return') {
-            $fileName = 'Fedex Formatted School Import '. now()->format('m-d-Y') .'.csv';
-            
-            $headers = [
-                "Content-type" => "text/csv",
-                "Content-Disposition" => "attachment; filename={$fileName}",
-                "Pragma" => "no-cache",
-                "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-                "Expires" => "0"
-            ];
-
-            $columns = [
-                'reference', 'senderContactName', 'senderCompany', 'senderLine2', 'senderCity', 'senderState', 
-                'senderPostcode', 'senderContactNumber', 'senderEmail', 'length', 'width', 'height', 
-                'packageWeight', 'shipDate', 'weightUnits', 'currencyType', 'serviceType', 'packageType', 
-                'numberOfPackages', 'recipientContactName', 'recipientCompany', 'recipientContactNumber', 'recipientEmail', 'recipientLine1', 
-                'recipientPostcode', 'recipientState', 'recipientCity', 'senderCountry', 'recipientCountry', 'senderExceptionNotification', 
-                'senderDeliveryNotification', 'recipientExceptionNotification', 'RecipientEmailLanguage', 'department', 'poNumber', 'commodityType'
-            ];
-
-            $callback = function() use ($schools, $columns) {
-                $file = fopen('php://output', 'w');
-                fputcsv($file, $columns);
-
-                foreach ($schools as $school) {
-                    fputcsv($file, [
-                        $school->unique_id,
-                        $school->contact_person_name,
-                        $school->organization_name,
-                        $school->street,
-                        $school->city,
-                        $school->state,
-                        $school->zip,
-                        $school->phone,
-                        $school->email,
-                        $school->length,
-                        $school->width,
-                        $school->height,
-                        $school->weight,
-                        "20250929",
-                        "LBS",
-                        "USD",
-                        "FEDEX_GROUND",
-                        "YOUR_PACKAGING",
-                        "1",
-                        "Patrick Kaufmann",
-                        "Valentines By Kids",
-                        "2023286666",
-                        "Patrick@ValentinesByKids.org",
-                        "10116 Iron Gate Rd.",
-                        "20854",
-                        "MD",
-                        "Potomac",
-                        "US",
-                        "US",
-                        "Y",
-                        "Y",
-                        "Y",
-                        "EN",
-                        "",
-                        "",
-                        "",
-                    ]);
-                }
-
-                fclose($file);
-            };
+            $mappings = SchoolReturnFedexFieldMapping::all();            
         }
+
+        $fileName = 'Fedex Formatted School Import '. now()->format('m-d-Y') .'.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = $mappings->pluck('fedex_field')->toArray();
+
+        $callback = function() use ($schools, $mappings, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+        
+            foreach ($schools as $school) {
+                $row = [];
+        
+                foreach ($mappings as $map) {
+                    if (!empty($map->our_field)) {
+                        // Pull value from the schools table dynamically
+                        $row[] = $school->{$map->our_field} ?? '';
+                    } elseif (!empty($map->common_value)) {
+                        // Use the static/common value
+                        $row[] = $map->common_value;
+                    } else {
+                        // Leave blank if neither
+                        $row[] = '';
+                    }
+                }
+        
+                fputcsv($file, $row);
+            }
+        
+            fclose($file);
+        };
 
         return response()->stream($callback, 200, $headers);
     }

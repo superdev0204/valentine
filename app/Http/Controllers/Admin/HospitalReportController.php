@@ -44,7 +44,7 @@ class HospitalReportController extends Controller
             $q->where('hospitals.standing_order', $standing === 'yes');
         }
 
-        return $q->orderBy('hospitals.id');
+        return $q->orderBy('reference');
     }
 
     // DataTables JSON (server-side)
@@ -57,7 +57,8 @@ class HospitalReportController extends Controller
                 'hospitals.valentine_card_count','hospitals.extra_staff_cards',
                 'hb.box_style','hb.length','hb.width','hb.height','hb.empty_box','hb.weight',
                 'hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status',
-                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as unique_id'), 
+                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
+                DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
             ])->get();
     
             return response()->json(['data' => $rows]);
@@ -76,7 +77,8 @@ class HospitalReportController extends Controller
             'hospitals.valentine_card_count','hospitals.extra_staff_cards',
             'hb.box_style','hb.length','hb.width','hb.height','hb.empty_box','hb.weight',
             'hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status',
-            DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as unique_id'), 
+            DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
+            DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
         ])->get();;
 
         if ($type === 'pdf') {
@@ -91,7 +93,7 @@ class HospitalReportController extends Controller
             public function array(): array {
                 return $this->rows->map(function ($r) {
                     return [
-                        $r->id,
+                        $r->reference,
                         $r->organization_name,
                         $r->contact_person_name,
                         $r->email,
@@ -99,6 +101,7 @@ class HospitalReportController extends Controller
                         $r->street, $r->city, $r->state, $r->zip,
                         $r->valentine_card_count,
                         $r->extra_staff_cards,
+                        ($r->valentine_card_count + $r->extra_staff_cards),
                         $r->box_style,
                         "{$r->length}x{$r->width}x{$r->height}",
                         $r->empty_box,
@@ -113,7 +116,7 @@ class HospitalReportController extends Controller
                 return [
                     'ID','Organization','Contact','Email','Phone',
                     'Street','City','State','ZIP',
-                    'Valentine Cards','Staff Cards','Box Style','Dimensions','Empty Box','Weight'
+                    'Valentine Cards','Staff Cards','Total Cards','Box Style','Dimensions','Empty Box','Weight'
                 ];
             }
         };
@@ -133,7 +136,15 @@ class HospitalReportController extends Controller
         // 3) Share target sheet with service account email
         // This is a minimal example; handle auth/config as you prefer.
 
-        $rows = $this->baseQuery($request)->get();
+        $rows = $this->baseQuery($request)->select([
+            'hospitals.id','hospitals.organization_name','hospitals.contact_person_name','hospitals.how_to_address',
+            'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.state','hospitals.zip',
+            'hospitals.valentine_card_count','hospitals.extra_staff_cards',
+            'hb.box_style','hb.length','hb.width','hb.height','hb.empty_box','hb.weight',
+            'hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status',
+            DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
+            DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
+        ])->get();
 
         $client = new \Google\Client();
         $client->setApplicationName('Hospital Reports');
@@ -148,11 +159,11 @@ class HospitalReportController extends Controller
         $values[] = [
             'ID','Organization','Contact','Email','Phone',
             'Street','City','State','ZIP',
-            'Valentine Cards','Staff Cards','Box Style','Dimensions','Empty Box','Weight'
+            'Valentine Cards','Staff Cards','Total Cards','Box Style','Dimensions','Empty Box','Weight'
         ];
         foreach ($rows as $r) {
             $values[] = [
-                $r->id,
+                $r->reference,
                 $r->organization_name,
                 $r->contact_person_name,
                 $r->email,
@@ -160,6 +171,7 @@ class HospitalReportController extends Controller
                 $r->street, $r->city, $r->state, $r->zip,
                 $r->valentine_card_count,
                 $r->extra_staff_cards,
+                ($r->valentine_card_count + $r->extra_staff_cards),
                 $r->box_style,
                 "{$r->length}x{$r->width}x{$r->height}",
                 $r->empty_box,

@@ -9,6 +9,9 @@ use App\Http\Controllers\Admin\HospitalController;
 use App\Http\Controllers\Admin\SchoolReportController;
 use App\Http\Controllers\Admin\HospitalReportController;
 use App\Http\Controllers\Admin\VolunteerController;
+use App\Http\Controllers\Admin\SchoolOutgoingFedexFieldMappingController;
+use App\Http\Controllers\Admin\SchoolReturnFedexFieldMappingController;
+use App\Http\Controllers\Admin\HospitalOutgoingFedexFieldMappingController;
 
 Route::get('/', function () {
     return view('home');
@@ -109,5 +112,27 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/volunteers/{volunteer}/edit', [VolunteerController::class, 'edit'])->name('admin.volunteers.edit');
     Route::put('/admin/volunteers/{volunteer}', [VolunteerController::class, 'update'])->name('admin.volunteers.update');
     Route::delete('/admin/volunteers/{volunteer}', [VolunteerController::class, 'delete'])->name('admin.volunteers.delete');
+
+
+    Route::get('/admin/fedex_mappings/school_outgoing', [SchoolOutgoingFedexFieldMappingController::class, 'index'])->name('admin.fedex_mappings.school_outgoing');
+    Route::get('/admin/fedex_mappings/school_outgoing/create', [SchoolOutgoingFedexFieldMappingController::class, 'create'])->name('admin.fedex_mappings.school_outgoing.create');
+    Route::post('/admin/fedex_mappings/school_outgoing', [SchoolOutgoingFedexFieldMappingController::class, 'store'])->name('admin.fedex_mappings.school_outgoing.store');
+    Route::get('/admin/fedex_mappings/school_outgoing/{fedexMapping}/edit', [SchoolOutgoingFedexFieldMappingController::class, 'edit'])->name('admin.fedex_mappings.school_outgoing.edit');
+    Route::put('/admin/fedex_mappings/school_outgoing/{fedexMapping}', [SchoolOutgoingFedexFieldMappingController::class, 'update'])->name('admin.fedex_mappings.school_outgoing.update');
+    Route::delete('/admin/fedex_mappings/school_outgoing/{fedexMapping}', [SchoolOutgoingFedexFieldMappingController::class, 'destroy'])->name('admin.fedex_mappings.school_outgoing.destroy');
+
+    Route::get('/admin/fedex_mappings/school_return', [SchoolReturnFedexFieldMappingController::class, 'index'])->name('admin.fedex_mappings.school_return');
+    Route::get('/admin/fedex_mappings/school_return/create', [SchoolReturnFedexFieldMappingController::class, 'create'])->name('admin.fedex_mappings.school_return.create');
+    Route::post('/admin/fedex_mappings/school_return', [SchoolReturnFedexFieldMappingController::class, 'store'])->name('admin.fedex_mappings.school_return.store');
+    Route::get('/admin/fedex_mappings/school_return/{fedexMapping}/edit', [SchoolReturnFedexFieldMappingController::class, 'edit'])->name('admin.fedex_mappings.school_return.edit');
+    Route::put('/admin/fedex_mappings/school_return/{fedexMapping}', [SchoolReturnFedexFieldMappingController::class, 'update'])->name('admin.fedex_mappings.school_return.update');
+    Route::delete('/admin/fedex_mappings/school_return/{fedexMapping}', [SchoolReturnFedexFieldMappingController::class, 'destroy'])->name('admin.fedex_mappings.school_return.destroy');
+
+    Route::get('/admin/fedex_mappings/hospital_outgoing', [HospitalOutgoingFedexFieldMappingController::class, 'index'])->name('admin.fedex_mappings.hospital_outgoing');
+    Route::get('/admin/fedex_mappings/hospital_outgoing/create', [HospitalOutgoingFedexFieldMappingController::class, 'create'])->name('admin.fedex_mappings.hospital_outgoing.create');
+    Route::post('/admin/fedex_mappings/hospital_outgoing', [HospitalOutgoingFedexFieldMappingController::class, 'store'])->name('admin.fedex_mappings.hospital_outgoing.store');
+    Route::get('/admin/fedex_mappings/hospital_outgoing/{fedexMapping}/edit', [HospitalOutgoingFedexFieldMappingController::class, 'edit'])->name('admin.fedex_mappings.hospital_outgoing.edit');
+    Route::put('/admin/fedex_mappings/hospital_outgoing/{fedexMapping}', [HospitalOutgoingFedexFieldMappingController::class, 'update'])->name('admin.fedex_mappings.hospital_outgoing.update');
+    Route::delete('/admin/fedex_mappings/hospital_outgoing/{fedexMapping}', [HospitalOutgoingFedexFieldMappingController::class, 'destroy'])->name('admin.fedex_mappings.hospital_outgoing.destroy');
     
 });

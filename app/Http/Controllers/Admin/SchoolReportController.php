@@ -47,7 +47,7 @@ class SchoolReportController extends Controller
             $q->where('schools.standing_order', $standing === 'yes');
         }
 
-        return $q->orderBy('unique_id');
+        return $q->orderBy('reference');
     }
 
     // DataTables JSON (server-side)
@@ -63,7 +63,8 @@ class SchoolReportController extends Controller
                     'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
                     'v.name as volunteer_name','v.phone as volunteer_phone',
                     'schools.prefilled_link','schools.standing_order','schools.update_status',
-                    DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as unique_id'), 
+                    DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
+                    DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
                 ])
                 ->get();
 
@@ -83,7 +84,8 @@ class SchoolReportController extends Controller
             'schools.envelope_quantity','schools.instructions_cards',
             'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
             'schools.prefilled_link','schools.standing_order','schools.update_status',
-            DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as unique_id'), 
+            DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
+            DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
         ])->get();;
 
         if ($type === 'pdf') {
@@ -140,7 +142,15 @@ class SchoolReportController extends Controller
         // 3) Share target sheet with service account email
         // This is a minimal example; handle auth/config as you prefer.
 
-        $rows = $this->baseQuery($request)->get();
+        $rows = $this->baseQuery($request)->select([
+            'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
+            'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
+            'schools.envelope_quantity','schools.instructions_cards',
+            'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
+            'schools.prefilled_link','schools.standing_order','schools.update_status',
+            DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
+            DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
+        ])->get();;
 
         $client = new \Google\Client();
         $client->setApplicationName('School Reports');

@@ -23,19 +23,29 @@
                         <button class="btn btn-light btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#reportsModal">
                             <i class="bi bi-bar-chart-line me-2"></i> Reports
                         </button>
-                        <a href="{{ route('admin.hospitals.sendgrid.export') }}" class="btn btn-light btn-lg shadow-sm">
+
+                        <!-- SendGrid CSV -->
+                        <button type="button" class="btn btn-light btn-lg shadow-sm export-btn" 
+                                data-bs-toggle="modal" data-bs-target="#exportModal"
+                                data-route="{{ route('admin.hospitals.sendgrid.export') }}">
                             <i class="bi bi-download me-2"></i> SendGrid CSV
-                        </a>
-                        <a href="{{ route('admin.hospitals.fedex.export') }}" class="btn btn-light btn-lg shadow-sm">
-                            <i class="bi bi-download me-2"></i> Fedex CSV
-                        </a>
+                        </button>
+
+                        <!-- FedEx CSV -->
+                        <button type="button" class="btn btn-light btn-lg shadow-sm export-btn" 
+                                data-bs-toggle="modal" data-bs-target="#exportModal"
+                                data-route="{{ route('admin.hospitals.fedex.export') }}">
+                            <i class="bi bi-download me-2"></i> FedEx CSV
+                        </button>
+
                         <a href="{{ route('admin.hospitals.create') }}" class="btn btn-light btn-lg shadow-sm">
                             <i class="bi bi-plus-lg me-2"></i> Add Record
                         </a>
+
                         <button type="button" class="btn btn-light btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#importModal">
                             <i class="bi bi-upload me-2"></i> Import
                         </button>
-                    </div>            
+                    </div>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -63,6 +73,9 @@
                                 </th>
                                 <th scope="col" class="text-center" style="min-width: 200px;">
                                     <i class="bi bi-heart me-1"></i>Valentine Cards
+                                </th>
+                                <th scope="col" class="text-center" style="min-width: 200px;">
+                                    <i class="bi bi-collection-fill me-1"></i> Total Cards
                                 </th>
                                 <th scope="col" style="min-width: 200px;">
                                     <i class="bi bi-tag me-1"></i>Box Style
@@ -97,7 +110,7 @@
                             @forelse ($hospitals as $hospital)
                                 <tr class="border-bottom">
                                     <td class="text-center">
-                                        <span class="badge bg-secondary rounded-pill">{{ $hospital->unique_id }}</span>
+                                        <span class="badge bg-secondary rounded-pill">{{ $hospital->reference }}</span>
                                     </td>
                                     <td>
                                         <div class="fw-semibold text-dark">{{ $hospital->organization_name }}</div>
@@ -135,6 +148,9 @@
                                             <span class="badge bg-danger">{{ $hospital->valentine_card_count }} Valentine Cards</span>
                                             <span class="badge bg-info">{{ $hospital->extra_staff_cards }} Staff Cards</span>
                                         </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success text-white fs-6 px-3 py-2">{{ $hospital->valentine_card_count + $hospital->extra_staff_cards }}</span>
                                     </td>
                                     <td>
                                         <span class="badge bg-primary fs-6 px-3 py-2">{{ $hospital->box_style }}</span>
@@ -221,6 +237,7 @@
                                             </a>
                                         </div>
                                     </td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -388,6 +405,7 @@
                 <th style="min-width: 100px;">ZIP</th>
                 <th style="min-width: 100px;">Valentine Cards</th>
                 <th style="min-width: 100px;">Staff Cards</th>
+                <th style="min-width: 100px;">Total Cards</th>
                 <th style="min-width: 100px;">Box</th>
                 <th style="min-width: 100px;">Empty</th>
                 <th style="min-width: 100px;">Weight</th>
@@ -403,7 +421,39 @@
         </div>
       </div>
     </div>
-</div>  
+</div>
+
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form method="GET" id="exportForm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exportModalLabel">Export Options</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Export Scope</label>
+              <select name="scope" id="exportScope" class="form-select">
+                <option value="all" selected>All</option>
+                <option value="since">New/Edited Since</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Date</label>
+              <input type="date" name="since" id="sinceDate" class="form-control" disabled>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger">Export CSV</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  
 
 <script>
     let reportTable;
@@ -426,7 +476,7 @@
             serverSide: false,
             ajax: url,
             columns: [
-                { data: 'id' },
+                { data: 'reference' },
                 { data: 'organization_name' },
                 {
                     data: null,
@@ -442,6 +492,10 @@
                 { data: 'zip' },
                 { data: 'valentine_card_count' },
                 { data: 'extra_staff_cards' },
+                {
+                    data: null,
+                    render: d => (parseInt(d.valentine_card_count || 0) + parseInt(d.extra_staff_cards || 0))
+                },
                 {
                     data: null,
                     render: d => `
@@ -495,6 +549,35 @@
             ],
             fixedColumns: {
                 rightColumns: 1  // freeze the last column
+            }
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const exportButtons = document.querySelectorAll(".export-btn");
+        const exportForm = document.getElementById("exportForm");
+        const exportScope = document.getElementById("exportScope");
+        const sinceDate = document.getElementById("sinceDate");
+
+        // Open modal with correct route
+        exportButtons.forEach(btn => {
+            btn.addEventListener("click", function () {
+                let route = this.getAttribute("data-route");
+                exportForm.setAttribute("action", route);
+
+                // Reset defaults
+                exportScope.value = "all";
+                sinceDate.disabled = true;
+                sinceDate.value = "";
+            });
+        });
+
+        // Enable date only when "New/Edited Since" is chosen
+        exportScope.addEventListener("change", function () {
+            if (this.value === "since") {
+                sinceDate.disabled = false;
+            } else {
+                sinceDate.disabled = true;
+                sinceDate.value = "";
             }
         });
     });
