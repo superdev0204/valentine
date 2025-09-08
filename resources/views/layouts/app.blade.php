@@ -32,7 +32,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-danger shadow-sm">
             <div class="container">
-                <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/">
+                <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/app">
                     <i class="bi bi-heart-fill me-1 text-white" style="font-size: 1.2rem;"></i>
                     <span style="font-weight: 700; color: #fff;">Valen</span><span style="font-weight: 400; color: #ffd6d6;">tine</span>
                 </a>
