@@ -210,7 +210,7 @@ class SchoolController extends Controller
         ];
 
         $columns = [
-            'SchoolName', 'ContactName', 'email', 'DearWhom', 
+            'SchoolName', 'ContactName', 'Email', 'DearWhom', 
             'EnvelopesDesired2022', 'QtyInstSheets', 'address_line_1', 'city', 'state_province_region', 
             'postal_code', 'phone_number', 'StandingOrder', 'CustomURL'
         ];
