@@ -206,14 +206,14 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if ($school->prefilled_link)
+                                            {{-- @if ($school->prefilled_link) --}}
                                                 <a href="{{ route('school.edit', $school->id) }}" target="_blank"
                                                     class="text-decoration-none">
                                                     <i class="bi bi-box-arrow-up-right me-1"></i>Open Form
                                                 </a>
-                                            @else
+                                            {{-- @else
                                                 <span class="text-muted">—</span>
-                                            @endif
+                                            @endif --}}
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex flex-column align-items-center">

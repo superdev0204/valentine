@@ -168,13 +168,13 @@
                                         <span class="fw-semibold text-info">{{ $hospital->weight }}g</span>
                                     </td>
                                     <td>
-                                        @if($hospital->prefilled_link)
+                                        {{-- @if($hospital->prefilled_link) --}}
                                             <a href="{{ route('hospital.edit', $hospital->id) }}" target="_blank" class="text-decoration-none">
                                                 <i class="bi bi-box-arrow-up-right me-1"></i>Open Form
                                             </a>
-                                        @else
+                                        {{-- @else
                                             <span class="text-muted">—</span>
-                                        @endif
+                                        @endif --}}
                                     </td>
                                     <td>
                                         @if($hospital->volunteer)
