@@ -45,7 +45,7 @@
                             </label>
                             <input type="text" class="form-control @error('contact_person_name') is-invalid @enderror" 
                                    id="contact_person_name" name="contact_person_name" value="{{ old('contact_person_name') }}" 
-                                   maxlength="35" pattern="[A-Za-z0-9 .-]+" placeholder="Dr. Smith">
+                                   maxlength="35" pattern="[A-Za-z0-9 .-]+" placeholder="Dr. John Smith">
                             @error('contact_person_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
