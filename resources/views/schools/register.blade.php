@@ -150,7 +150,7 @@
 
                         <!-- Quantities -->
                         <div class="form-section">
-                            <label for="envelope_quantity" class="form-label">Quantity of empty <a href="https://tinyurl.com/EnvelopeFront">Valentine's envelopes</a> we should send to you.  (Please estimate realistically - We promise hospitals quantities based upon the number of envelopes you request and, if you return fewer, we can't fulfill the promise - Thank you!) <span class="text-danger">*</span></label>
+                            <label for="envelope_quantity" class="form-label">Quantity of empty <a href="https://tinyurl.com/EnvelopeFront" target="_blank">Valentine's envelopes</a> we should send to you.  (Please estimate realistically - We promise hospitals quantities based upon the number of envelopes you request and, if you return fewer, we can't fulfill the promise - Thank you!) <span class="text-danger">*</span></label>
                             <input type="number" class="form-control @error('envelope_quantity') is-invalid @enderror" 
                                    id="envelope_quantity" name="envelope_quantity" value="{{ old('envelope_quantity') }}" min="0">
                             @error('envelope_quantity')
@@ -159,7 +159,7 @@
                         </div>
 
                         <div class="form-section">
-                            <label for="instructions_cards" class="form-label">Each teacher will receive an <a href="http://tinyurl.com/ValentineTeacherInstructions">instructions card</a>.  How many instructions cards shall we include?</label>
+                            <label for="instructions_cards" class="form-label">Each teacher will receive an <a href="http://tinyurl.com/ValentineTeacherInstructions" target="_blank">instructions card</a>.  How many instructions cards shall we include?</label>
                             <input type="number" class="form-control @error('instructions_cards') is-invalid @enderror" 
                                    id="instructions_cards" name="instructions_cards" value="{{ old('instructions_cards') }}" min="0">
                             @error('instructions_cards')
