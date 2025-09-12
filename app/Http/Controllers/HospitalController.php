@@ -38,10 +38,14 @@ class HospitalController extends Controller
         // Ensure standing_order is boolean
         $validated['standing_order'] = $request->has('standing_order');
 
-        Hospital::updateOrCreate(
+        $hospital = Hospital::updateOrCreate(
             ['organization_name' => $validated['organization_name'], 'email' => $validated['email']],
             $validated
         );
+
+        $hospital->update([
+            'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
+        ]);
 
         return redirect()
             ->back()
@@ -79,6 +83,10 @@ class HospitalController extends Controller
         $validated['update_status'] = true;
 
         $hospital->update($validated);
+        $hospital->update([
+            'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
+        ]);
+        
         return redirect()
             ->back()
             ->with('success', 'Hospital updated successfully.');

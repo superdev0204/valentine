@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\HospitalController;
 use App\Http\Controllers\Admin\SchoolReportController;
 use App\Http\Controllers\Admin\HospitalReportController;
 use App\Http\Controllers\Admin\VolunteerController;
+use App\Http\Controllers\Admin\SchoolSendgridFieldMappingController;
+use App\Http\Controllers\Admin\HospitalSendgridFieldMappingController;
 use App\Http\Controllers\Admin\SchoolOutgoingFedexFieldMappingController;
 use App\Http\Controllers\Admin\SchoolReturnFedexFieldMappingController;
 use App\Http\Controllers\Admin\HospitalOutgoingFedexFieldMappingController;
@@ -114,6 +116,20 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/volunteers/{volunteer}', [VolunteerController::class, 'delete'])->name('admin.volunteers.delete');
 
 
+    Route::get('/admin/sendgrid_mappings/school', [SchoolSendgridFieldMappingController::class, 'index'])->name('admin.sendgrid_mappings.school');
+    Route::get('/admin/sendgrid_mappings/school/create', [SchoolSendgridFieldMappingController::class, 'create'])->name('admin.sendgrid_mappings.school.create');
+    Route::post('/admin/sendgrid_mappings/school', [SchoolSendgridFieldMappingController::class, 'store'])->name('admin.sendgrid_mappings.school.store');
+    Route::get('/admin/sendgrid_mappings/school/{sendgridMapping}/edit', [SchoolSendgridFieldMappingController::class, 'edit'])->name('admin.sendgrid_mappings.school.edit');
+    Route::put('/admin/sendgrid_mappings/school/{sendgridMapping}', [SchoolSendgridFieldMappingController::class, 'update'])->name('admin.sendgrid_mappings.school.update');
+    Route::delete('/admin/sendgrid_mappings/school/{sendgridMapping}', [SchoolSendgridFieldMappingController::class, 'destroy'])->name('admin.sendgrid_mappings.school.destroy');
+
+    Route::get('/admin/sendgrid_mappings/hospital', [HospitalSendgridFieldMappingController::class, 'index'])->name('admin.sendgrid_mappings.hospital');
+    Route::get('/admin/sendgrid_mappings/hospital/create', [HospitalSendgridFieldMappingController::class, 'create'])->name('admin.sendgrid_mappings.hospital.create');
+    Route::post('/admin/sendgrid_mappings/hospital', [HospitalSendgridFieldMappingController::class, 'store'])->name('admin.sendgrid_mappings.hospital.store');
+    Route::get('/admin/sendgrid_mappings/hospital/{sendgridMapping}/edit', [HospitalSendgridFieldMappingController::class, 'edit'])->name('admin.sendgrid_mappings.hospital.edit');
+    Route::put('/admin/sendgrid_mappings/hospital/{sendgridMapping}', [HospitalSendgridFieldMappingController::class, 'update'])->name('admin.sendgrid_mappings.hospital.update');
+    Route::delete('/admin/sendgrid_mappings/hospital/{sendgridMapping}', [HospitalSendgridFieldMappingController::class, 'destroy'])->name('admin.sendgrid_mappings.hospital.destroy');
+    
     Route::get('/admin/fedex_mappings/school_outgoing', [SchoolOutgoingFedexFieldMappingController::class, 'index'])->name('admin.fedex_mappings.school_outgoing');
     Route::get('/admin/fedex_mappings/school_outgoing/create', [SchoolOutgoingFedexFieldMappingController::class, 'create'])->name('admin.fedex_mappings.school_outgoing.create');
     Route::post('/admin/fedex_mappings/school_outgoing', [SchoolOutgoingFedexFieldMappingController::class, 'store'])->name('admin.fedex_mappings.school_outgoing.store');

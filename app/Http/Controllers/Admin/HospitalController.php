@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\HospitalBoxSizeMatrix;
 use App\Models\Hospital;
 use App\Models\HospitalOutgoingFedexFieldMapping;
+use App\Models\HospitalSendgridFieldMapping;
 use Google\Client;
 use Google\Service\Sheets;
 use Illuminate\Support\Facades\Http;
@@ -20,6 +21,7 @@ class HospitalController extends Controller
     public function hospitalList()
     {
         $hospitals = Hospital::select('hospitals.*', 
+                DB::raw('(hospitals.valentine_card_count + hospitals.extra_staff_cards) as totalHospRequested'), 
                 DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
                 DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
                 'hb.id as matrix_id', 
@@ -61,7 +63,11 @@ class HospitalController extends Controller
             // 'prefilled_link' => 'nullable|string',
         ]);
 
-        Hospital::create($request->all());
+        $hospital = Hospital::create($request->all());        
+        $hospital->update([
+            'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
+        ]);
+
         return redirect()->route('admin.hospitals')->with('success', 'Hospital created successfully.');
     }
 
@@ -88,6 +94,10 @@ class HospitalController extends Controller
         ]);
 
         $hospital->update($request->all());
+        $hospital->update([
+            'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
+        ]);
+
         return redirect()->route('admin.hospitals')->with('success', 'Hospital updated successfully.');
     }
 
@@ -160,10 +170,19 @@ class HospitalController extends Controller
                 ];
 
                 if (!empty($hospitalData['email'])) {
-                    \App\Models\Hospital::updateOrCreate(
-                        ['organization_name' => $hospitalData['organization_name'], 'email' => $hospitalData['email']],
+                    $hospital = \App\Models\Hospital::updateOrCreate(
+                        [
+                            'organization_name' => $hospitalData['organization_name'],
+                            'email' => $hospitalData['email']
+                        ],
                         $hospitalData
                     );
+                
+                    // Now we have $hospital->id, so we can update the prefilled_link
+                    $hospital->update([
+                        'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
+                    ]);
+                
                     $imported++;
                 }
             }
@@ -177,8 +196,8 @@ class HospitalController extends Controller
 
     public function exportSendgridCsv(Request $request)
     {
-        $fileName = 'Hospital Sendgrid Upload Format.csv';
         $query = Hospital::select('hospitals.*', 
+                DB::raw('(hospitals.valentine_card_count + hospitals.extra_staff_cards) as totalHospRequested'), 
                 DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
                 DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
                 'hb.id as matrix_id', 
@@ -202,6 +221,10 @@ class HospitalController extends Controller
 
         $hospitals = $query->get();
 
+        $fileName = 'Hospital Sendgrid Upload Format.csv';
+
+        $mappings = HospitalSendgridFieldMapping::all();
+
         $headers = [
             "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$fileName}",
@@ -210,34 +233,31 @@ class HospitalController extends Controller
             "Expires" => "0"
         ];
 
-        $columns = [
-            'Organization Name', 'ContactName', 'Email', 'DearWhom', 
-            'HospPatientCardQty', 'HospStaffCardsQty', 'address_line_1', 'City', 'state_province_region', 
-            'postal_code', 'phone_number', 'TotalHospRequested', 'CustomURL'
-        ];
+        $columns = $mappings->pluck('sendgrid_field')->toArray();
 
-        $callback = function() use ($hospitals, $columns) {
+        $callback = function() use ($hospitals, $mappings, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
-
+        
             foreach ($hospitals as $hospital) {
-                fputcsv($file, [
-                    $hospital->organization_name,
-                    $hospital->contact_person_name,
-                    $hospital->email,
-                    "",
-                    $hospital->valentine_card_count,
-                    $hospital->extra_staff_cards,
-                    $hospital->street,
-                    $hospital->city,
-                    $hospital->state,
-                    $hospital->zip,
-                    $hospital->phone,
-                    ($hospital->valentine_card_count + $hospital->extra_staff_cards),
-                    url('/hospital/' . $hospital->id . '/edit'),
-                ]);
+                $row = [];
+        
+                foreach ($mappings as $map) {
+                    if (!empty($map->our_field)) {
+                        // Pull value from the hospitals table dynamically
+                        $row[] = $hospital->{$map->our_field} ?? '';
+                    } elseif (!empty($map->common_value)) {
+                        // Use the static/common value
+                        $row[] = $map->common_value;
+                    } else {
+                        // Leave blank if neither
+                        $row[] = '';
+                    }
+                }
+        
+                fputcsv($file, $row);
             }
-
+        
             fclose($file);
         };
 
@@ -248,6 +268,7 @@ class HospitalController extends Controller
     {
         $fileName = 'Fedex Formatted hospitals Import '. now()->format('m-d-Y') .'.csv';
         $query = Hospital::select('hospitals.*', 
+                DB::raw('(hospitals.valentine_card_count + hospitals.extra_staff_cards) as totalHospRequested'), 
                 DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
                 DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
                 'hb.id as matrix_id', 

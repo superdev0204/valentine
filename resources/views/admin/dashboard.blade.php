@@ -35,6 +35,12 @@
                     <a href="{{ route('admin.hospital-box-matrices') }}" class="btn btn-outline-primary btn-lg w-100">
                         <i class="bi bi-box me-2"></i> Hospital Box Size Matrix
                     </a>
+                    <a href="{{ route('admin.sendgrid_mappings.school') }}" class="btn btn-outline-primary btn-lg w-100">
+                        <i class="bi bi-truck me-2"></i> School Sendgrid Field Mappings
+                    </a>
+                    <a href="{{ route('admin.sendgrid_mappings.hospital') }}" class="btn btn-outline-primary btn-lg w-100">
+                        <i class="bi bi-truck me-2"></i> Hospital Sendgrid Field Mappings
+                    </a>
                     <a href="{{ route('admin.fedex_mappings.school_outgoing') }}" class="btn btn-outline-primary btn-lg w-100">
                         <i class="bi bi-truck me-2"></i> School Outgoing FedEx Field Mappings
                     </a>

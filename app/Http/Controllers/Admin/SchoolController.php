@@ -10,6 +10,7 @@ use App\Models\SchoolBoxSizeMatrix;
 use App\Models\School;
 use App\Models\SchoolOutgoingFedexFieldMapping;
 use App\Models\SchoolReturnFedexFieldMapping;
+use App\Models\SchoolSendgridFieldMapping;
 use Google\Client;
 use Google\Service\Sheets;
 use Illuminate\Support\Facades\Http;
@@ -63,7 +64,11 @@ class SchoolController extends Controller
             // 'prefilled_link' => 'nullable|string',
         ]);
 
-        School::create($request->all());
+        $school = School::create($request->all());
+        $school->update([
+            'prefilled_link' => url('/school/' . $school->id . '/edit')
+        ]);
+
         return redirect()->route('admin.schools')->with('success', 'School created successfully.');
     }
 
@@ -90,6 +95,9 @@ class SchoolController extends Controller
         ]);
 
         $school->update($request->all());
+        $school->update([
+            'prefilled_link' => url('/school/' . $school->id . '/edit')
+        ]);
         
         return redirect()->route('admin.schools')->with('success', 'School updated successfully.');
     }
@@ -159,10 +167,19 @@ class SchoolController extends Controller
                 ];
 
                 if (!empty($schoolData['email'])) {
-                    \App\Models\School::updateOrCreate(
-                        ['organization_name' => $schoolData['organization_name'], 'email' => $schoolData['email']],
+                    $school = \App\Models\School::updateOrCreate(
+                        [
+                            'organization_name' => $schoolData['organization_name'],
+                            'email' => $schoolData['email']
+                        ],
                         $schoolData
                     );
+                
+                    // Now we have $school->id, so we can update the prefilled_link
+                    $school->update([
+                        'prefilled_link' => url('/school/' . $school->id . '/edit')
+                    ]);
+                
                     $imported++;
                 }
             }
@@ -176,7 +193,6 @@ class SchoolController extends Controller
 
     public function exportSendgridCsv(Request $request)
     {
-        $fileName = 'School Sendgrid Upload Format.csv';
         $query = School::select('schools.*', 
                 DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
                 DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
@@ -201,6 +217,10 @@ class SchoolController extends Controller
         
         $schools = $query->get();
 
+        $mappings = SchoolSendgridFieldMapping::all();
+        
+        $fileName = 'School Sendgrid Upload Format.csv';
+
         $headers = [
             "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$fileName}",
@@ -209,34 +229,31 @@ class SchoolController extends Controller
             "Expires" => "0"
         ];
 
-        $columns = [
-            'SchoolName', 'ContactName', 'Email', 'DearWhom', 
-            'EnvelopesDesired2022', 'QtyInstSheets', 'address_line_1', 'city', 'state_province_region', 
-            'postal_code', 'phone_number', 'StandingOrder', 'CustomURL'
-        ];
+        $columns = $mappings->pluck('sendgrid_field')->toArray();
 
-        $callback = function() use ($schools, $columns) {
+        $callback = function() use ($schools, $mappings, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
-
+        
             foreach ($schools as $school) {
-                fputcsv($file, [
-                    $school->organization_name,
-                    $school->contact_person_name,
-                    $school->email,
-                    $school->how_to_address,
-                    $school->envelope_quantity,
-                    $school->instructions_cards,                    
-                    $school->street,
-                    $school->city,
-                    $school->state,
-                    $school->zip,
-                    $school->phone,
-                    $school->standing_order ? 'Yes' : 'No',
-                    url('/school/' . $school->id . '/edit'),
-                ]);
+                $row = [];
+        
+                foreach ($mappings as $map) {
+                    if (!empty($map->our_field)) {
+                        // Pull value from the schools table dynamically
+                        $row[] = $school->{$map->our_field} ?? '';
+                    } elseif (!empty($map->common_value)) {
+                        // Use the static/common value
+                        $row[] = $map->common_value;
+                    } else {
+                        // Leave blank if neither
+                        $row[] = '';
+                    }
+                }
+        
+                fputcsv($file, $row);
             }
-
+        
             fclose($file);
         };
 

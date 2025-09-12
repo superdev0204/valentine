@@ -32,10 +32,14 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-danger shadow-sm">
             <div class="container">
-                <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/app">
+                {{-- <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/app">
                     <i class="bi bi-heart-fill me-1 text-white" style="font-size: 1.2rem;"></i>
                     <span style="font-weight: 700; color: #fff;">Valen</span><span style="font-weight: 400; color: #ffd6d6;">tine</span>
+                </a> --}}
+                <a class="navbar-brand d-flex align-items-center" href="/app">
+                    <img src="{{ asset('images/logo.png') }}" alt="Valentines By Kids" height="80" class="me-2">
                 </a>
+                
                 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -80,10 +84,11 @@
     </main>
     <footer class="bg-danger text-white text-center py-4 mt-auto shadow-lg border-top border-light">
         <div class="container">
-            <div class="mb-2">
-                <span class="fw-bold">Valentine Website</span> &mdash; Your place to connect, share, and celebrate love.
+            <div class="mb-2 d-flex justify-content-center align-items-center">
+                <img src="{{ asset('images/logo.png') }}" alt="Valentines By Kids" height="80" class="me-2">
+                <span class="fw-bold">Valentines By Kids</span>
             </div>
-            <small>&copy; {{ date('Y') }} All rights reserved.</small>
+            <small>&copy; {{ date('Y') }} All rights reserved.</small>            
         </div>
     </footer>
     <!-- Bootstrap 5 JS -->

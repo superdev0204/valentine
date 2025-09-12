@@ -40,10 +40,14 @@ class SchoolController extends Controller
         // Mark the school as updated
         $validated['update_status'] = true;
 
-        School::updateOrCreate(
+        $school = School::updateOrCreate(
             ['organization_name' => $validated['organization_name'], 'email' => $validated['email']],
             $validated
         );
+
+        $school->update([
+            'prefilled_link' => url('/school/' . $school->id . '/edit')
+        ]);
 
         return redirect()
             ->back()
@@ -81,6 +85,10 @@ class SchoolController extends Controller
         $validated['update_status'] = true;
 
         $school->update($validated);
+        $school->update([
+            'prefilled_link' => url('/school/' . $school->id . '/edit')
+        ]);
+        
         return redirect()
             ->back()
             ->with('success', 'School updated successfully.');
