@@ -95,9 +95,8 @@ class SchoolController extends Controller
         ]);
 
         $school->update($request->all());
-        $school->update([
-            'prefilled_link' => url('/school/' . $school->id . '/edit')
-        ]);
+        $school->prefilled_link = url('/school/' . $school->id . '/edit');
+        $school->save();
         
         return redirect()->route('admin.schools')->with('success', 'School updated successfully.');
     }

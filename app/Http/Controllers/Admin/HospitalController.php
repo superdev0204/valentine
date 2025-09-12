@@ -94,9 +94,8 @@ class HospitalController extends Controller
         ]);
 
         $hospital->update($request->all());
-        $hospital->update([
-            'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
-        ]);
+        $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
+        $hospital->save();
 
         return redirect()->route('admin.hospitals')->with('success', 'Hospital updated successfully.');
     }
