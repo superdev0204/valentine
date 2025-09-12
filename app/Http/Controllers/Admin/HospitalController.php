@@ -177,11 +177,9 @@ class HospitalController extends Controller
                         ],
                         $hospitalData
                     );
-                
-                    // Now we have $hospital->id, so we can update the prefilled_link
-                    $hospital->update([
-                        'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
-                    ]);
+
+                    $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
+                    $hospital->save();
                 
                     $imported++;
                 }

@@ -175,10 +175,8 @@ class SchoolController extends Controller
                         $schoolData
                     );
                 
-                    // Now we have $school->id, so we can update the prefilled_link
-                    $school->update([
-                        'prefilled_link' => url('/school/' . $school->id . '/edit')
-                    ]);
+                    $school->prefilled_link = url('/school/' . $school->id . '/edit');
+                    $school->save();
                 
                     $imported++;
                 }
