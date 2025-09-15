@@ -35,6 +35,11 @@
         {{-- <th>Dim</th> --}}
         <th>Empty</th>
         <th>Weight</th>
+        {{-- <th>Volunteer</th>
+        <th>Prefilled Link</th>
+        <th>Notes from School</th>
+        <th>Internal Notes</th>
+        <th>Last Updated</th> --}}
       </tr>
     </thead>
     <tbody>
@@ -53,6 +58,25 @@
           <td>{{ $r->box_style }}<br>{{ $r->length }}x{{ $r->width }}x{{ $r->height }}</td>
           <td>{{ $r->empty_box }}</td>
           <td>{{ $r->weight }}</td>
+          {{-- <td>
+            @if ($r->volunteer_name)
+                <div class="d-flex flex-column">
+                    <div class="fw-semibold">{{ $r->volunteer_name }}</div>
+                    <small class="text-muted">{{ $r->volunteer_phone }}</small>
+                </div>
+            @else
+                <span class="text-muted">—</span>
+            @endif
+          </td>
+          <td>{{ $r->prefilled_link }}</td>
+          <td></td>
+          <td></td>
+          <td>
+            <div class="d-flex flex-column">
+                <span class="fw-semibold">{{ $r->updated_at->format('M d, Y') }}</span>
+                <small class="text-muted">{{ $r->updated_at->diffForHumans() }}</small>
+            </div>
+          </td> --}}
         </tr>
       @endforeach
     </tbody>

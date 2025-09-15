@@ -59,10 +59,9 @@ class SchoolReportController extends Controller
                 ->select([
                     'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
                     'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
-                    'schools.envelope_quantity','schools.instructions_cards',
+                    'schools.envelope_quantity','schools.instructions_cards','schools.prefilled_link','schools.standing_order','schools.update_status','schools.updated_at',
                     'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
-                    'v.name as volunteer_name','v.phone as volunteer_phone',
-                    'schools.prefilled_link','schools.standing_order','schools.update_status',
+                    'v.name as volunteer_name','v.phone as volunteer_phone',                    
                     DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
                     DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
                 ])
@@ -78,15 +77,18 @@ class SchoolReportController extends Controller
     // Exports share filters via query string (?state=CA&min_envelopes=100...)
     public function export(Request $request, string $type)
     {
-        $rows = $this->baseQuery($request)->select([
-            'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
-            'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
-            'schools.envelope_quantity','schools.instructions_cards',
-            'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
-            'schools.prefilled_link','schools.standing_order','schools.update_status',
-            DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
-            DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
-        ])->get();;
+        $rows = $this->baseQuery($request)
+            ->with('volunteer')
+            ->select([
+                'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
+                'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
+                'schools.envelope_quantity','schools.instructions_cards','schools.prefilled_link','schools.standing_order','schools.update_status','schools.updated_at',
+                'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
+                'v.name as volunteer_name','v.phone as volunteer_phone',                    
+                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
+                DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
+            ])
+            ->get();
 
         if ($type === 'pdf') {
             $pdf = Pdf::loadView('admin.schools.report-pdf', ['rows' => $rows, 'filters' => $request->all()])
@@ -100,7 +102,7 @@ class SchoolReportController extends Controller
             public function array(): array {
                 return $this->rows->map(function ($r) {
                     return [
-                        $r->id,
+                        $r->reference,
                         $r->organization_name,
                         $r->contact_person_name,
                         $r->email,
@@ -112,6 +114,11 @@ class SchoolReportController extends Controller
                         "{$r->length}x{$r->width}x{$r->height}",
                         $r->empty_box,
                         $r->weight,
+                        $r->volunteer_name,
+                        $r->prefilled_link,
+                        "",
+                        "",
+                        $r->updated_at->format('M d, Y')
                         // $r->prefilled_link,
                         // $r->standing_order ? 'Yes' : 'No',
                         // $r->update_status ? 'Updated' : '—',
@@ -122,7 +129,8 @@ class SchoolReportController extends Controller
                 return [
                     'ID','Organization','Contact','Email','Phone',
                     'Street','City','State','ZIP',
-                    'Envelopes','Cards','Box Style','Dimensions','Empty Box','Weight'
+                    'Envelopes','Cards','Box Style','Dimensions','Empty Box','Weight',
+                    'Volunteer','Prefilled Link','Notes from School','Internal Notes','Last Updated'
                 ];
             }
         };
@@ -145,9 +153,8 @@ class SchoolReportController extends Controller
         $rows = $this->baseQuery($request)->select([
             'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
             'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
-            'schools.envelope_quantity','schools.instructions_cards',
+            'schools.envelope_quantity','schools.instructions_cards','schools.prefilled_link','schools.standing_order','schools.update_status','schools.updated_at',
             'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
-            'schools.prefilled_link','schools.standing_order','schools.update_status',
             DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
             DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
         ])->get();;
@@ -165,11 +172,12 @@ class SchoolReportController extends Controller
         $values[] = [
             'ID','Organization','Contact','Email','Phone',
             'Street','City','State','ZIP',
-            'Envelopes','Cards','Box Style','Dimensions','Empty Box','Weight'
+            'Envelopes','Cards','Box Style','Dimensions','Empty Box','Weight',
+            'Volunteer','Prefilled Link','Notes from School','Internal Notes','Last Updated'
         ];
         foreach ($rows as $r) {
             $values[] = [
-                $r->id,
+                $r->reference,
                 $r->organization_name,
                 $r->contact_person_name,
                 $r->email,
@@ -181,6 +189,11 @@ class SchoolReportController extends Controller
                 "{$r->length}x{$r->width}x{$r->height}",
                 $r->empty_box,
                 $r->weight,
+                $r->volunteer_name,
+                $r->prefilled_link,
+                "",
+                "",
+                $r->updated_at->format('M d, Y')
                 // $r->prefilled_link,
                 // $r->standing_order ? 'Yes' : 'No',
                 // $r->update_status ? 'Updated' : '—',

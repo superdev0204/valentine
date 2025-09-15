@@ -409,6 +409,10 @@
                 <th style="min-width: 100px;">Box</th>
                 <th style="min-width: 100px;">Empty</th>
                 <th style="min-width: 100px;">Weight</th>
+                <th style="min-width: 200px;">Prefilled Link</th>
+                <th style="min-width: 200px;">Notes from Hosp/Organization</th>
+                <th style="min-width: 200px;">Internal Notes</th>
+                <th style="min-width: 100px;">Last Updated</th>
                 {{-- <th>Standing</th>
                 <th>Updated</th> --}}
               </tr>
@@ -505,6 +509,29 @@
                 },
                 { data: 'empty_box' },
                 { data: 'weight' },
+                {
+                    data: 'prefilled_link'
+                },
+                {
+                    data: null,
+                    render: d => ``
+                },
+                {
+                    data: null,
+                    render: d => ``
+                },
+                {
+                    data: 'updated_at',
+                    render: function (data) {
+                        if (!data) return '-';
+                        const formatted = dayjs.utc(data).tz("America/New_York").format('MMM DD, YYYY');
+                        const human = dayjs.utc(data).tz("America/New_York").fromNow();
+                        return `
+                            <span class="fw-semibold">${formatted}</span><br>
+                            <small class="text-muted">${human}</small>
+                        `;
+                    }
+                }
                 // { data: 'standing_order', render: v => v ? 'Yes' : 'No' },
                 // { data: 'update_status', render: v => v ? 'Updated' : '—' },
             ],

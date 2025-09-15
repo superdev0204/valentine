@@ -65,7 +65,7 @@
                             <textarea name="qualifications" rows="3" class="form-control" placeholder="Skills, certifications, experience..."></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Notes</label>
+                            <label class="form-label fw-semibold">Notes from School</label>
                             <textarea name="notes" rows="2" class="form-control" placeholder="Additional notes..."></textarea>
                         </div>
 

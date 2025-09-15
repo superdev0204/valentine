@@ -21,6 +21,18 @@
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
     <!-- FixedColumns JS -->
     <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs/plugin/utc.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs/plugin/timezone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs/plugin/relativeTime.js"></script>
+    <script>
+        dayjs.extend(window.dayjs_plugin_utc);
+        dayjs.extend(window.dayjs_plugin_timezone);
+        dayjs.extend(window.dayjs_plugin_relativeTime);
+
+        // Set timezone globally
+        dayjs.tz.setDefault("America/New_York"); // or your app timezone
+    </script>
 
     <style>
         body {
@@ -47,11 +59,13 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         @auth
-                            <li class="nav-item d-flex align-items-center">
-                                <a class="nav-link fw-semibold d-flex align-items-center" href="{{ url('/admin/dashboard') }}">
-                                    <i class="bi bi-speedometer2 me-1"></i> Dashboard
-                                </a>
-                            </li>
+                            @if(auth()->user()->is_admin)
+                                <li class="nav-item d-flex align-items-center">
+                                    <a class="nav-link fw-semibold d-flex align-items-center" href="{{ url('/admin/dashboard') }}">
+                                        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                                    </a>
+                                </li>
+                            @endif
                             <li class="nav-item d-flex align-items-center">
                                 <form action="{{ route('logout') }}" method="POST" class="d-inline m-0 p-0">
                                     @csrf

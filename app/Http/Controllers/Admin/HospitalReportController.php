@@ -51,15 +51,17 @@ class HospitalReportController extends Controller
     public function data(Request $request)
     {
         try {
-            $rows = $this->baseQuery($request)->select([
-                'hospitals.id','hospitals.organization_name','hospitals.contact_person_name','hospitals.how_to_address',
-                'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.state','hospitals.zip',
-                'hospitals.valentine_card_count','hospitals.extra_staff_cards',
-                'hb.box_style','hb.length','hb.width','hb.height','hb.empty_box','hb.weight',
-                'hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status',
-                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
-                DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
-            ])->get();
+            $rows = $this->baseQuery($request)
+                // ->with('volunteer')
+                ->select([
+                    'hospitals.id','hospitals.organization_name','hospitals.contact_person_name','hospitals.how_to_address',
+                    'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.state','hospitals.zip',
+                    'hospitals.valentine_card_count','hospitals.extra_staff_cards','hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status','hospitals.updated_at',
+                    'hb.box_style','hb.length','hb.width','hb.height','hb.empty_box','hb.weight',
+                    // 'v.name as volunteer_name','v.phone as volunteer_phone',
+                    DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
+                    DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
+                ])->get();
     
             return response()->json(['data' => $rows]);
         } catch (\Throwable $e) {
@@ -71,15 +73,17 @@ class HospitalReportController extends Controller
     // Exports share filters via query string (?state=CA&min_valentine_cards=100...)
     public function export(Request $request, string $type)
     {
-        $rows = $this->baseQuery($request)->select([
-            'hospitals.id','hospitals.organization_name','hospitals.contact_person_name','hospitals.how_to_address',
-            'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.state','hospitals.zip',
-            'hospitals.valentine_card_count','hospitals.extra_staff_cards',
-            'hb.box_style','hb.length','hb.width','hb.height','hb.empty_box','hb.weight',
-            'hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status',
-            DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
-            DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
-        ])->get();;
+        $rows = $this->baseQuery($request)
+            // ->with('volunteer')
+            ->select([
+                'hospitals.id','hospitals.organization_name','hospitals.contact_person_name','hospitals.how_to_address',
+                'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.state','hospitals.zip',
+                'hospitals.valentine_card_count','hospitals.extra_staff_cards','hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status','hospitals.updated_at',
+                'hb.box_style','hb.length','hb.width','hb.height','hb.empty_box','hb.weight',
+                // 'v.name as volunteer_name','v.phone as volunteer_phone',
+                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
+                DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
+            ])->get();
 
         if ($type === 'pdf') {
             $pdf = Pdf::loadView('admin.hospitals.report-pdf', ['rows' => $rows, 'filters' => $request->all()])
@@ -106,6 +110,10 @@ class HospitalReportController extends Controller
                         "{$r->length}x{$r->width}x{$r->height}",
                         $r->empty_box,
                         $r->weight,
+                        $r->prefilled_link,
+                        "",
+                        "",
+                        $r->updated_at->format('M d, Y')
                         // $r->prefilled_link,
                         // $r->standing_order ? 'Yes' : 'No',
                         // $r->update_status ? 'Updated' : '—',
@@ -116,7 +124,8 @@ class HospitalReportController extends Controller
                 return [
                     'ID','Organization','Contact','Email','Phone',
                     'Street','City','State','ZIP',
-                    'Valentine Cards','Staff Cards','Total Cards','Box Style','Dimensions','Empty Box','Weight'
+                    'Valentine Cards','Staff Cards','Total Cards','Box Style','Dimensions','Empty Box','Weight',
+                    'Prefilled Link','Notes from Hosp/Organization','Internal Notes','Last Updated'
                 ];
             }
         };
@@ -136,15 +145,17 @@ class HospitalReportController extends Controller
         // 3) Share target sheet with service account email
         // This is a minimal example; handle auth/config as you prefer.
 
-        $rows = $this->baseQuery($request)->select([
-            'hospitals.id','hospitals.organization_name','hospitals.contact_person_name','hospitals.how_to_address',
-            'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.state','hospitals.zip',
-            'hospitals.valentine_card_count','hospitals.extra_staff_cards',
-            'hb.box_style','hb.length','hb.width','hb.height','hb.empty_box','hb.weight',
-            'hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status',
-            DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
-            DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
-        ])->get();
+        $rows = $this->baseQuery($request)
+            // ->with('volunteer')
+            ->select([
+                'hospitals.id','hospitals.organization_name','hospitals.contact_person_name','hospitals.how_to_address',
+                'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.state','hospitals.zip',
+                'hospitals.valentine_card_count','hospitals.extra_staff_cards','hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status','hospitals.updated_at',
+                'hb.box_style','hb.length','hb.width','hb.height','hb.empty_box','hb.weight',
+                // 'v.name as volunteer_name','v.phone as volunteer_phone',
+                DB::raw('CONCAT("H", hospitals.state, LPAD(hospitals.id, 5, "0")) as reference'), 
+                DB::raw('CONCAT(hospitals.valentine_card_count, "/", hospitals.extra_staff_cards, "/", (hospitals.valentine_card_count + hospitals.extra_staff_cards), "/", hb.box_style) as invoiceNumber'), 
+            ])->get();
 
         $client = new \Google\Client();
         $client->setApplicationName('Hospital Reports');
@@ -159,7 +170,8 @@ class HospitalReportController extends Controller
         $values[] = [
             'ID','Organization','Contact','Email','Phone',
             'Street','City','State','ZIP',
-            'Valentine Cards','Staff Cards','Total Cards','Box Style','Dimensions','Empty Box','Weight'
+            'Valentine Cards','Staff Cards','Total Cards','Box Style','Dimensions','Empty Box','Weight',
+            'Prefilled Link','Notes from Hosp/Organization','Internal Notes','Last Updated'
         ];
         foreach ($rows as $r) {
             $values[] = [
@@ -176,6 +188,10 @@ class HospitalReportController extends Controller
                 "{$r->length}x{$r->width}x{$r->height}",
                 $r->empty_box,
                 $r->weight,
+                $r->prefilled_link,
+                "",
+                "",
+                $r->updated_at->format('M d, Y')
                 // $r->prefilled_link,
                 // $r->standing_order ? 'Yes' : 'No',
                 // $r->update_status ? 'Updated' : '—',
