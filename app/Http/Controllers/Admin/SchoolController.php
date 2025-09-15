@@ -200,16 +200,18 @@ class SchoolController extends Controller
 
     public function exportSendgridCsv(Request $request)
     {
-        $query = School::select('schools.*', 
-                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
-                DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
-                'sb.id as matrix_id', 
-                'sb.box_style', 
-                'sb.length', 
-                'sb.width', 
-                'sb.height', 
-                'sb.empty_weight', 
-                'sb.full_weight')
+        $query = School::select(
+                'schools.*',
+                DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'),
+                DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'),
+                'sb.id as matrix_id',
+                'sb.box_style',
+                'sb.length',
+                'sb.width',
+                'sb.height',
+                'sb.empty_weight',
+                'sb.full_weight'
+            )
             ->leftJoin('school_box_size_matrices as sb', function ($join) {
                 $join->on(DB::raw('schools.envelope_quantity'), '>', DB::raw('sb.greater_than'))
                     ->on(DB::raw('schools.envelope_quantity'), '<=', DB::raw('sb.qty_of_env'));
@@ -248,7 +250,11 @@ class SchoolController extends Controller
                 foreach ($mappings as $map) {
                     if (!empty($map->our_field)) {
                         // Pull value from the schools table dynamically
-                        $row[] = $school->{$map->our_field} ?? '';
+                        if ($map->our_field == "standing_order") {
+                            $row[] = $school->{$map->our_field} ? "Yes" : "No";
+                        } else {
+                            $row[] = $school->{$map->our_field} ?? '';
+                        }
                     } elseif (!empty($map->common_value)) {
                         // Use the static/common value
                         $row[] = $map->common_value;

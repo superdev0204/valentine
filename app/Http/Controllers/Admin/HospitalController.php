@@ -252,7 +252,11 @@ class HospitalController extends Controller
                 foreach ($mappings as $map) {
                     if (!empty($map->our_field)) {
                         // Pull value from the hospitals table dynamically
-                        $row[] = $hospital->{$map->our_field} ?? '';
+                        if ($map->our_field == "standing_order") {
+                            $row[] = $hospital->{$map->our_field} ? "Yes" : "No";
+                        } else {
+                            $row[] = $hospital->{$map->our_field} ?? '';
+                        }
                     } elseif (!empty($map->common_value)) {
                         // Use the static/common value
                         $row[] = $map->common_value;

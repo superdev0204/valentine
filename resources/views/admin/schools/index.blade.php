@@ -534,7 +534,7 @@
                     {
                         data: null,
                         render: d => `
-                        <strong>${d.contact_person_name || ''}</strong><br>
+                        ${d.contact_person_name || ''}<br>
                         <small>${d.email || ''}</small><br>
                         <small>${d.phone || ''}</small>
                     `
