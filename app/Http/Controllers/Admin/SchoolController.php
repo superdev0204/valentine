@@ -92,10 +92,20 @@ class SchoolController extends Controller
             'phone' => ['required', 'digits:10'],
             'standing_order' => 'boolean',
             // 'prefilled_link' => 'nullable|string',
+            'updated_at' => 'nullable|date',
         ]);
+
+        $data = $request->all();
+
+        if (empty($data['updated_at'])) {
+            unset($data['updated_at']);
+        }
 
         $school->update($request->all());
         $school->prefilled_link = url('/school/' . $school->id . '/edit');
+        if (!empty($data['updated_at'])) {
+            $school->updated_at = $data['updated_at'];
+        }        
         $school->save();
         
         return redirect()->route('admin.schools')->with('success', 'School updated successfully.');

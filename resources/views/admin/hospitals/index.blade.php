@@ -114,7 +114,6 @@
                                     </td>
                                     <td>
                                         <div class="fw-semibold text-dark">{{ $hospital->organization_name }}</div>
-                                        <small class="text-primary">{{ $hospital->valentine_opt_in }}</small>
                                     </td>
                                     <td>
                                         <div class="fw-semibold text-dark">{{ $hospital->organization_type }}</div>

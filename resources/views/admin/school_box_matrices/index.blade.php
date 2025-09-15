@@ -67,14 +67,13 @@
                                     <td>
                                         <div class="d-flex flex-column">
                                             <small class="text-muted">L: {{ $matrix->length }} × W: {{ $matrix->width }} × H: {{ $matrix->height }}</small>
-                                            <small class="text-success fw-semibold">{{ $matrix->length * $matrix->width * $matrix->height }} cm³</small>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-warning text-dark">{{ $matrix->empty_weight }}</span>
+                                        <span class="fw-semibold">{{ $matrix->empty_weight }} lbs</span>
                                     </td>
                                     <td>
-                                        <span class="fw-semibold text-info">{{ $matrix->full_weight }}g</span>
+                                        <span class="fw-semibold text-info">{{ $matrix->full_weight }} lbs</span>
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">

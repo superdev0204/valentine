@@ -91,10 +91,20 @@ class HospitalController extends Controller
             'phone' => 'required|string|max:255',
             'standing_order' => 'boolean',
             // 'prefilled_link' => 'nullable|string',
+            'updated_at' => 'nullable|date',
         ]);
 
+        $data = $request->all();
+
+        if (empty($data['updated_at'])) {
+            unset($data['updated_at']);
+        }
+
         $hospital->update($request->all());
-        $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
+        $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');        
+        if (!empty($data['updated_at'])) {
+            $hospital->updated_at = $data['updated_at'];
+        }
         $hospital->save();
 
         return redirect()->route('admin.hospitals')->with('success', 'Hospital updated successfully.');

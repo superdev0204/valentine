@@ -216,6 +216,30 @@
                 </div>
             </div>
 
+            <!-- Editable Last Updated -->
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-header bg-dark text-white py-3">
+                    <i class="bi bi-clock-history display-6 me-2"></i>
+                    <span class="fs-5 fw-bold">Last Updated</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="updated_at" class="form-label fw-semibold">
+                                <i class="bi bi-calendar-date me-1 text-info"></i> Last Updated Date
+                            </label>
+                            <input type="datetime-local"
+                                id="updated_at"
+                                name="updated_at"
+                                class="form-control @error('updated_at') is-invalid @enderror"
+                                value="{{ old('updated_at', $school->updated_at ? $school->updated_at->format('Y-m-d\TH:i') : '') }}">
+                            @error('updated_at') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+                    <small class="text-muted">By default this is auto-managed, but you can override it manually.</small>
+                </div>
+            </div>
+
             <div class="d-flex justify-content-between mb-5">
                 <a href="{{ route('admin.schools') }}" class="btn btn-secondary btn-lg">
                     <i class="bi bi-arrow-left me-2"></i>Cancel
