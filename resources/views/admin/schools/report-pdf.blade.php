@@ -33,8 +33,8 @@
         <th>Cards</th>
         <th>Box</th>
         {{-- <th>Dim</th> --}}
-        <th>Empty</th>
-        <th>Weight</th>
+        <th>Empty Weight</th>
+        <th>Full Weight</th>
         {{-- <th>Volunteer</th>
         <th>Prefilled Link</th>
         <th>Notes from School</th>
@@ -56,8 +56,8 @@
           <td>{{ $r->envelope_quantity }}</td>
           <td>{{ $r->instructions_cards }}</td>
           <td>{{ $r->box_style }}<br>{{ $r->length }}x{{ $r->width }}x{{ $r->height }}</td>
-          <td>{{ $r->empty_box }}</td>
-          <td>{{ $r->weight }}</td>
+          <td>{{ $r->empty_weight }}</td>
+          <td>{{ $r->full_weight }}</td>
           {{-- <td>
             @if ($r->volunteer_name)
                 <div class="d-flex flex-column">

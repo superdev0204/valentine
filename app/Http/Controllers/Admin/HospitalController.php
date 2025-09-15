@@ -29,8 +29,8 @@ class HospitalController extends Controller
                 'hb.length', 
                 'hb.width', 
                 'hb.height', 
-                'hb.empty_box', 
-                'hb.weight')
+                'hb.empty_weight', 
+                'hb.full_weight')
             ->leftJoin('hospital_box_size_matrices as hb', function ($join) {
                 $join->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '>', DB::raw('hb.greater_than'))
                     ->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '<=', DB::raw('hb.qty_of_env'));
@@ -162,8 +162,8 @@ class HospitalController extends Controller
                     'zip' => $data["Zip Code:"] ?? '',
                     'phone' => $data["Phone (Fedex requires in case they have an issue - enter 10 digits only - no dashes, no hyphens, spaces, or parentheses):"] ?? '',
                     'standing_order' => ($data["Do you want to make this a standing order (we send you the same amount each year) so you don't need to worry about remembering? (Easier for us and for you!)"] == "Yes" ? 1 : 0),
-                    'question' => $data["Any other questions or comments?"] ?? null,
-                    'introducer' => $data["How did you hear about Valentine's By Kids?"] ?? null,
+                    'public_notes' => $data["Any other questions or comments?"] ?? null,
+                    // 'internal_notes' => $data["How did you hear about Valentine's By Kids?"] ?? null,
                     'prefilled_link' => $data["Prefilled Link"] ?? null,
                     'update_status' => 0,
                 ];
@@ -202,8 +202,8 @@ class HospitalController extends Controller
                 'hb.length', 
                 'hb.width', 
                 'hb.height', 
-                'hb.empty_box', 
-                'hb.weight')
+                'hb.empty_weight', 
+                'hb.full_weight')
             ->leftJoin('hospital_box_size_matrices as hb', function ($join) {
                 $join->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '>', DB::raw('hb.greater_than'))
                     ->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '<=', DB::raw('hb.qty_of_env'));
@@ -273,8 +273,8 @@ class HospitalController extends Controller
                 'hb.length', 
                 'hb.width', 
                 'hb.height', 
-                'hb.empty_box', 
-                'hb.weight')
+                'hb.empty_weight', 
+                'hb.full_weight')
             ->leftJoin('hospital_box_size_matrices as hb', function ($join) {
                 $join->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '>', DB::raw('hb.greater_than'))
                     ->on(DB::raw('hospitals.valentine_card_count + hospitals.extra_staff_cards'), '<=', DB::raw('hb.qty_of_env'));

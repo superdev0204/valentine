@@ -60,7 +60,8 @@ class SchoolReportController extends Controller
                     'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
                     'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
                     'schools.envelope_quantity','schools.instructions_cards','schools.prefilled_link','schools.standing_order','schools.update_status','schools.updated_at',
-                    'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
+                    'schools.public_notes','schools.internal_notes',
+                    'sb.box_style','sb.length','sb.width','sb.height','sb.empty_weight','sb.full_weight',
                     'v.name as volunteer_name','v.phone as volunteer_phone',                    
                     DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
                     DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
@@ -83,7 +84,8 @@ class SchoolReportController extends Controller
                 'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
                 'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
                 'schools.envelope_quantity','schools.instructions_cards','schools.prefilled_link','schools.standing_order','schools.update_status','schools.updated_at',
-                'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
+                'schools.public_notes','schools.internal_notes',
+                'sb.box_style','sb.length','sb.width','sb.height','sb.empty_weight','sb.full_weight',
                 'v.name as volunteer_name','v.phone as volunteer_phone',                    
                 DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
                 DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
@@ -112,12 +114,12 @@ class SchoolReportController extends Controller
                         $r->instructions_cards,
                         $r->box_style,
                         "{$r->length}x{$r->width}x{$r->height}",
-                        $r->empty_box,
-                        $r->weight,
+                        $r->empty_weight,
+                        $r->full_weight,
                         $r->volunteer_name,
                         $r->prefilled_link,
-                        "",
-                        "",
+                        $r->public_notes,
+                        $r->internal_notes,
                         $r->updated_at->format('M d, Y')
                         // $r->prefilled_link,
                         // $r->standing_order ? 'Yes' : 'No',
@@ -129,7 +131,7 @@ class SchoolReportController extends Controller
                 return [
                     'ID','Organization','Contact','Email','Phone',
                     'Street','City','State','ZIP',
-                    'Envelopes','Cards','Box Style','Dimensions','Empty Box','Weight',
+                    'Envelopes','Cards','Box Style','Dimensions','Empty Weight','Full Weight',
                     'Volunteer','Prefilled Link','Notes from School','Internal Notes','Last Updated'
                 ];
             }
@@ -154,7 +156,8 @@ class SchoolReportController extends Controller
             'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
             'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
             'schools.envelope_quantity','schools.instructions_cards','schools.prefilled_link','schools.standing_order','schools.update_status','schools.updated_at',
-            'sb.box_style','sb.length','sb.width','sb.height','sb.empty_box','sb.weight',
+            'schools.public_notes','schools.internal_notes',
+            'sb.box_style','sb.length','sb.width','sb.height','sb.empty_weight','sb.full_weight',
             DB::raw('CONCAT("S", schools.state, LPAD(schools.id, 5, "0")) as reference'), 
             DB::raw('CONCAT(schools.envelope_quantity, "/", schools.instructions_cards, "/", sb.box_style) as invoiceNumber'), 
         ])->get();;
@@ -172,7 +175,7 @@ class SchoolReportController extends Controller
         $values[] = [
             'ID','Organization','Contact','Email','Phone',
             'Street','City','State','ZIP',
-            'Envelopes','Cards','Box Style','Dimensions','Empty Box','Weight',
+            'Envelopes','Cards','Box Style','Dimensions','Empty Weight','Full Weight',
             'Volunteer','Prefilled Link','Notes from School','Internal Notes','Last Updated'
         ];
         foreach ($rows as $r) {
@@ -187,12 +190,12 @@ class SchoolReportController extends Controller
                 $r->instructions_cards,
                 $r->box_style,
                 "{$r->length}x{$r->width}x{$r->height}",
-                $r->empty_box,
-                $r->weight,
+                $r->empty_weight,
+                $r->full_weight,
                 $r->volunteer_name,
                 $r->prefilled_link,
-                "",
-                "",
+                $r->public_notes,
+                $r->internal_notes,
                 $r->updated_at->format('M d, Y')
                 // $r->prefilled_link,
                 // $r->standing_order ? 'Yes' : 'No',

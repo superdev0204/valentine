@@ -84,10 +84,10 @@
                                     <i class="bi bi-arrows-angle-expand me-1"></i>Dimensions
                                 </th>
                                 <th scope="col" style="min-width: 200px;">
-                                    <i class="bi bi-box me-1"></i>Empty Box
+                                    <i class="bi bi-box me-1"></i>Empty Weight
                                 </th>
                                 <th scope="col" style="min-width: 200px;">
-                                    <i class="bi bi-weight me-1"></i>Weight
+                                    <i class="bi bi-weight me-1"></i>Full Weight
                                 </th>
                                 <th scope="col" style="min-width: 200px;">
                                     <i class="bi bi-link-45deg me-1"></i>Prefilled Link
@@ -162,10 +162,10 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-warning text-dark">{{ $hospital->empty_box }}</span>
+                                        <span class="badge bg-warning text-dark">{{ $hospital->empty_weight }}</span>
                                     </td>
                                     <td>
-                                        <span class="fw-semibold text-info">{{ $hospital->weight }}g</span>
+                                        <span class="fw-semibold text-info">{{ $hospital->full_weight }}g</span>
                                     </td>
                                     <td>
                                         {{-- @if($hospital->prefilled_link) --}}
@@ -407,8 +407,8 @@
                 <th style="min-width: 100px;">Staff Cards</th>
                 <th style="min-width: 100px;">Total Cards</th>
                 <th style="min-width: 100px;">Box</th>
-                <th style="min-width: 100px;">Empty</th>
-                <th style="min-width: 100px;">Weight</th>
+                <th style="min-width: 100px;">Empty Weight</th>
+                <th style="min-width: 100px;">Full Weight</th>
                 <th style="min-width: 200px;">Prefilled Link</th>
                 <th style="min-width: 200px;">Notes from Hosp/Organization</th>
                 <th style="min-width: 200px;">Internal Notes</th>
@@ -507,19 +507,13 @@
                         ${d.length}x${d.width}x${d.height}
                     `
                 },
-                { data: 'empty_box' },
-                { data: 'weight' },
+                { data: 'empty_weight' },
+                { data: 'full_weight' },
                 {
                     data: 'prefilled_link'
                 },
-                {
-                    data: null,
-                    render: d => ``
-                },
-                {
-                    data: null,
-                    render: d => ``
-                },
+                { data: 'public_notes' },
+                { data: 'internal_notes' },
                 {
                     data: 'updated_at',
                     render: function (data) {

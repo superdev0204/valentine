@@ -24,8 +24,8 @@ class Hospital extends Model
         'zip',
         'phone',
         'standing_order',
-        'question',
-        'introducer',
+        'public_notes',
+        'internal_notes',
         'prefilled_link',
         'update_status',
     ];

@@ -31,8 +31,8 @@ class HospitalController extends Controller
             'zip'                   => 'required|string|max:20',
             'phone'                 => 'required|string|max:20',
             'standing_order'        => 'boolean',
-            'question'              => 'nullable|string',
-            // 'introducer'            => 'nullable|string',
+            'public_notes'              => 'nullable|string',
+            // 'internal_notes'            => 'nullable|string',
         ]);
 
         // Ensure standing_order is boolean
@@ -72,8 +72,8 @@ class HospitalController extends Controller
             'zip' => 'required|string|max:20',
             'phone' => 'required|string|max:255',
             'standing_order' => 'boolean',
-            'question'            => 'nullable|string',
-            // 'introducer'          => 'nullable|string',
+            'public_notes'            => 'nullable|string',
+            // 'internal_notes'          => 'nullable|string',
         ]);
 
         // Ensure standing_order is boolean

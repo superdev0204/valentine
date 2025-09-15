@@ -209,32 +209,32 @@
             <div class="card shadow-lg border-0 mb-4">
                 <div class="card-header bg-secondary text-white py-3">
                     <i class="bi bi-chat-left-text display-6 me-2"></i>
-                    <span class="fs-5 fw-bold">Questions / Comments</span>
+                    <span class="fs-5 fw-bold">Notes</span>
                 </div>
                 <div class="card-body">
                     <!-- Text Areas -->
                     <div class="mb-3">
-                        <label for="question" class="form-label fw-semibold">
-                            <i class="bi bi-question-circle me-1"></i>Questions or Comments
+                        <label for="public_notes" class="form-label fw-semibold">
+                            <i class="bi bi-question-circle me-1"></i>Notes from Hosp/Organization
                         </label>
-                        <textarea class="form-control @error('question') is-invalid @enderror" 
-                                id="question" name="question" rows="3" 
-                                placeholder="Any questions or additional information...">{{ old('question', $hospital->question) }}</textarea>
-                        @error('question')
+                        <textarea class="form-control @error('public_notes') is-invalid @enderror" 
+                                id="public_notes" name="public_notes" rows="3" 
+                                placeholder="Any questions or additional information...">{{ old('public_notes', $hospital->public_notes) }}</textarea>
+                        @error('public_notes')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    {{-- <div class="mb-3">
-                        <label for="introducer" class="form-label fw-semibold">
-                            <i class="bi bi-person-plus me-1"></i>Introducer
+                    <div class="mb-3">
+                        <label for="internal_notes" class="form-label fw-semibold">
+                            <i class="bi bi-person-plus me-1"></i>Internal Notes
                         </label>
-                        <textarea class="form-control @error('introducer') is-invalid @enderror" 
-                                id="introducer" name="introducer" rows="3" 
-                                placeholder="How did you hear about us?">{{ old('introducer', $hospital->introducer) }}</textarea>
-                        @error('introducer')
+                        <textarea class="form-control @error('internal_notes') is-invalid @enderror" 
+                                id="internal_notes" name="internal_notes" rows="3" 
+                                placeholder="How did you hear about us?">{{ old('internal_notes', $hospital->internal_notes) }}</textarea>
+                        @error('internal_notes')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                    </div> --}}
+                    </div>
                 </div>
             </div>
                     

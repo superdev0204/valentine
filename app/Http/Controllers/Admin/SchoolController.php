@@ -30,8 +30,8 @@ class SchoolController extends Controller
                 'sb.length', 
                 'sb.width', 
                 'sb.height', 
-                'sb.empty_box', 
-                'sb.weight')
+                'sb.empty_weight', 
+                'sb.full_weight')
             ->leftJoin('school_box_size_matrices as sb', function ($join) {
                 $join->on('schools.envelope_quantity', '>', 'sb.greater_than')
                      ->on('schools.envelope_quantity', '<=', 'sb.qty_of_env');
@@ -159,8 +159,8 @@ class SchoolController extends Controller
                     'zip' => $data['Zip Code'] ?? '',
                     'phone' => $data["Phone (Fedex requires in case they have an issue - enter digits only, no spaces, dashes, or parentheses):"] ?? '',
                     'standing_order' => ($data["Do you want to make this a standing order (we just send you the same amount in future years), so you don't have to remember (makes it easier for you and for us)?"] == "Yes" ? 1 : 0),
-                    'question' => $data["Any other questions or thoughts to share?"] ?? null,
-                    'introducer' => $data["How did you find out about Valentines By Kids?"] ?? null,
+                    'public_notes' => $data["Any other questions or thoughts to share?"] ?? null,
+                    // 'internal_notes' => $data["How did you find out about Valentines By Kids?"] ?? null,
                     'prefilled_link' => $data["Prefilled Link"] ?? null,
                     'update_status' => 0,
                 ];
@@ -198,8 +198,8 @@ class SchoolController extends Controller
                 'sb.length', 
                 'sb.width', 
                 'sb.height', 
-                'sb.empty_box', 
-                'sb.weight')
+                'sb.empty_weight', 
+                'sb.full_weight')
             ->leftJoin('school_box_size_matrices as sb', function ($join) {
                 $join->on(DB::raw('schools.envelope_quantity'), '>', DB::raw('sb.greater_than'))
                     ->on(DB::raw('schools.envelope_quantity'), '<=', DB::raw('sb.qty_of_env'));
@@ -267,8 +267,8 @@ class SchoolController extends Controller
                 'sb.length', 
                 'sb.width', 
                 'sb.height', 
-                'sb.empty_box', 
-                'sb.weight')
+                'sb.empty_weight', 
+                'sb.full_weight')
             ->leftJoin('school_box_size_matrices as sb', function ($join) {
                 $join->on(DB::raw('schools.envelope_quantity'), '>', DB::raw('sb.greater_than'))
                     ->on(DB::raw('schools.envelope_quantity'), '<=', DB::raw('sb.qty_of_env'));

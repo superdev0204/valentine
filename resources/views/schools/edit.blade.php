@@ -226,10 +226,10 @@
 
                         <!-- Text Areas -->
                         <div class="form-section">
-                            <label for="question" class="form-label">Any other questions or thoughts to share?</label>
-                            <textarea class="form-control @error('question') is-invalid @enderror" 
-                                    id="question" name="question" rows="3">{{ old('question', $school->question) }}</textarea>
-                            @error('question')
+                            <label for="public_notes" class="form-label">Any other questions or thoughts to share?</label>
+                            <textarea class="form-control @error('public_notes') is-invalid @enderror" 
+                                    id="public_notes" name="public_notes" rows="3">{{ old('public_notes', $school->public_notes) }}</textarea>
+                            @error('public_notes')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

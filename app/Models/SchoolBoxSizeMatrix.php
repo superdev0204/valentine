@@ -16,8 +16,8 @@ class SchoolBoxSizeMatrix extends Model
         'length',
         'width',
         'height',
-        'empty_box',
-        'weight',
+        'empty_weight',
+        'full_weight',
     ];
 
     protected $casts = [
@@ -26,7 +26,7 @@ class SchoolBoxSizeMatrix extends Model
         'length' => 'integer',
         'width' => 'integer',
         'height' => 'integer',
-        'empty_box' => 'integer',
-        'weight' => 'integer',
+        'empty_weight' => 'integer',
+        'full_weight' => 'integer',
     ];
 } 

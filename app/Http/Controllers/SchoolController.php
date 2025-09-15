@@ -30,8 +30,8 @@ class SchoolController extends Controller
             'zip'                 => 'required|string|max:20',
             'phone'               => ['required', 'digits:10'],
             'standing_order'      => 'boolean',
-            'question'            => 'nullable|string',
-            // 'introducer'          => 'nullable|string',
+            'public_notes'            => 'nullable|string',
+            // 'internal_notes'          => 'nullable|string',
         ]);
 
         // Ensure standing_order is boolean
@@ -74,8 +74,8 @@ class SchoolController extends Controller
             'zip'                 => 'required|string|max:20',
             'phone'               => ['required', 'digits:10'],
             'standing_order'      => 'boolean',
-            'question'            => 'nullable|string',
-            // 'introducer'          => 'nullable|string',
+            'public_notes'            => 'nullable|string',
+            // 'internal_notes'          => 'nullable|string',
         ]);
 
         // Ensure standing_order is boolean

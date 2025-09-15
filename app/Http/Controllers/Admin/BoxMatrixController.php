@@ -32,8 +32,8 @@ class BoxMatrixController extends Controller
             // 'length' => 'required|integer|min:1',
             // 'width' => 'required|integer|min:1',
             // 'height' => 'required|integer|min:1',
-            'empty_box' => 'required|integer|min:0',
-            'weight' => 'required|integer|min:0',
+            'empty_weight' => 'required|integer|min:0',
+            'full_weight' => 'required|integer|min:0',
         ]);
 
         SchoolBoxSizeMatrix::create($request->all());
@@ -54,8 +54,8 @@ class BoxMatrixController extends Controller
             // 'length' => 'required|integer|min:1',
             // 'width' => 'required|integer|min:1',
             // 'height' => 'required|integer|min:1',
-            'empty_box' => 'required|integer|min:0',
-            'weight' => 'required|integer|min:0',
+            'empty_weight' => 'required|integer|min:0',
+            'full_weight' => 'required|integer|min:0',
         ]);
 
         $boxMatrix->update($request->all());
@@ -89,8 +89,8 @@ class BoxMatrixController extends Controller
             // 'length' => 'required|integer|min:1',
             // 'width' => 'required|integer|min:1',
             // 'height' => 'required|integer|min:1',
-            'empty_box' => 'required|integer|min:0',
-            'weight' => 'required|integer|min:0',
+            'empty_weight' => 'required|integer|min:0',
+            'full_weight' => 'required|integer|min:0',
         ]);
 
         HospitalBoxSizeMatrix::create($request->all());
@@ -111,8 +111,8 @@ class BoxMatrixController extends Controller
             // 'length' => 'required|integer|min:1',
             // 'width' => 'required|integer|min:1',
             // 'height' => 'required|integer|min:1',
-            'empty_box' => 'required|integer|min:0',
-            'weight' => 'required|integer|min:0',
+            'empty_weight' => 'required|integer|min:0',
+            'full_weight' => 'required|integer|min:0',
         ]);
 
         $boxMatrix->update($request->all());

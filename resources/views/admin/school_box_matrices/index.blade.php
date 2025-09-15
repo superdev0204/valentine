@@ -39,10 +39,10 @@
                                     <i class="bi bi-arrows-angle-expand me-1"></i>Dimensions
                                 </th>
                                 <th scope="col">
-                                    <i class="bi bi-box me-1"></i>Empty Box
+                                    <i class="bi bi-box me-1"></i>Empty Weight
                                 </th>
                                 <th scope="col">
-                                    <i class="bi bi-weight me-1"></i>Weight
+                                    <i class="bi bi-weight me-1"></i>Full Weight
                                 </th>
                                 <th scope="col" class="text-center" style="width: 200px;">
                                     <i class="bi bi-gear me-1"></i>Actions
@@ -71,10 +71,10 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-warning text-dark">{{ $matrix->empty_box }}</span>
+                                        <span class="badge bg-warning text-dark">{{ $matrix->empty_weight }}</span>
                                     </td>
                                     <td>
-                                        <span class="fw-semibold text-info">{{ $matrix->weight }}g</span>
+                                        <span class="fw-semibold text-info">{{ $matrix->full_weight }}g</span>
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">

@@ -43,12 +43,12 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="empty_box" class="form-label">Empty Box</label>
-                            <input type="number" name="empty_box" id="empty_box" class="form-control" value="{{ old('empty_box', $boxMatrix->empty_box) }}" required min="0">
+                            <label for="empty_weight" class="form-label">Empty Weight</label>
+                            <input type="number" name="empty_weight" id="empty_weight" class="form-control" value="{{ old('empty_weight', $boxMatrix->empty_weight) }}" required min="0">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="weight" class="form-label">Weight</label>
-                            <input type="number" name="weight" id="weight" class="form-control" value="{{ old('weight', $boxMatrix->weight) }}" required min="0">
+                            <label for="full_weight" class="form-label">Full Weight</label>
+                            <input type="number" name="full_weight" id="full_weight" class="form-control" value="{{ old('full_weight', $boxMatrix->full_weight) }}" required min="0">
                         </div>
                     </div>
                     <div class="d-flex gap-2">
