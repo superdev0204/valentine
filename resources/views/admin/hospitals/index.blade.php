@@ -122,6 +122,7 @@
                                         <div class="d-flex flex-column">
                                             <div class="fw-semibold">{{ $hospital->contact_person_name }}</div>
                                             <small class="text-muted">{{ $hospital->how_to_address }}</small>
+                                            <small class="text-muted">{{ $hospital->contact_title }}</small>
                                         </div>
                                     </td>
                                     <td>
@@ -317,24 +318,32 @@
 
 <!-- Import Confirmation Modal -->
 <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="importModalLabel">Import Hospitals from Google Spreadsheet</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to import hospital data from the Google Spreadsheet? This will fetch and update the hospitals list.</p>
-      </div>
-      <div class="modal-footer">
-        <form action="{{ route('admin.hospitals.import') }}" method="POST">
-          @csrf
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-danger">Yes, Import</button>
+    <div class="modal-dialog">
+        <form action="{{ route('admin.hospitals.import') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">
+                    <i class="bi bi-upload me-2"></i> Import Hospitals CSV
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <div class="mb-3">
+                    <label for="csv_file" class="form-label fw-semibold">Choose CSV File</label>
+                    <input type="file" name="csv_file" id="csv_file" class="form-control" accept=".csv" required>
+                </div>
+                <small class="text-muted">CSV must match the format: Organization Name, Valentine Card Count, Extra Staff Cards, Street, City, State, Zip, Phone …</small>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-check-circle me-2"></i> Import
+                </button>
+                </div>
+            </div>
         </form>
-      </div>
     </div>
-  </div>
 </div>
 
 {{-- REPORTS MODAL --}}
@@ -395,6 +404,7 @@
               <tr>
                 <th>ID</th>
                 <th style="min-width: 200px;">Organization</th>
+                <th style="min-width: 200px;">Contact Person</th>
                 <th style="min-width: 200px;">Contact Info</th>
                 {{-- <th>Email</th>
                 <th>Phone</th> --}}
@@ -484,9 +494,22 @@
                 {
                     data: null,
                     render: d => `
-                        <strong>${d.contact_person_name || ''}</strong><br>
-                        <small>${d.email || ''}</small><br>
-                        <small>${d.phone || ''}</small>
+                        ${d.contact_person_name || ''}<br>
+                        <small>${d.how_to_address || ''}</small><br>
+                        <small>${d.contact_title || ''}</small>
+                    `
+                },
+                {
+                    data: null,
+                    render: d => `
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-envelope text-muted me-1"></i>
+                            <span class="fw-semibold">${d.email || ''}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-telephone text-muted me-1"></i>
+                            <span class="text-muted">${d.phone || ''}</span>
+                        </div>
                     `
                 },
                 { data: 'street' },

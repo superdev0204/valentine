@@ -41,6 +41,21 @@
                             @error('contact_person_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
+                            <label for="contact_title" class="form-label fw-semibold">
+                                <i class="bi bi-award me-1"></i> Title of Contact Person
+                            </label>
+                            <input type="text" class="form-control @error('contact_title') is-invalid @enderror" 
+                                   id="contact_title" name="contact_title" 
+                                   value="{{ old('contact_title', $school->contact_title) }}" 
+                                   maxlength="50" placeholder="e.g., Principal, Coordinator">
+                            @error('contact_title')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>                        
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12">
                             <label for="how_to_address" class="form-label fw-semibold">
                                 <i class="bi bi-chat-square-dots me-1 text-secondary"></i> How to Address You
                             </label>

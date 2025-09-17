@@ -10,7 +10,7 @@ class School extends Model
     use HasFactory;
 
     protected $fillable = [
-        'participation',
+        'contact_title',
         'organization_name',
         'contact_person_name',
         'email',

@@ -6,10 +6,12 @@
 <div class="container py-5">
     <h2 class="text-center fw-bold text-dark mb-5">Admin Dashboard</h2>
 
-    <div class="row justify-content-center g-4">
+    <div class="row g-4">
 
-        {{-- User Management --}}
-        <div class="col-lg-8">
+        {{-- Left Column: Dashboard Cards --}}
+        <div class="col-lg-8 d-grid gap-4">
+
+            {{-- User Management --}}
             <div class="card shadow border-danger rounded-4">
                 <div class="card-header bg-danger text-white fw-bold rounded-top-4">
                     <i class="bi bi-people me-2"></i> User Management
@@ -20,10 +22,8 @@
                     </a>
                 </div>
             </div>
-        </div>
 
-        {{-- System Settings --}}
-        <div class="col-lg-8">
+            {{-- System Settings --}}
             <div class="card shadow border-primary rounded-4">
                 <div class="card-header bg-primary text-white fw-bold rounded-top-4">
                     <i class="bi bi-gear me-2"></i> System Settings
@@ -52,10 +52,8 @@
                     </a>
                 </div>
             </div>
-        </div>
 
-        {{-- Organization Management --}}
-        <div class="col-lg-8">
+            {{-- Organization Management --}}
             <div class="card shadow border-success rounded-4">
                 <div class="card-header bg-success text-white fw-bold rounded-top-4">
                     <i class="bi bi-building me-2"></i> Organization Management
@@ -70,6 +68,45 @@
                     <a href="{{ route('admin.volunteers') }}" class="btn btn-outline-success btn-lg w-100">
                         <i class="bi bi-person-badge me-2"></i> Manage Volunteers
                     </a>
+                </div>
+            </div>
+
+        </div>
+
+        {{-- Right Column: Password Update Form --}}
+        <div class="col-lg-4">
+            <div class="card shadow border-warning rounded-4">
+                <div class="card-header bg-warning text-dark fw-bold rounded-top-4">
+                    <i class="bi bi-lock me-2"></i> Change Password
+                </div>
+                <div class="card-body" style="background-color: #fff8e1;">
+                    @if(session('status'))
+                        <div class="alert alert-success">{{ session('status') }}</div>
+                    @endif
+
+                    <form method="POST" action="{{ route('admin.password.update') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label">Current Password</label>
+                            <input type="password" name="current_password" id="current_password" class="form-control" required>
+                            @error('current_password') <div class="text-danger">{{ $message }}</div> @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">New Password</label>
+                            <input type="password" name="password" id="password" class="form-control" required>
+                            @error('password') <div class="text-danger">{{ $message }}</div> @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password_confirmation" class="form-label">Confirm New Password</label>
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning w-100">
+                            <i class="bi bi-shield-lock me-2"></i> Update Password
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -10,7 +10,7 @@ class Hospital extends Model
     use HasFactory;
 
     protected $fillable = [
-        'valentine_opt_in',
+        'contact_title',
         'organization_name',
         'organization_type',
         'contact_person_name',

@@ -19,18 +19,6 @@
 
                     <!-- Organization & Contact -->
                     <div class="row mb-3">
-                        {{-- <div class="col-md-6 mb-3">
-                            <label for="valentine_opt_in" class="form-label fw-semibold">
-                                <i class="bi bi-heart me-1"></i>Valentine Opt In
-                            </label>
-                            <input type="text" class="form-control @error('valentine_opt_in') is-invalid @enderror" 
-                                id="valentine_opt_in" name="valentine_opt_in" value="{{ old('valentine_opt_in', $hospital->valentine_opt_in) }}" 
-                                placeholder="e.g., Yes, No, Pending">
-                            @error('valentine_opt_in')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div> --}}
-                        
                         <div class="col-md-6">
                             <label for="organization_name" class="form-label fw-semibold">
                                 <i class="bi bi-heart-pulse me-1"></i>Organization Name

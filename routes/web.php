@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\HospitalSendgridFieldMappingController;
 use App\Http\Controllers\Admin\SchoolOutgoingFedexFieldMappingController;
 use App\Http\Controllers\Admin\SchoolReturnFedexFieldMappingController;
 use App\Http\Controllers\Admin\HospitalOutgoingFedexFieldMappingController;
+use App\Http\Controllers\PasswordController;
 
 Route::get('/', function () {
     return view('home');
@@ -35,13 +36,17 @@ Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('regi
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::post('/admin/password/update', [PasswordController::class, 'update'])
+    ->middleware('auth')
+    ->name('admin.password.update');
+
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/users', [AdminController::class, 'userList'])->name('admin.users');
     Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
-    
+
     // School Box Size Matrix routes
     Route::get('/admin/school-box-matrices', [BoxMatrixController::class, 'schoolBoxMatrixList'])->name('admin.school-box-matrices');
     Route::get('/admin/school-box-matrices/create', [BoxMatrixController::class, 'createSchoolBoxMatrix'])->name('admin.school-box-matrices.create');
