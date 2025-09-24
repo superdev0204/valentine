@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\School;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendEmail;
 
 class SchoolController extends Controller
 {
@@ -49,6 +51,18 @@ class SchoolController extends Controller
             'prefilled_link' => url('/school/' . $school->id . '/edit')
         ]);
 
+        $subject = 'Valentine notification';
+        $message = 'Congratulations on your new sign up.';
+
+        $data = array(
+            'from_name' => env('MAIL_FROM_NAME'),
+            'from_email' => env('MAIL_FROM_ADDRESS'),
+            'subject' => $subject,
+            'message' => $message,
+        );
+
+        Mail::to($school->email)->send(new SendEmail($data));
+
         return redirect()
             ->back()
             ->with('success', 'Thank you for registering! We will contact you soon.');
@@ -88,6 +102,18 @@ class SchoolController extends Controller
         $school->update([
             'prefilled_link' => url('/school/' . $school->id . '/edit')
         ]);
+
+        $subject = 'Valentine notification';
+        $message = 'Thank you for submitting your confirmation information';
+
+        $data = array(
+            'from_name' => env('MAIL_FROM_NAME'),
+            'from_email' => env('MAIL_FROM_ADDRESS'),
+            'subject' => $subject,
+            'message' => $message,
+        );
+
+        Mail::to($school->email)->send(new SendEmail($data));
         
         return redirect()
             ->back()

@@ -47,6 +47,18 @@ class HospitalController extends Controller
             'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
         ]);
 
+        $subject = 'Valentine notification';
+        $message = 'Congratulations on your new sign up.';
+
+        $data = array(
+            'from_name' => env('MAIL_FROM_NAME'),
+            'from_email' => env('MAIL_FROM_ADDRESS'),
+            'subject' => $subject,
+            'message' => $message,
+        );
+
+        Mail::to($hospital->email)->send(new SendEmail($data));
+
         return redirect()
             ->back()
             ->with('success', 'Thank you for registering! We will contact you soon.');
@@ -86,6 +98,18 @@ class HospitalController extends Controller
         $hospital->update([
             'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
         ]);
+
+        $subject = 'Valentine notification';
+        $message = 'Thank you for submitting your confirmation information';
+
+        $data = array(
+            'from_name' => env('MAIL_FROM_NAME'),
+            'from_email' => env('MAIL_FROM_ADDRESS'),
+            'subject' => $subject,
+            'message' => $message,
+        );
+
+        Mail::to($hospital->email)->send(new SendEmail($data));
         
         return redirect()
             ->back()
