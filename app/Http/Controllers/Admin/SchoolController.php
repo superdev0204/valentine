@@ -291,33 +291,35 @@ class SchoolController extends Controller
 
         $callback = function() use ($schools, $mappings, $columns) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
+        
+            // Add UTF-8 BOM so Excel reads characters correctly
+            fputs($file, "\xEF\xBB\xBF"); 
+        
+            // Write header
+            fputcsv($file, $columns, ',', '"');
         
             foreach ($schools as $school) {
                 $row = [];
-        
                 foreach ($mappings as $map) {
                     if (!empty($map->our_field)) {
-                        // Pull value from the schools table dynamically
                         if ($map->our_field == "standing_order") {
                             $row[] = $school->{$map->our_field} ? "Yes" : "No";
                         } else {
-                            $row[] = $school->{$map->our_field} ?? '';
+                            $value = $school->{$map->our_field} ?? '';
+                            // Force Excel to treat as text
+                            $row[] = '="' . $value . '"';
                         }
                     } elseif (!empty($map->common_value)) {
-                        // Use the static/common value
-                        $row[] = $map->common_value;
+                        $row[] = '="' . $map->common_value . '"';
                     } else {
-                        // Leave blank if neither
                         $row[] = '';
                     }
                 }
-        
-                fputcsv($file, $row);
+                fputcsv($file, $row, ',', '"');
             }
         
             fclose($file);
-        };
+        };        
 
         return response()->stream($callback, 200, $headers);
     }
@@ -378,12 +380,12 @@ class SchoolController extends Controller
                 foreach ($mappings as $map) {
                     if (!empty($map->our_field)) {
                         // Pull value from the schools table dynamically
-                        $row[] = $school->{$map->our_field} ?? '';
+                        $value = $school->{$map->our_field} ?? '';
+                        // Force Excel to treat as text
+                        $row[] = '="' . $value . '"';
                     } elseif (!empty($map->common_value)) {
-                        // Use the static/common value
-                        $row[] = $map->common_value;
+                        $row[] = '="' . $map->common_value . '"';
                     } else {
-                        // Leave blank if neither
                         $row[] = '';
                     }
                 }

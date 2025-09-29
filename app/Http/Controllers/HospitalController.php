@@ -48,7 +48,10 @@ class HospitalController extends Controller
         ]);
 
         $subject = 'Valentine notification';
-        $message = 'Congratulations on your new sign up.';
+        $message = 'Thank you, so much!  We have updated our database with your information.  
+                    We usually send out the Valentines for arrival the first week of February.  
+                    These cards are made by hand, felt by hearts.  
+                    Any questions you may have, just let us know.';
 
         $data = array(
             'from_name' => env('MAIL_FROM_NAME'),
@@ -100,7 +103,10 @@ class HospitalController extends Controller
         ]);
 
         $subject = 'Valentine notification';
-        $message = 'Thank you for submitting your confirmation information';
+        $message = 'Thank you, so much!  We have updated our database with your information.  
+                    We usually send out the Valentines for arrival the first week of February.  
+                    These cards are made by hand, felt by hearts.  
+                    Any questions you may have, just let us know.';
 
         $data = array(
             'from_name' => env('MAIL_FROM_NAME'),

@@ -301,17 +301,16 @@ class HospitalController extends Controller
         
                 foreach ($mappings as $map) {
                     if (!empty($map->our_field)) {
-                        // Pull value from the hospitals table dynamically
                         if ($map->our_field == "standing_order") {
                             $row[] = $hospital->{$map->our_field} ? "Yes" : "No";
                         } else {
-                            $row[] = $hospital->{$map->our_field} ?? '';
+                            $value = $hospital->{$map->our_field} ?? '';
+                            // Force Excel to treat as text
+                            $row[] = '="' . $value . '"';
                         }
                     } elseif (!empty($map->common_value)) {
-                        // Use the static/common value
-                        $row[] = $map->common_value;
+                        $row[] = '="' . $map->common_value . '"';
                     } else {
-                        // Leave blank if neither
                         $row[] = '';
                     }
                 }
@@ -375,12 +374,12 @@ class HospitalController extends Controller
                 foreach ($mappings as $map) {
                     if (!empty($map->our_field)) {
                         // Pull value from the hospitals table dynamically
-                        $row[] = $hospital->{$map->our_field} ?? '';
+                        $value = $hospital->{$map->our_field} ?? '';
+                        // Force Excel to treat as text
+                        $row[] = '="' . $value . '"';
                     } elseif (!empty($map->common_value)) {
-                        // Use the static/common value
-                        $row[] = $map->common_value;
+                        $row[] = '="' . $map->common_value . '"';
                     } else {
-                        // Leave blank if neither
                         $row[] = '';
                     }
                 }

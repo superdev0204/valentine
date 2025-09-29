@@ -11,7 +11,9 @@
         "google/apiclient": "^2.18",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "maatwebsite/excel": "*"
+        "maatwebsite/excel": "*",
+        "masbug/flysystem-google-drive-ext": "*",
+        "spatie/laravel-backup": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

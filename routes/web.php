@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\HospitalSendgridFieldMappingController;
 use App\Http\Controllers\Admin\SchoolOutgoingFedexFieldMappingController;
 use App\Http\Controllers\Admin\SchoolReturnFedexFieldMappingController;
 use App\Http\Controllers\Admin\HospitalOutgoingFedexFieldMappingController;
+use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\PasswordController;
 
 Route::get('/', function () {
@@ -155,5 +156,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/fedex_mappings/hospital_outgoing/{fedexMapping}/edit', [HospitalOutgoingFedexFieldMappingController::class, 'edit'])->name('admin.fedex_mappings.hospital_outgoing.edit');
     Route::put('/admin/fedex_mappings/hospital_outgoing/{fedexMapping}', [HospitalOutgoingFedexFieldMappingController::class, 'update'])->name('admin.fedex_mappings.hospital_outgoing.update');
     Route::delete('/admin/fedex_mappings/hospital_outgoing/{fedexMapping}', [HospitalOutgoingFedexFieldMappingController::class, 'destroy'])->name('admin.fedex_mappings.hospital_outgoing.destroy');
+
+    Route::prefix('admin/backups')->group(function () {
+        Route::get('/', [BackupController::class, 'index'])->name('admin.backups');
+        Route::post('/create', [BackupController::class, 'create'])->name('admin.backups.create');
+        Route::get('/download/{file}', [BackupController::class, 'download'])->name('admin.backups.download');
+        Route::delete('/delete/{file}', [BackupController::class, 'delete'])->name('admin.backups.delete');
+    });
+    
     
 });

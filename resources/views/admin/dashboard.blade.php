@@ -70,12 +70,29 @@
                     </a>
                 </div>
             </div>
-
         </div>
 
         {{-- Right Column: Password Update Form --}}
         <div class="col-lg-4">
-            <div class="card shadow border-warning rounded-4">
+            {{-- Backup Management --}}
+            <div class="card shadow border-info rounded-4">
+                <div class="card-header bg-info text-white fw-bold rounded-top-4">
+                    <i class="bi bi-cloud-arrow-down me-2"></i> Backups
+                </div>
+                <div class="card-body text-center">
+                    <form action="{{ route('admin.backups.create') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-info btn-lg">
+                            <i class="bi bi-cloud-arrow-down me-2"></i> Create Backup
+                        </button>
+                    </form>
+                    <a href="{{ route('admin.backups') }}" class="btn btn-outline-info btn-lg mt-3">
+                        <i class="bi bi-folder2-open me-2"></i> Manage Backups
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card shadow border-warning rounded-4 mt-4">
                 <div class="card-header bg-warning text-dark fw-bold rounded-top-4">
                     <i class="bi bi-lock me-2"></i> Change Password
                 </div>

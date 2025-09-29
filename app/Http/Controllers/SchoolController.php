@@ -47,12 +47,14 @@ class SchoolController extends Controller
             $validated
         );
 
-        $school->update([
-            'prefilled_link' => url('/school/' . $school->id . '/edit')
-        ]);
+        $school->prefilled_link = url('/school/' . $school->id . '/edit');
+        $school->save();
 
         $subject = 'Valentine notification';
-        $message = 'Congratulations on your new sign up.';
+        $message = 'Thank you, so much!  We have updated our database with your information.  
+                    We usually send out the boxes of envelopes in December and the deadline for you to call Fedex for pickup is January 31. 
+                    The Teacher Instructions Card can be found here https://tinyurl.com/ValentineTeacherInstructions.  
+                    Any questions, just let us know.';
 
         $data = array(
             'from_name' => env('MAIL_FROM_NAME'),
@@ -99,12 +101,15 @@ class SchoolController extends Controller
         $validated['update_status'] = true;
 
         $school->update($validated);
-        $school->update([
-            'prefilled_link' => url('/school/' . $school->id . '/edit')
-        ]);
+
+        $school->prefilled_link = url('/school/' . $school->id . '/edit');
+        $school->save();
 
         $subject = 'Valentine notification';
-        $message = 'Thank you for submitting your confirmation information';
+        $message = 'Thank you, so much!  We have updated our database with your information.  
+                    We usually send out the boxes of envelopes in December and the deadline for you to call Fedex for pickup is January 31. 
+                    The Teacher Instructions Card can be found here https://tinyurl.com/ValentineTeacherInstructions.  
+                    Any questions, just let us know.';
 
         $data = array(
             'from_name' => env('MAIL_FROM_NAME'),
