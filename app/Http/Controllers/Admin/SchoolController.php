@@ -307,10 +307,14 @@ class SchoolController extends Controller
                         } else {
                             $value = $school->{$map->our_field} ?? '';
                             // Force Excel to treat as text
-                            $row[] = '="' . $value . '"';
+                            if (preg_match('/^0\d+$/', $value)) {
+                                $row[] = "\t" . $value;  // Excel sees it as text
+                            } else {
+                                $row[] = $value;
+                            }
                         }
                     } elseif (!empty($map->common_value)) {
-                        $row[] = '="' . $map->common_value . '"';
+                        $row[] = $map->common_value;
                     } else {
                         $row[] = '';
                     }
@@ -382,9 +386,13 @@ class SchoolController extends Controller
                         // Pull value from the schools table dynamically
                         $value = $school->{$map->our_field} ?? '';
                         // Force Excel to treat as text
-                        $row[] = '="' . $value . '"';
+                        if (preg_match('/^0\d+$/', $value)) {
+                            $row[] = "\t" . $value;  // Excel sees it as text
+                        } else {
+                            $row[] = $value;
+                        }
                     } elseif (!empty($map->common_value)) {
-                        $row[] = '="' . $map->common_value . '"';
+                        $row[] = $map->common_value;
                     } else {
                         $row[] = '';
                     }

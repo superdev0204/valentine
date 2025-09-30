@@ -306,10 +306,14 @@ class HospitalController extends Controller
                         } else {
                             $value = $hospital->{$map->our_field} ?? '';
                             // Force Excel to treat as text
-                            $row[] = '="' . $value . '"';
+                            if (preg_match('/^0\d+$/', $value)) {
+                                $row[] = "\t" . $value;  // Excel sees it as text
+                            } else {
+                                $row[] = $value;
+                            }
                         }
                     } elseif (!empty($map->common_value)) {
-                        $row[] = '="' . $map->common_value . '"';
+                        $row[] = $map->common_value;
                     } else {
                         $row[] = '';
                     }
@@ -376,9 +380,13 @@ class HospitalController extends Controller
                         // Pull value from the hospitals table dynamically
                         $value = $hospital->{$map->our_field} ?? '';
                         // Force Excel to treat as text
-                        $row[] = '="' . $value . '"';
+                        if (preg_match('/^0\d+$/', $value)) {
+                            $row[] = "\t" . $value;  // Excel sees it as text
+                        } else {
+                            $row[] = $value;
+                        }
                     } elseif (!empty($map->common_value)) {
-                        $row[] = '="' . $map->common_value . '"';
+                        $row[] = $map->common_value;
                     } else {
                         $row[] = '';
                     }

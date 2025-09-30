@@ -62,7 +62,10 @@ return [
 
         'google' => [
             'driver' => 'google',
-            'serviceAccountCredentialsJson' => storage_path('app/google/service-account.json'),
+            'client_id' => null,
+            'client_secret' => null,
+            'refresh_token' => null,
+            'serviceAccountCredentialsJson' => storage_path('app/google/valentines-backups.json'),
             'folderId' => env('GOOGLE_DRIVE_FOLDER_ID'),
         ],
         
