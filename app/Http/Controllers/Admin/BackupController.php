@@ -28,7 +28,7 @@ class BackupController extends Controller
 
     public function delete($file)
     {
-        Storage::disk('local')->delete($file);
+        Storage::disk('local_backups')->delete($file);
         return back()->with('status', 'Backup deleted successfully!');
     }
 }

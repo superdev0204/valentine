@@ -4,29 +4,30 @@
 
 @section('content')
 <div class="container py-5">
-    <h2 class="text-center fw-bold text-dark mb-5">Admin Dashboard</h2>
+
+    <h2 class="text-center fw-bold text-dark mb-5 display-5">Admin Dashboard</h2>
 
     <div class="row g-4">
 
-        {{-- Left Column: Dashboard Cards --}}
+        {{-- Left Column --}}
         <div class="col-lg-8 d-grid gap-4">
 
             {{-- User Management --}}
-            <div class="card shadow border-danger rounded-4">
-                <div class="card-header bg-danger text-white fw-bold rounded-top-4">
-                    <i class="bi bi-people me-2"></i> User Management
+            <div class="card shadow-lg border-danger rounded-4">
+                <div class="card-header bg-danger text-white fw-bold rounded-top-4 d-flex align-items-center">
+                    <i class="bi bi-people me-2 fs-4"></i> User Management
                 </div>
                 <div class="card-body">
-                    <a href="{{ route('admin.users') }}" class="btn btn-danger btn-lg w-100 mb-2">
+                    <a href="{{ route('admin.users') }}" class="btn btn-danger btn-lg w-100 mb-2 fw-semibold">
                         <i class="bi bi-people me-2"></i> Manage Users
                     </a>
                 </div>
             </div>
 
             {{-- System Settings --}}
-            <div class="card shadow border-primary rounded-4">
-                <div class="card-header bg-primary text-white fw-bold rounded-top-4">
-                    <i class="bi bi-gear me-2"></i> System Settings
+            <div class="card shadow-lg border-primary rounded-4">
+                <div class="card-header bg-primary text-white fw-bold rounded-top-4 d-flex align-items-center">
+                    <i class="bi bi-gear me-2 fs-4"></i> System Settings
                 </div>
                 <div class="card-body d-grid gap-3">
                     <a href="{{ route('admin.school-box-matrices') }}" class="btn btn-outline-primary btn-lg w-100">
@@ -54,9 +55,9 @@
             </div>
 
             {{-- Organization Management --}}
-            <div class="card shadow border-success rounded-4">
-                <div class="card-header bg-success text-white fw-bold rounded-top-4">
-                    <i class="bi bi-building me-2"></i> Organization Management
+            <div class="card shadow-lg border-success rounded-4">
+                <div class="card-header bg-success text-white fw-bold rounded-top-4 d-flex align-items-center">
+                    <i class="bi bi-building me-2 fs-4"></i> Organization Management
                 </div>
                 <div class="card-body d-grid gap-3">
                     <a href="{{ route('admin.schools') }}" class="btn btn-outline-success btn-lg w-100">
@@ -70,37 +71,39 @@
                     </a>
                 </div>
             </div>
+
         </div>
 
-        {{-- Right Column: Password Update Form --}}
-        <div class="col-lg-4">
+        {{-- Right Column --}}
+        <div class="col-lg-4 d-grid gap-4">
+
             {{-- Backup Management --}}
-            <div class="card shadow border-info rounded-4">
-                <div class="card-header bg-info text-white fw-bold rounded-top-4">
-                    <i class="bi bi-cloud-arrow-down me-2"></i> Backups
+            <div class="card shadow-lg border-info rounded-4">
+                <div class="card-header bg-info text-white fw-bold rounded-top-4 d-flex align-items-center justify-content-between">
+                    <div><i class="bi bi-cloud-arrow-down me-2 fs-4"></i> Backups</div>
+                    {{-- <form action="{{ route('admin.backups.create') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-light btn-sm fw-bold">
+                            <i class="bi bi-plus-circle me-1"></i> Create
+                        </button>
+                    </form> --}}
                 </div>
                 <div class="card-body text-center">
-                    <form action="{{ route('admin.backups.create') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-info btn-lg">
-                            <i class="bi bi-cloud-arrow-down me-2"></i> Create Backup
-                        </button>
-                    </form>
-                    <a href="{{ route('admin.backups') }}" class="btn btn-outline-info btn-lg mt-3">
+                    <a href="{{ route('admin.backups') }}" class="btn btn-outline-info btn-lg w-100">
                         <i class="bi bi-folder2-open me-2"></i> Manage Backups
                     </a>
                 </div>
             </div>
-            
-            <div class="card shadow border-warning rounded-4 mt-4">
-                <div class="card-header bg-warning text-dark fw-bold rounded-top-4">
-                    <i class="bi bi-lock me-2"></i> Change Password
+
+            {{-- Change Password --}}
+            <div class="card shadow-lg border-warning rounded-4">
+                <div class="card-header bg-warning text-dark fw-bold rounded-top-4 d-flex align-items-center">
+                    <i class="bi bi-lock me-2 fs-4"></i> Change Password
                 </div>
                 <div class="card-body" style="background-color: #fff8e1;">
                     @if(session('status'))
                         <div class="alert alert-success">{{ session('status') }}</div>
                     @endif
-
                     <form method="POST" action="{{ route('admin.password.update') }}">
                         @csrf
                         <div class="mb-3">
@@ -120,12 +123,13 @@
                             <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
                         </div>
 
-                        <button type="submit" class="btn btn-warning w-100">
+                        <button type="submit" class="btn btn-warning w-100 fw-semibold">
                             <i class="bi bi-shield-lock me-2"></i> Update Password
                         </button>
                     </form>
                 </div>
             </div>
+
         </div>
 
     </div>
@@ -133,15 +137,30 @@
 
 <style>
     .card-header {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
+
     .btn-lg {
         border-radius: 0.5rem;
         transition: transform 0.2s, box-shadow 0.2s;
     }
+
     .btn-lg:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .fw-semibold {
+        font-weight: 600 !important;
     }
 </style>
 @endsection
