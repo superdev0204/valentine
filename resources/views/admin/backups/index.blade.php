@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container py-4">
-    <h2 class="mb-4">Google Drive Backups</h2>
+    <h2 class="mb-4">Available Backups</h2>
     
     @if(session('status'))
         <div class="alert alert-success">{{ session('status') }}</div>

@@ -17,21 +17,18 @@ class BackupController extends Controller
 
     public function index()
     {
-        $files = Storage::disk('google')->files();
+        $files = Storage::disk('local_backups')->files('backups');
         return view('admin.backups.index', compact('files'));
     }
 
     public function download($file)
     {
-        $content = Storage::disk('google')->get($file);
-        return response($content)
-            ->header('Content-Type', 'application/zip')
-            ->header('Content-Disposition', 'attachment; filename="' . basename($file) . '"');
+        return Storage::disk('local_backups')->download("backups/{$file}");
     }
 
     public function delete($file)
     {
-        Storage::disk('google')->delete($file);
-        return back()->with('status', 'Backup deleted from Google Drive!');
+        Storage::disk('local')->delete("backups/{$file}");
+        return back()->with('status', 'Backup deleted successfully!');
     }
 }
