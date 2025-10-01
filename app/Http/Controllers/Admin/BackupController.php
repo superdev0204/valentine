@@ -17,18 +17,18 @@ class BackupController extends Controller
 
     public function index()
     {
-        $files = Storage::disk('local_backups')->files('backups');
+        $files = Storage::disk('local_backups')->files();
         return view('admin.backups.index', compact('files'));
     }
 
     public function download($file)
     {
-        return Storage::disk('local_backups')->download("backups/{$file}");
+        return Storage::disk('local_backups')->download($file);
     }
 
     public function delete($file)
     {
-        Storage::disk('local')->delete("backups/{$file}");
+        Storage::disk('local')->delete($file);
         return back()->with('status', 'Backup deleted successfully!');
     }
 }
