@@ -48,7 +48,7 @@ class HospitalController extends Controller
 
     public function storeHospital(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'organization_name' => 'required|string|max:255',
             'organization_type' => 'required|string|max:255',
             'contact_person_name' => 'required|string|max:255',
@@ -63,10 +63,16 @@ class HospitalController extends Controller
             // 'prefilled_link' => 'nullable|string',
         ]);
 
-        $hospital = Hospital::create($request->all());        
-        $hospital->update([
-            'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
-        ]);
+        // Ensure standing_order is boolean
+        $validated['standing_order'] = $request->has('standing_order');
+
+        $hospital = Hospital::updateOrCreate(
+            ['organization_name' => $validated['organization_name'], 'email' => $validated['email']],
+            $validated
+        );
+        
+        $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
+        $hospital->save();
 
         return redirect()->route('admin.hospitals')->with('success', 'Hospital created successfully.');
     }
@@ -78,7 +84,7 @@ class HospitalController extends Controller
 
     public function updateHospital(Request $request, Hospital $hospital)
     {
-        $request->validate([
+        $validated = $request->validate([
             'organization_name' => 'required|string|max:255',
             'organization_type' => 'required|string|max:255',
             'contact_person_name' => 'required|string|max:255',
@@ -90,21 +96,19 @@ class HospitalController extends Controller
             'zip' => 'required|string|max:20',
             'phone' => 'required|string|max:255',
             'standing_order' => 'boolean',
-            // 'prefilled_link' => 'nullable|string',
             'updated_at' => 'nullable|date',
         ]);
 
-        $data = $request->all();
-
-        if (empty($data['updated_at'])) {
-            unset($data['updated_at']);
+        // Always use validated data instead of $request->all()
+        if (empty($validated['updated_at'])) {
+            unset($validated['updated_at']);
         }
 
-        $hospital->update($request->all());
+        // Update Hospital
+        $hospital->fill($validated);
+
+        // Add prefilled link
         $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');        
-        if (!empty($data['updated_at'])) {
-            $hospital->updated_at = $data['updated_at'];
-        }
         $hospital->save();
 
         return redirect()->route('admin.hospitals')->with('success', 'Hospital updated successfully.');

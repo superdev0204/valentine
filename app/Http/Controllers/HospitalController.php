@@ -43,9 +43,8 @@ class HospitalController extends Controller
             $validated
         );
 
-        $hospital->update([
-            'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
-        ]);
+        $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
+        $hospital->save();
 
         $subject = 'Valentine notification';
         $message = 'Thank you, so much!  We have updated our database with your information.  

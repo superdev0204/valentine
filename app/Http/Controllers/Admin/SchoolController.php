@@ -50,7 +50,7 @@ class SchoolController extends Controller
 
     public function storeSchool(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'organization_name' => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'contact_person_name' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'email' => 'required|email|max:255',
@@ -61,14 +61,19 @@ class SchoolController extends Controller
             'zip' => 'required|string|max:20',
             'phone' => ['required', 'digits:10'],
             'standing_order' => 'boolean',
-            // 'prefilled_link' => 'nullable|string',
         ]);
 
-        $school = School::create($request->all());
-        $school->update([
-            'prefilled_link' => url('/school/' . $school->id . '/edit')
-        ]);
+        // Ensure standing_order is boolean
+        $validated['standing_order'] = $request->has('standing_order');
 
+        $school = School::updateOrCreate(
+            ['organization_name' => $validated['organization_name'], 'email' => $validated['email']],
+            $validated
+        );
+
+        $school->prefilled_link = url('/school/' . $school->id . '/edit');
+        $school->save();
+        
         return redirect()->route('admin.schools')->with('success', 'School created successfully.');
     }
 
@@ -80,34 +85,33 @@ class SchoolController extends Controller
 
     public function updateSchool(Request $request, School $school)
     {
-        $request->validate([
-            'organization_name' => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
-            'contact_person_name' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
-            'email' => 'required|email|max:255',
-            'envelope_quantity' => 'required|integer|min:0',
-            'street' => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
-            'city' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
-            'state' => ['required', 'size:2', 'alpha'],
-            'zip' => 'required|string|max:20',
-            'phone' => ['required', 'digits:10'],
-            'standing_order' => 'boolean',
-            // 'prefilled_link' => 'nullable|string',
-            'updated_at' => 'nullable|date',
+        $validated = $request->validate([
+            'organization_name'    => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'contact_person_name'  => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'email'                => 'required|email|max:255',
+            'envelope_quantity'    => 'required|integer|min:0',
+            'street'               => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'city'                 => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'state'                => ['required', 'size:2', 'alpha'],
+            'zip'                  => 'required|string|max:20',
+            'phone'                => ['required', 'digits:10'],
+            'standing_order'       => 'boolean',
+            'updated_at'           => 'nullable|date',
         ]);
 
-        $data = $request->all();
-
-        if (empty($data['updated_at'])) {
-            unset($data['updated_at']);
+        // Always use validated data instead of $request->all()
+        if (empty($validated['updated_at'])) {
+            unset($validated['updated_at']);
         }
 
-        $school->update($request->all());
+        // Update school
+        $school->fill($validated);
+
+        // Add prefilled link
         $school->prefilled_link = url('/school/' . $school->id . '/edit');
-        if (!empty($data['updated_at'])) {
-            $school->updated_at = $data['updated_at'];
-        }        
+
         $school->save();
-        
+
         return redirect()->route('admin.schools')->with('success', 'School updated successfully.');
     }
 
