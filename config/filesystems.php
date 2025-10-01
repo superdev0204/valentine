@@ -69,6 +69,10 @@ return [
             'folderId' => env('GOOGLE_DRIVE_FOLDER_ID'),
         ],
         
+        'local_backups' => [
+            'driver' => 'local',
+            'root' => base_path('../backups'),
+        ],
 
     ],
 
