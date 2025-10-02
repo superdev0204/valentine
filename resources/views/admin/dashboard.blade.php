@@ -21,6 +21,11 @@
                     <a href="{{ route('admin.users') }}" class="btn btn-danger btn-lg w-100 mb-2 fw-semibold">
                         <i class="bi bi-people me-2"></i> Manage Users
                     </a>
+
+                    <!-- Helper text -->
+                    <p class="text-muted small text-center mt-2">
+                        (To add user, first have user register at login screen)
+                    </p>
                 </div>
             </div>
 

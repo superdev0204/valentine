@@ -4,7 +4,13 @@
 
 @section('content')
     <div class="container py-4">
-        <h2 class="mb-4">Available Backups</h2>
+        <h2 class="mb-2">Available Backups</h2>
+
+        <!-- Instructional text -->
+        <p class="text-muted mb-4">
+            (Saved in <strong>Backups</strong> folder – Login to Bluehost Cpanel and select <em>File Manager</em>. <br/>
+            To save off-line to Google Drive, click the green <strong>"Download"</strong> button and then save it to Google Drive.)
+        </p>
 
         @if(session('status'))
             <div class="alert alert-success">{{ session('status') }}</div>

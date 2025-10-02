@@ -12,7 +12,7 @@ class BackupController extends Controller
     public function create()
     {
         Artisan::call('backup:run');
-        return back()->with('status', 'Backup created and uploaded to Google Drive!');
+        return back()->with('status', 'Backup created and uploaded to Bluehost Backups Folder!');
     }
 
     public function index()
