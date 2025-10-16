@@ -28,8 +28,9 @@ class School extends Model
         'qty_sent_last_year',
         'qty_received_last_year',
         'volunteer_id',
-        // 'prefilled_link',
+        'prefilled_link',
         'update_status',
+        'updated_at',
     ];
 
     protected $casts = [

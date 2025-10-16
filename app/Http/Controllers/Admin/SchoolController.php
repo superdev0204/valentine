@@ -100,8 +100,11 @@ class SchoolController extends Controller
         ]);
 
         // Always use validated data instead of $request->all()
-        if (empty($validated['updated_at'])) {
+        if (!isset($validated['updated_at']) || empty($validated['updated_at'])) {
             unset($validated['updated_at']);
+        }
+        else{
+            $validated['updated_at'] = Carbon::createFromFormat('Y-m-d\TH:i', $validated['updated_at']);
         }
 
         // Update school

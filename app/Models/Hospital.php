@@ -28,6 +28,7 @@ class Hospital extends Model
         'internal_notes',
         'prefilled_link',
         'update_status',
+        'updated_at',
     ];
 
     protected $casts = [
