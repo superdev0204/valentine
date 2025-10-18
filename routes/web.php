@@ -37,25 +37,27 @@ Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('regi
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-// Schools routes
-Route::get('/admin/schools', [SchoolController::class, 'schoolList'])->name('admin.schools');
-Route::get('/admin/schools/create', [SchoolController::class, 'createSchool'])->name('admin.schools.create');
-Route::post('/admin/schools', [SchoolController::class, 'storeSchool'])->name('admin.schools.store');
-Route::get('/admin/schools/{school}/edit', [SchoolController::class, 'editSchool'])->name('admin.schools.edit');
-Route::put('/admin/schools/{school}', [SchoolController::class, 'updateSchool'])->name('admin.schools.update');
-Route::delete('/admin/schools/{school}', [SchoolController::class, 'deleteSchool'])->name('admin.schools.delete');
-Route::post('/admin/schools/import', [SchoolController::class, 'importSchools'])->name('admin.schools.import');
+    // Schools routes
+    Route::get('/admin/schools', [SchoolController::class, 'schoolList'])->name('admin.schools');
+    Route::get('/admin/schools/create', [SchoolController::class, 'createSchool'])->name('admin.schools.create');
+    Route::post('/admin/schools', [SchoolController::class, 'storeSchool'])->name('admin.schools.store');
+    Route::get('/admin/schools/{school}/edit', [SchoolController::class, 'editSchool'])->name('admin.schools.edit');
+    Route::put('/admin/schools/{school}', [SchoolController::class, 'updateSchool'])->name('admin.schools.update');
+    Route::delete('/admin/schools/{school}', [SchoolController::class, 'deleteSchool'])->name('admin.schools.delete');
+    Route::post('/admin/schools/import', [SchoolController::class, 'importSchools'])->name('admin.schools.import');
 
-// Hospitals routes
-Route::get('/admin/hospitals', [HospitalController::class, 'hospitalList'])->name('admin.hospitals');
-Route::get('/admin/hospitals/create', [HospitalController::class, 'createHospital'])->name('admin.hospitals.create');
-Route::post('/admin/hospitals', [HospitalController::class, 'storeHospital'])->name('admin.hospitals.store');
-Route::get('/admin/hospitals/{hospital}/edit', [HospitalController::class, 'editHospital'])->name('admin.hospitals.edit');
-Route::put('/admin/hospitals/{hospital}', [HospitalController::class, 'updateHospital'])->name('admin.hospitals.update');
-Route::delete('/admin/hospitals/{hospital}', [HospitalController::class, 'deleteHospital'])->name('admin.hospitals.delete');
-Route::post('/admin/hospitals/import', [HospitalController::class, 'importHospitals'])->name('admin.hospitals.import');
+    // Hospitals routes
+    Route::get('/admin/hospitals', [HospitalController::class, 'hospitalList'])->name('admin.hospitals');
+    Route::get('/admin/hospitals/create', [HospitalController::class, 'createHospital'])->name('admin.hospitals.create');
+    Route::post('/admin/hospitals', [HospitalController::class, 'storeHospital'])->name('admin.hospitals.store');
+    Route::get('/admin/hospitals/{hospital}/edit', [HospitalController::class, 'editHospital'])->name('admin.hospitals.edit');
+    Route::put('/admin/hospitals/{hospital}', [HospitalController::class, 'updateHospital'])->name('admin.hospitals.update');
+    Route::delete('/admin/hospitals/{hospital}', [HospitalController::class, 'deleteHospital'])->name('admin.hospitals.delete');
+    Route::post('/admin/hospitals/import', [HospitalController::class, 'importHospitals'])->name('admin.hospitals.import');
+});
 
 
 // Export routes
