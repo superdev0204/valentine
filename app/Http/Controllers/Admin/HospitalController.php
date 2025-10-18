@@ -66,9 +66,12 @@ class HospitalController extends Controller
         // Ensure standing_order is boolean
         $validated['standing_order'] = $request->has('standing_order');
 
+        // Merge the full form data (request->all) with validated data
+        $allData = array_merge($request->all(), $validated);
+
         $hospital = Hospital::updateOrCreate(
             ['organization_name' => $validated['organization_name'], 'email' => $validated['email']],
-            $validated
+            $allData
         );
         
         $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
@@ -107,9 +110,11 @@ class HospitalController extends Controller
             $validated['updated_at'] = Carbon::createFromFormat('Y-m-d\TH:i', $validated['updated_at']);
         }
 
+        // Merge the full form data (request->all) with validated data
+        $allData = array_merge($request->all(), $validated);
 
         // Update Hospital
-        $hospital->fill($validated);
+        $hospital->fill($allData);
 
         // Add prefilled link
         $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');        

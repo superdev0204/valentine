@@ -66,9 +66,12 @@ class SchoolController extends Controller
         // Ensure standing_order is boolean
         $validated['standing_order'] = $request->has('standing_order');
 
+        // Merge the full form data (request->all) with validated data
+        $allData = array_merge($request->all(), $validated);
+
         $school = School::updateOrCreate(
             ['organization_name' => $validated['organization_name'], 'email' => $validated['email']],
-            $validated
+            $allData
         );
 
         $school->prefilled_link = url('/school/' . $school->id . '/edit');
@@ -107,8 +110,11 @@ class SchoolController extends Controller
             $validated['updated_at'] = Carbon::createFromFormat('Y-m-d\TH:i', $validated['updated_at']);
         }
 
+        // Merge the full form data (request->all) with validated data
+        $allData = array_merge($request->all(), $validated);
+
         // Update school
-        $school->fill($validated);
+        $school->fill($allData);
 
         // Add prefilled link
         $school->prefilled_link = url('/school/' . $school->id . '/edit');

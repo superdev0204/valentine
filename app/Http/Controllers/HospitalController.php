@@ -38,9 +38,12 @@ class HospitalController extends Controller
         // Ensure standing_order is boolean
         $validated['standing_order'] = $request->has('standing_order');
 
+        // Merge the full form data (request->all) with validated data
+        $allData = array_merge($request->all(), $validated);
+
         $hospital = Hospital::updateOrCreate(
             ['organization_name' => $validated['organization_name'], 'email' => $validated['email']],
-            $validated
+            $allData
         );
 
         $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
@@ -96,10 +99,13 @@ class HospitalController extends Controller
         // Mark the school as updated
         $validated['update_status'] = true;
 
-        $hospital->update($validated);
-        $hospital->update([
-            'prefilled_link' => url('/hospital/' . $hospital->id . '/edit')
-        ]);
+        // Merge the full form data (request->all) with validated data
+        $allData = array_merge($request->all(), $validated);
+
+        $hospital->update($allData);
+        
+        $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
+        $school->save();
 
         $subject = 'Valentine notification';
         $message = 'Thank you, so much!  We have updated our database with your information.  

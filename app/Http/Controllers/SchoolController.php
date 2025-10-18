@@ -42,9 +42,12 @@ class SchoolController extends Controller
         // Mark the school as updated
         $validated['update_status'] = true;
 
+        // Merge the full form data (request->all) with validated data
+        $allData = array_merge($request->all(), $validated);
+
         $school = School::updateOrCreate(
             ['organization_name' => $validated['organization_name'], 'email' => $validated['email']],
-            $validated
+            $allData
         );
 
         $school->prefilled_link = url('/school/' . $school->id . '/edit');
@@ -99,8 +102,11 @@ class SchoolController extends Controller
 
         // Mark the school as updated
         $validated['update_status'] = true;
+        
+        // Merge the full form data (request->all) with validated data
+        $allData = array_merge($request->all(), $validated);
 
-        $school->update($validated);
+        $school->update($allData);
 
         $school->prefilled_link = url('/school/' . $school->id . '/edit');
         $school->save();
