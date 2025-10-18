@@ -37,12 +37,70 @@ Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('regi
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
+// Schools routes
+Route::get('/admin/schools', [SchoolController::class, 'schoolList'])->name('admin.schools');
+Route::get('/admin/schools/create', [SchoolController::class, 'createSchool'])->name('admin.schools.create');
+Route::post('/admin/schools', [SchoolController::class, 'storeSchool'])->name('admin.schools.store');
+Route::get('/admin/schools/{school}/edit', [SchoolController::class, 'editSchool'])->name('admin.schools.edit');
+Route::put('/admin/schools/{school}', [SchoolController::class, 'updateSchool'])->name('admin.schools.update');
+Route::delete('/admin/schools/{school}', [SchoolController::class, 'deleteSchool'])->name('admin.schools.delete');
+Route::post('/admin/schools/import', [SchoolController::class, 'importSchools'])->name('admin.schools.import');
+
+// Hospitals routes
+Route::get('/admin/hospitals', [HospitalController::class, 'hospitalList'])->name('admin.hospitals');
+Route::get('/admin/hospitals/create', [HospitalController::class, 'createHospital'])->name('admin.hospitals.create');
+Route::post('/admin/hospitals', [HospitalController::class, 'storeHospital'])->name('admin.hospitals.store');
+Route::get('/admin/hospitals/{hospital}/edit', [HospitalController::class, 'editHospital'])->name('admin.hospitals.edit');
+Route::put('/admin/hospitals/{hospital}', [HospitalController::class, 'updateHospital'])->name('admin.hospitals.update');
+Route::delete('/admin/hospitals/{hospital}', [HospitalController::class, 'deleteHospital'])->name('admin.hospitals.delete');
+Route::post('/admin/hospitals/import', [HospitalController::class, 'importHospitals'])->name('admin.hospitals.import');
+
+
+// Export routes
+Route::get('/admin/schools/sendgrid/export', [SchoolController::class, 'exportSendgridCsv'])->name('admin.schools.sendgrid.export');
+Route::get('/admin/schools/fedex/export/{type}', [SchoolController::class, 'exportFedexCsv'])->whereIn('type', ['outgoing', 'return'])->name('admin.schools.fedex.export');
+Route::get('/admin/hospitals/sendgrid/export', [HospitalController::class, 'exportSendgridCsv'])->name('admin.hospitals.sendgrid.export');
+Route::get('/admin/hospitals/fedex/export', [HospitalController::class, 'exportFedexCsv'])->name('admin.hospitals.fedex.export');
+
+Route::prefix('admin/schools')->name('admin.schools.')->group(function () {
+    Route::get('reports', [SchoolReportController::class, 'index'])
+        ->name('reports'); // page (or modal content)
+    Route::get('reports/data', [SchoolReportController::class, 'data'])
+        ->name('reports.data'); // JSON for DataTables
+    Route::get('reports/export/{type}', [SchoolReportController::class, 'export'])
+        ->whereIn('type', ['csv','xlsx','pdf'])
+        ->name('reports.export');
+    Route::post('reports/export/sheets', [SchoolReportController::class, 'exportToSheets'])
+        ->name('reports.export.sheets'); // optional Google Sheets
+});
+
+Route::prefix('admin/hospitals')->name('admin.hospitals.')->group(function () {
+    Route::get('reports', [HospitalReportController::class, 'index'])
+        ->name('reports'); // page (or modal content)
+    Route::get('reports/data', [HospitalReportController::class, 'data'])
+        ->name('reports.data'); // JSON for DataTables
+    Route::get('reports/export/{type}', [HospitalReportController::class, 'export'])
+        ->whereIn('type', ['csv','xlsx','pdf'])
+        ->name('reports.export');
+    Route::post('reports/export/sheets', [HospitalReportController::class, 'exportToSheets'])
+        ->name('reports.export.sheets'); // optional Google Sheets
+});
+
+// Volunteers routes
+Route::get('/admin/volunteers', [VolunteerController::class, 'volunteerList'])->name('admin.volunteers');
+Route::get('/admin/volunteers/create', [VolunteerController::class, 'create'])->name('admin.volunteers.create');
+Route::post('/admin/volunteers', [VolunteerController::class, 'store'])->name('admin.volunteers.store');
+Route::get('/admin/volunteers/{volunteer}/edit', [VolunteerController::class, 'edit'])->name('admin.volunteers.edit');
+Route::put('/admin/volunteers/{volunteer}', [VolunteerController::class, 'update'])->name('admin.volunteers.update');
+Route::delete('/admin/volunteers/{volunteer}', [VolunteerController::class, 'delete'])->name('admin.volunteers.delete');
+
 Route::post('/admin/password/update', [PasswordController::class, 'update'])
     ->middleware('auth')
     ->name('admin.password.update');
 
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/users', [AdminController::class, 'userList'])->name('admin.users');
     Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
@@ -64,64 +122,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/hospital-box-matrices/{boxMatrix}', [BoxMatrixController::class, 'updateHospitalBoxMatrix'])->name('admin.hospital-box-matrices.update');
     Route::delete('/admin/hospital-box-matrices/{boxMatrix}', [BoxMatrixController::class, 'deleteHospitalBoxMatrix'])->name('admin.hospital-box-matrices.delete');
     
-    // Schools routes
-    Route::get('/admin/schools', [SchoolController::class, 'schoolList'])->name('admin.schools');
-    Route::get('/admin/schools/create', [SchoolController::class, 'createSchool'])->name('admin.schools.create');
-    Route::post('/admin/schools', [SchoolController::class, 'storeSchool'])->name('admin.schools.store');
-    Route::get('/admin/schools/{school}/edit', [SchoolController::class, 'editSchool'])->name('admin.schools.edit');
-    Route::put('/admin/schools/{school}', [SchoolController::class, 'updateSchool'])->name('admin.schools.update');
-    Route::delete('/admin/schools/{school}', [SchoolController::class, 'deleteSchool'])->name('admin.schools.delete');
-    Route::post('/admin/schools/import', [SchoolController::class, 'importSchools'])->name('admin.schools.import');
-    
-    // Hospitals routes
-    Route::get('/admin/hospitals', [HospitalController::class, 'hospitalList'])->name('admin.hospitals');
-    Route::get('/admin/hospitals/create', [HospitalController::class, 'createHospital'])->name('admin.hospitals.create');
-    Route::post('/admin/hospitals', [HospitalController::class, 'storeHospital'])->name('admin.hospitals.store');
-    Route::get('/admin/hospitals/{hospital}/edit', [HospitalController::class, 'editHospital'])->name('admin.hospitals.edit');
-    Route::put('/admin/hospitals/{hospital}', [HospitalController::class, 'updateHospital'])->name('admin.hospitals.update');
-    Route::delete('/admin/hospitals/{hospital}', [HospitalController::class, 'deleteHospital'])->name('admin.hospitals.delete');
-    Route::post('/admin/hospitals/import', [HospitalController::class, 'importHospitals'])->name('admin.hospitals.import');
-
-
-    // Export routes
-    Route::get('/admin/schools/sendgrid/export', [SchoolController::class, 'exportSendgridCsv'])->name('admin.schools.sendgrid.export');
-    Route::get('/admin/schools/fedex/export/{type}', [SchoolController::class, 'exportFedexCsv'])->whereIn('type', ['outgoing', 'return'])->name('admin.schools.fedex.export');
-    Route::get('/admin/hospitals/sendgrid/export', [HospitalController::class, 'exportSendgridCsv'])->name('admin.hospitals.sendgrid.export');
-    Route::get('/admin/hospitals/fedex/export', [HospitalController::class, 'exportFedexCsv'])->name('admin.hospitals.fedex.export');
-
-    Route::prefix('admin/schools')->name('admin.schools.')->group(function () {
-        Route::get('reports', [SchoolReportController::class, 'index'])
-            ->name('reports'); // page (or modal content)
-        Route::get('reports/data', [SchoolReportController::class, 'data'])
-            ->name('reports.data'); // JSON for DataTables
-        Route::get('reports/export/{type}', [SchoolReportController::class, 'export'])
-            ->whereIn('type', ['csv','xlsx','pdf'])
-            ->name('reports.export');
-        Route::post('reports/export/sheets', [SchoolReportController::class, 'exportToSheets'])
-            ->name('reports.export.sheets'); // optional Google Sheets
-    });
-
-    Route::prefix('admin/hospitals')->name('admin.hospitals.')->group(function () {
-        Route::get('reports', [HospitalReportController::class, 'index'])
-            ->name('reports'); // page (or modal content)
-        Route::get('reports/data', [HospitalReportController::class, 'data'])
-            ->name('reports.data'); // JSON for DataTables
-        Route::get('reports/export/{type}', [HospitalReportController::class, 'export'])
-            ->whereIn('type', ['csv','xlsx','pdf'])
-            ->name('reports.export');
-        Route::post('reports/export/sheets', [HospitalReportController::class, 'exportToSheets'])
-            ->name('reports.export.sheets'); // optional Google Sheets
-    });
-
-    // Volunteers routes
-    Route::get('/admin/volunteers', [VolunteerController::class, 'volunteerList'])->name('admin.volunteers');
-    Route::get('/admin/volunteers/create', [VolunteerController::class, 'create'])->name('admin.volunteers.create');
-    Route::post('/admin/volunteers', [VolunteerController::class, 'store'])->name('admin.volunteers.store');
-    Route::get('/admin/volunteers/{volunteer}/edit', [VolunteerController::class, 'edit'])->name('admin.volunteers.edit');
-    Route::put('/admin/volunteers/{volunteer}', [VolunteerController::class, 'update'])->name('admin.volunteers.update');
-    Route::delete('/admin/volunteers/{volunteer}', [VolunteerController::class, 'delete'])->name('admin.volunteers.delete');
-
-
     Route::get('/admin/sendgrid_mappings/school', [SchoolSendgridFieldMappingController::class, 'index'])->name('admin.sendgrid_mappings.school');
     Route::get('/admin/sendgrid_mappings/school/create', [SchoolSendgridFieldMappingController::class, 'create'])->name('admin.sendgrid_mappings.school.create');
     Route::post('/admin/sendgrid_mappings/school', [SchoolSendgridFieldMappingController::class, 'store'])->name('admin.sendgrid_mappings.school.store');

@@ -11,53 +11,54 @@
 
         {{-- Left Column --}}
         <div class="col-lg-8 d-grid gap-4">
+            @if(auth()->user()->is_admin)
+                {{-- User Management --}}
+                <div class="card shadow-lg border-danger rounded-4">
+                    <div class="card-header bg-danger text-white fw-bold rounded-top-4 d-flex align-items-center">
+                        <i class="bi bi-people me-2 fs-4"></i> User Management
+                    </div>
+                    <div class="card-body">
+                        <a href="{{ route('admin.users') }}" class="btn btn-danger btn-lg w-100 mb-2 fw-semibold">
+                            <i class="bi bi-people me-2"></i> Manage Users
+                        </a>
 
-            {{-- User Management --}}
-            <div class="card shadow-lg border-danger rounded-4">
-                <div class="card-header bg-danger text-white fw-bold rounded-top-4 d-flex align-items-center">
-                    <i class="bi bi-people me-2 fs-4"></i> User Management
+                        <!-- Helper text -->
+                        <p class="text-muted small text-center mt-2">
+                            (To add user, first have user register at login screen)
+                        </p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <a href="{{ route('admin.users') }}" class="btn btn-danger btn-lg w-100 mb-2 fw-semibold">
-                        <i class="bi bi-people me-2"></i> Manage Users
-                    </a>
 
-                    <!-- Helper text -->
-                    <p class="text-muted small text-center mt-2">
-                        (To add user, first have user register at login screen)
-                    </p>
+                {{-- System Settings --}}
+                <div class="card shadow-lg border-primary rounded-4">
+                    <div class="card-header bg-primary text-white fw-bold rounded-top-4 d-flex align-items-center">
+                        <i class="bi bi-gear me-2 fs-4"></i> System Settings
+                    </div>
+                    <div class="card-body d-grid gap-3">
+                        <a href="{{ route('admin.school-box-matrices') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="bi bi-box me-2"></i> School Box Size Matrix
+                        </a>
+                        <a href="{{ route('admin.hospital-box-matrices') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="bi bi-box me-2"></i> Hospital Box Size Matrix
+                        </a>
+                        <a href="{{ route('admin.sendgrid_mappings.school') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="bi bi-truck me-2"></i> School Sendgrid Field Mappings
+                        </a>
+                        <a href="{{ route('admin.sendgrid_mappings.hospital') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="bi bi-truck me-2"></i> Hospital Sendgrid Field Mappings
+                        </a>
+                        <a href="{{ route('admin.fedex_mappings.school_outgoing') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="bi bi-truck me-2"></i> School Outgoing FedEx Field Mappings
+                        </a>
+                        <a href="{{ route('admin.fedex_mappings.school_return') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="bi bi-arrow-return-left me-2"></i> School Return FedEx Field Mappings
+                        </a>
+                        <a href="{{ route('admin.fedex_mappings.hospital_outgoing') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="bi bi-hospital me-2"></i> Hospital Outgoing FedEx Field Mappings
+                        </a>
+                    </div>
                 </div>
-            </div>
-
-            {{-- System Settings --}}
-            <div class="card shadow-lg border-primary rounded-4">
-                <div class="card-header bg-primary text-white fw-bold rounded-top-4 d-flex align-items-center">
-                    <i class="bi bi-gear me-2 fs-4"></i> System Settings
-                </div>
-                <div class="card-body d-grid gap-3">
-                    <a href="{{ route('admin.school-box-matrices') }}" class="btn btn-outline-primary btn-lg w-100">
-                        <i class="bi bi-box me-2"></i> School Box Size Matrix
-                    </a>
-                    <a href="{{ route('admin.hospital-box-matrices') }}" class="btn btn-outline-primary btn-lg w-100">
-                        <i class="bi bi-box me-2"></i> Hospital Box Size Matrix
-                    </a>
-                    <a href="{{ route('admin.sendgrid_mappings.school') }}" class="btn btn-outline-primary btn-lg w-100">
-                        <i class="bi bi-truck me-2"></i> School Sendgrid Field Mappings
-                    </a>
-                    <a href="{{ route('admin.sendgrid_mappings.hospital') }}" class="btn btn-outline-primary btn-lg w-100">
-                        <i class="bi bi-truck me-2"></i> Hospital Sendgrid Field Mappings
-                    </a>
-                    <a href="{{ route('admin.fedex_mappings.school_outgoing') }}" class="btn btn-outline-primary btn-lg w-100">
-                        <i class="bi bi-truck me-2"></i> School Outgoing FedEx Field Mappings
-                    </a>
-                    <a href="{{ route('admin.fedex_mappings.school_return') }}" class="btn btn-outline-primary btn-lg w-100">
-                        <i class="bi bi-arrow-return-left me-2"></i> School Return FedEx Field Mappings
-                    </a>
-                    <a href="{{ route('admin.fedex_mappings.hospital_outgoing') }}" class="btn btn-outline-primary btn-lg w-100">
-                        <i class="bi bi-hospital me-2"></i> Hospital Outgoing FedEx Field Mappings
-                    </a>
-                </div>
-            </div>
+            @endif
 
             {{-- Organization Management --}}
             <div class="card shadow-lg border-success rounded-4">
@@ -81,24 +82,25 @@
 
         {{-- Right Column --}}
         <div class="col-lg-4 d-grid gap-4">
-
-            {{-- Backup Management --}}
-            <div class="card shadow-lg border-info rounded-4">
-                <div class="card-header bg-info text-white fw-bold rounded-top-4 d-flex align-items-center justify-content-between">
-                    <div><i class="bi bi-cloud-arrow-down me-2 fs-4"></i> Backups</div>
-                    {{-- <form action="{{ route('admin.backups.create') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-light btn-sm fw-bold">
-                            <i class="bi bi-plus-circle me-1"></i> Create
-                        </button>
-                    </form> --}}
+            @if(auth()->user()->is_admin)
+                {{-- Backup Management --}}
+                <div class="card shadow-lg border-info rounded-4">
+                    <div class="card-header bg-info text-white fw-bold rounded-top-4 d-flex align-items-center justify-content-between">
+                        <div><i class="bi bi-cloud-arrow-down me-2 fs-4"></i> Backups</div>
+                        {{-- <form action="{{ route('admin.backups.create') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-light btn-sm fw-bold">
+                                <i class="bi bi-plus-circle me-1"></i> Create
+                            </button>
+                        </form> --}}
+                    </div>
+                    <div class="card-body text-center">
+                        <a href="{{ route('admin.backups') }}" class="btn btn-outline-info btn-lg w-100">
+                            <i class="bi bi-folder2-open me-2"></i> Manage Backups
+                        </a>
+                    </div>
                 </div>
-                <div class="card-body text-center">
-                    <a href="{{ route('admin.backups') }}" class="btn btn-outline-info btn-lg w-100">
-                        <i class="bi bi-folder2-open me-2"></i> Manage Backups
-                    </a>
-                </div>
-            </div>
+            @endif
 
             {{-- Change Password --}}
             <div class="card shadow-lg border-warning rounded-4">
