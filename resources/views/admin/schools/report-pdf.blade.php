@@ -35,6 +35,7 @@
         {{-- <th>Dim</th> --}}
         <th>Empty Weight</th>
         <th>Full Weight</th>
+        <th>Standing Order</th>
         {{-- <th>Volunteer</th>
         <th>Prefilled Link</th>
         <th>Notes from School</th>
@@ -58,6 +59,7 @@
           <td>{{ $r->box_style }}<br>{{ $r->length }}x{{ $r->width }}x{{ $r->height }}</td>
           <td>{{ $r->empty_weight }}</td>
           <td>{{ $r->full_weight }}</td>
+          <td>{{ $r->standing_order ? 'Yes' : 'No' }}</td>
           {{-- <td>
             @if ($r->volunteer_name)
                 <div class="d-flex flex-column">
@@ -73,7 +75,7 @@
           <td></td>
           <td>
             <div class="d-flex flex-column">
-                <span class="fw-semibold">{{ $r->updated_at->format('M d, Y') }}</span>
+                <span class="fw-semibold">{{ $r->updated_at->format('Ymd') }}</span>
                 <small class="text-muted">{{ $r->updated_at->diffForHumans() }}</small>
             </div>
           </td> --}}

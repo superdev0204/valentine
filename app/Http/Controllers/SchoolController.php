@@ -50,7 +50,12 @@ class SchoolController extends Controller
             $allData
         );
 
-        $school->prefilled_link = url('/school/' . $school->id . '/edit');
+        do {
+            $token = Str::random(8);
+        } while (School::where('token', $token)->exists());
+
+        $school->token = $token;
+        $school->prefilled_link = url('/school/' . $token . '/edit');
         $school->save();
 
         $subject = 'Valentine notification';
@@ -73,13 +78,16 @@ class SchoolController extends Controller
             ->with('success', 'Thank you for registering! We will contact you soon.');
     }
 
-    public function edit(School $school)
+    public function edit($token)
     {
+        $school = School::where('token', $token)->firstOrFail();
         return view('schools.edit', compact('school'));
     }
 
-    public function update(Request $request, School $school)
+    public function update(Request $request, $token)
     {
+        $school = School::where('token', $token)->firstOrFail();
+        
         $validated = $request->validate([
             'organization_name'   => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'contact_person_name' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
@@ -108,7 +116,7 @@ class SchoolController extends Controller
 
         $school->update($allData);
 
-        $school->prefilled_link = url('/school/' . $school->id . '/edit');
+        // $school->prefilled_link = url('/school/' . $school->id . '/edit');
         $school->save();
 
         $subject = 'Valentine notification';

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Hospital;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class HospitalController extends Controller
 {
@@ -46,7 +47,12 @@ class HospitalController extends Controller
             $allData
         );
 
-        $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
+        do {
+            $token = Str::random(8);
+        } while (Hospital::where('token', $token)->exists());
+
+        $hospital->token = $token;
+        $hospital->prefilled_link = url('/hospital/' . $token . '/edit');
         $hospital->save();
 
         $subject = 'Valentine notification';
@@ -69,13 +75,16 @@ class HospitalController extends Controller
             ->with('success', 'Thank you for registering! We will contact you soon.');
     }
 
-    public function edit(Hospital $hospital)
+    public function edit($token)
     {
+        $hospital = Hospital::where('token', $token)->firstOrFail();
         return view('hospitals.edit', compact('hospital'));
     }
 
-    public function update(Request $request, Hospital $hospital)
+    public function update(Request $request, $token)
     {
+        $hospital = Hospital::where('token', $token)->firstOrFail();
+        
         $validated = $request->validate([
             'organization_name' => 'required|string|max:255',
             'organization_type' => 'required|string|max:255',
@@ -104,7 +113,7 @@ class HospitalController extends Controller
 
         $hospital->update($allData);
         
-        $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
+        // $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
         $school->save();
 
         $subject = 'Valentine notification';

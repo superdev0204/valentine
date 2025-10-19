@@ -81,7 +81,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('hospital.update', $hospital->id) }}" method="POST">
+                    <form action="{{ route('hospital.update', $hospital->token) }}" method="POST">
                         @csrf
                         @method('PUT')
 

@@ -23,13 +23,13 @@ Route::get('/', function () {
 
 Route::get('/register/school', [App\Http\Controllers\SchoolController::class, 'create'])->name('school.register');
 Route::post('/register/school', [App\Http\Controllers\SchoolController::class, 'store'])->name('school.register.store');
-Route::get('/school/{school}/edit', [App\Http\Controllers\SchoolController::class, 'edit'])->name('school.edit');
-Route::put('/school/{school}', [App\Http\Controllers\SchoolController::class, 'update'])->name('school.update');
+Route::get('/school/{token}/edit', [App\Http\Controllers\SchoolController::class, 'edit'])->name('school.edit');
+Route::put('/school/{token}', [App\Http\Controllers\SchoolController::class, 'update'])->name('school.update');
 
 Route::get('/register/hospital', [App\Http\Controllers\HospitalController::class, 'create'])->name('hospital.register');
 Route::post('/register/hospital', [App\Http\Controllers\HospitalController::class, 'store'])->name('hospital.register.store');
-Route::get('/hospital/{hospital}/edit', [App\Http\Controllers\HospitalController::class, 'edit'])->name('hospital.edit');
-Route::put('/hospital/{hospital}', [App\Http\Controllers\HospitalController::class, 'update'])->name('hospital.update');
+Route::get('/hospital/{token}/edit', [App\Http\Controllers\HospitalController::class, 'edit'])->name('hospital.edit');
+Route::put('/hospital/{token}', [App\Http\Controllers\HospitalController::class, 'update'])->name('hospital.update');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);

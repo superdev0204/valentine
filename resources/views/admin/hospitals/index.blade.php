@@ -90,10 +90,10 @@
                                     <i class="bi bi-weight me-1"></i>Full Weight
                                 </th>
                                 <th scope="col" style="min-width: 200px;">
-                                    <i class="bi bi-link-45deg me-1"></i>Prefilled Link
+                                    <i class="bi bi-person-badge me-1"></i>Volunteer
                                 </th>
                                 <th scope="col" style="min-width: 200px;">
-                                    <i class="bi bi-person-badge me-1"></i>Volunteer
+                                    <i class="bi bi-link-45deg me-1"></i>Prefilled Link
                                 </th>
                                 <th scope="col" class="text-center" style="min-width: 200px;">
                                     <i class="bi bi-toggle-on me-1"></i>Status
@@ -168,15 +168,6 @@
                                         <span class="fw-semibold text-info">{{ $hospital->full_weight }}g</span>
                                     </td>
                                     <td>
-                                        {{-- @if($hospital->prefilled_link) --}}
-                                            <a href="{{ route('hospital.edit', $hospital->id) }}" target="_blank" class="text-decoration-none">
-                                                <i class="bi bi-box-arrow-up-right me-1"></i>Open Form
-                                            </a>
-                                        {{-- @else
-                                            <span class="text-muted">—</span>
-                                        @endif --}}
-                                    </td>
-                                    <td>
                                         @if($hospital->volunteer)
                                             <div class="d-flex flex-column">
                                                 <div class="fw-semibold">{{ $hospital->volunteer->name }}</div>
@@ -185,6 +176,16 @@
                                         @else
                                             <span class="text-muted">—</span>
                                         @endif
+                                    </td>
+                                    <td style="max-width: 250px;">
+                                        {{-- @if($hospital->prefilled_link) --}}
+                                            <a href="{{ route('hospital.edit', $hospital->token) }}" target="_blank" class="text-decoration-none">
+                                                <!-- <i class="bi bi-box-arrow-up-right me-1"></i>Open Form -->
+                                                {{ $hospital->prefilled_link }}
+                                            </a>
+                                        {{-- @else
+                                            <span class="text-muted">—</span>
+                                        @endif --}}
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex flex-column align-items-center">
@@ -206,7 +207,7 @@
                                     </td>
                                     <td>
                                         <div class="d-flex flex-column">
-                                            <span class="fw-semibold">{{ $hospital->updated_at->format('M d, Y') }}</span>
+                                            <span class="fw-semibold">{{ $hospital->updated_at->format('Ymd') }}</span>
                                             <small class="text-muted">{{ $hospital->updated_at->diffForHumans() }}</small>
                                         </div>
                                     </td>

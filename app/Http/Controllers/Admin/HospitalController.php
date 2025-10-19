@@ -73,8 +73,13 @@ class HospitalController extends Controller
             ['organization_name' => $validated['organization_name'], 'email' => $validated['email']],
             $allData
         );
-        
-        $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
+
+        do {
+            $token = Str::random(8);
+        } while (Hospital::where('token', $token)->exists());
+
+        $hospital->token = $token;
+        $hospital->prefilled_link = url('/hospital/' . $token . '/edit');
         $hospital->save();
 
         return redirect()->route('admin.hospitals')->with('success', 'Hospital created successfully.');
@@ -117,7 +122,7 @@ class HospitalController extends Controller
         $hospital->fill($allData);
 
         // Add prefilled link
-        $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');        
+        // $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');        
         $hospital->save();
 
         return redirect()->route('admin.hospitals')->with('success', 'Hospital updated successfully.');
@@ -167,7 +172,12 @@ class HospitalController extends Controller
                     $hospitalData
                 );
 
-                $hospital->prefilled_link = url('/hospital/' . $hospital->id . '/edit');
+                do {
+                    $token = Str::random(8);
+                } while (Hospital::where('token', $token)->exists());
+
+                $hospital->token = $token;
+                $hospital->prefilled_link = url('/hospital/' . $token . '/edit');
                 $hospital->save();
                 $imported++;
             }
@@ -316,6 +326,8 @@ class HospitalController extends Controller
                     if (!empty($map->our_field)) {
                         if ($map->our_field == "standing_order") {
                             $row[] = $hospital->{$map->our_field} ? "Yes" : "No";
+                        } elseif ($map->our_field == "updated_at") {
+                            $row[] = $hospital->{$map->our_field} ? $hospital->{$map->our_field}->format('Ymd') : "";
                         } else {
                             $value = $hospital->{$map->our_field} ?? '';
                             // Force Excel to treat as text
@@ -390,13 +402,17 @@ class HospitalController extends Controller
         
                 foreach ($mappings as $map) {
                     if (!empty($map->our_field)) {
-                        // Pull value from the hospitals table dynamically
-                        $value = $hospital->{$map->our_field} ?? '';
-                        // Force Excel to treat as text
-                        if (preg_match('/^0\d+$/', $value)) {
-                            $row[] = "\t" . $value;  // Excel sees it as text
+                        if ($map->our_field == "updated_at") {
+                            $row[] = $hospital->{$map->our_field} ? $hospital->{$map->our_field}->format('Ymd') : "";
                         } else {
-                            $row[] = $value;
+                            // Pull value from the hospitals table dynamically
+                            $value = $hospital->{$map->our_field} ?? '';
+                            // Force Excel to treat as text
+                            if (preg_match('/^0\d+$/', $value)) {
+                                $row[] = "\t" . $value;  // Excel sees it as text
+                            } else {
+                                $row[] = $value;
+                            }
                         }
                     } elseif (!empty($map->common_value)) {
                         $row[] = $map->common_value;

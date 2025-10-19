@@ -120,9 +120,9 @@ class SchoolReportController extends Controller
                         $r->prefilled_link,
                         $r->public_notes,
                         $r->internal_notes,
-                        $r->updated_at->format('M d, Y')
-                        // $r->prefilled_link,
-                        // $r->standing_order ? 'Yes' : 'No',
+                        $r->standing_order ? 'Yes' : 'No',
+                        $r->updated_at->format('Ymd')
+                        // $r->prefilled_link,                        
                         // $r->update_status ? 'Updated' : '—',
                     ];
                 })->toArray();
@@ -132,7 +132,7 @@ class SchoolReportController extends Controller
                     'ID','Organization','Contact','Email','Phone',
                     'Street','City','State','ZIP',
                     'Envelopes','Cards','Box Style','Dimensions','Empty Weight','Full Weight',
-                    'Volunteer','Prefilled Link','Notes from School','Internal Notes','Last Updated'
+                    'Volunteer','Prefilled Link','Notes from School','Internal Notes','Standing Order','Last Updated'
                 ];
             }
         };
@@ -176,7 +176,7 @@ class SchoolReportController extends Controller
             'ID','Organization','Contact','Email','Phone',
             'Street','City','State','ZIP',
             'Envelopes','Cards','Box Style','Dimensions','Empty Weight','Full Weight',
-            'Volunteer','Prefilled Link','Notes from School','Internal Notes','Last Updated'
+            'Volunteer','Prefilled Link','Notes from School','Internal Notes','Standing Order','Last Updated'
         ];
         foreach ($rows as $r) {
             $values[] = [
@@ -196,9 +196,9 @@ class SchoolReportController extends Controller
                 $r->prefilled_link,
                 $r->public_notes,
                 $r->internal_notes,
-                $r->updated_at->format('M d, Y')
-                // $r->prefilled_link,
-                // $r->standing_order ? 'Yes' : 'No',
+                $r->standing_order ? 'Yes' : 'No',
+                $r->updated_at->format('Ymd')
+                // $r->prefilled_link,                
                 // $r->update_status ? 'Updated' : '—',
             ];
         }

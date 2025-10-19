@@ -29,6 +29,7 @@ class Hospital extends Model
         'prefilled_link',
         'update_status',
         'updated_at',
+        'token'
     ];
 
     protected $casts = [

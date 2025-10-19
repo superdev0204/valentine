@@ -83,7 +83,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('school.update', $school->id) }}" method="POST">
+                    <form action="{{ route('school.update', $school->token) }}" method="POST">
                         @csrf
                         @method('PUT')
 

@@ -75,7 +75,7 @@
           <td></td>
           <td>
             <div class="d-flex flex-column">
-                <span class="fw-semibold">{{ $r->updated_at->format('M d, Y') }}</span>
+                <span class="fw-semibold">{{ $r->updated_at->format('Ymd') }}</span>
                 <small class="text-muted">{{ $r->updated_at->diffForHumans() }}</small>
             </div>
           </td> --}}

@@ -74,7 +74,12 @@ class SchoolController extends Controller
             $allData
         );
 
-        $school->prefilled_link = url('/school/' . $school->id . '/edit');
+        do {
+            $token = Str::random(8);
+        } while (School::where('token', $token)->exists());
+
+        $school->token = $token;
+        $school->prefilled_link = url('/school/' . $token . '/edit');
         $school->save();
         
         return redirect()->route('admin.schools')->with('success', 'School created successfully.');
@@ -117,8 +122,7 @@ class SchoolController extends Controller
         $school->fill($allData);
 
         // Add prefilled link
-        $school->prefilled_link = url('/school/' . $school->id . '/edit');
-
+        // $school->prefilled_link = url('/school/' . $school->id . '/edit');
         $school->save();
 
         return redirect()->route('admin.schools')->with('success', 'School updated successfully.');
@@ -167,7 +171,12 @@ class SchoolController extends Controller
                     $schoolData
                 );
 
-                $school->prefilled_link = url('/school/' . $school->id . '/edit');
+                do {
+                    $token = Str::random(8);
+                } while (School::where('token', $token)->exists());
+
+                $school->token = $token;
+                $school->prefilled_link = url('/school/' . $token . '/edit');
                 $school->save();
                 $imported++;
             }
@@ -317,6 +326,8 @@ class SchoolController extends Controller
                     if (!empty($map->our_field)) {
                         if ($map->our_field == "standing_order") {
                             $row[] = $school->{$map->our_field} ? "Yes" : "No";
+                        } elseif ($map->our_field == "updated_at") {
+                            $row[] = $school->{$map->our_field} ? $school->{$map->our_field}->format('Ymd') : "";
                         } else {
                             $value = $school->{$map->our_field} ?? '';
                             // Force Excel to treat as text
@@ -396,13 +407,17 @@ class SchoolController extends Controller
         
                 foreach ($mappings as $map) {
                     if (!empty($map->our_field)) {
-                        // Pull value from the schools table dynamically
-                        $value = $school->{$map->our_field} ?? '';
-                        // Force Excel to treat as text
-                        if (preg_match('/^0\d+$/', $value)) {
-                            $row[] = "\t" . $value;  // Excel sees it as text
-                        } else {
-                            $row[] = $value;
+                        if ($map->our_field == "updated_at") {
+                            $row[] = $school->{$map->our_field} ? $school->{$map->our_field}->format('Ymd') : "";
+                        } else{
+                            // Pull value from the schools table dynamically
+                            $value = $school->{$map->our_field} ?? '';
+                            // Force Excel to treat as text
+                            if (preg_match('/^0\d+$/', $value)) {
+                                $row[] = "\t" . $value;  // Excel sees it as text
+                            } else {
+                                $row[] = $value;
+                            }
                         }
                     } elseif (!empty($map->common_value)) {
                         $row[] = $map->common_value;

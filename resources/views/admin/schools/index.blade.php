@@ -205,11 +205,12 @@
                                                 <span class="text-muted">—</span>
                                             @endif
                                         </td>
-                                        <td>
+                                        <td style="max-width: 250px;">
                                             {{-- @if ($school->prefilled_link) --}}
-                                                <a href="{{ route('school.edit', $school->id) }}" target="_blank"
+                                                <a href="{{ route('school.edit', $school->token) }}" target="_blank"
                                                     class="text-decoration-none">
-                                                    <i class="bi bi-box-arrow-up-right me-1"></i>Open Form
+                                                    <!-- <i class="bi bi-box-arrow-up-right me-1"></i>Open Form -->
+                                                    {{ $school->prefilled_link }}
                                                 </a>
                                             {{-- @else
                                                 <span class="text-muted">—</span>
@@ -236,7 +237,7 @@
                                         <td>
                                             <div class="d-flex flex-column">
                                                 <span
-                                                    class="fw-semibold">{{ $school->updated_at->format('M d, Y') }}</span>
+                                                    class="fw-semibold">{{ $school->updated_at->format('Ymd') }}</span>
                                                 <small
                                                     class="text-muted">{{ $school->updated_at->diffForHumans() }}</small>
                                             </div>
