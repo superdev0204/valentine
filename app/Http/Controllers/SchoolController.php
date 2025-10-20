@@ -87,7 +87,7 @@ class SchoolController extends Controller
     public function update(Request $request, $token)
     {
         $school = School::where('token', $token)->firstOrFail();
-        
+
         $validated = $request->validate([
             'organization_name'   => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'contact_person_name' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
@@ -123,7 +123,8 @@ class SchoolController extends Controller
         $message = 'Thank you, so much!  We have updated our database with your information.  
                     We usually send out the boxes of envelopes in December and the deadline for you to call Fedex for pickup is January 31. 
                     The Teacher Instructions Card can be found here https://tinyurl.com/ValentineTeacherInstructions.  
-                    Any questions, just let us know.';
+                    Any questions, just let us know.
+                    We will send you ' . $school->envelope_quantity . ' envelopes.';
 
         $data = array(
             'from_name' => env('MAIL_FROM_NAME'),
