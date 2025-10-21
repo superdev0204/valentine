@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -40,5 +41,23 @@ class AdminController extends Controller
     {
         $user->delete();
         return redirect()->route('admin.users')->with('success', 'User deleted successfully.');
+    }
+
+    public function editPassword(User $user)
+    {
+        return view('admin.change_password', compact('user'));
+    }
+
+    public function updatePassword(Request $request, User $user)
+    {
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->route('admin.users')->with('success', 'Password updated successfully.');
     }
 }

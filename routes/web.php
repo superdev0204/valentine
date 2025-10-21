@@ -107,6 +107,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+    Route::get('/admin/users/{user}/password', [AdminController::class, 'editPassword'])->name('admin.users.password.edit');
+    Route::put('/admin/users/{user}/password', [AdminController::class, 'updatePassword'])->name('admin.users.password.update');
 
     // School Box Size Matrix routes
     Route::get('/admin/school-box-matrices', [BoxMatrixController::class, 'schoolBoxMatrixList'])->name('admin.school-box-matrices');

@@ -234,11 +234,11 @@
             <!-- Editable Last Updated -->
             <div class="card shadow-lg border-0 mb-4">
                 <div class="card-header bg-dark text-white py-3">
-                    <i class="bi bi-clock-history display-6 me-2"></i>
-                    <span class="fs-5 fw-bold">Last Updated</span>
+                    <i class="bi bi-info-circle display-6 me-2"></i>
+                    <span class="fs-5 fw-bold">Others</span>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row mb-4">
                         <div class="col-md-6">
                             <label for="updated_at" class="form-label fw-semibold">
                                 <i class="bi bi-calendar-date me-1 text-info"></i> Last Updated Date
@@ -249,11 +249,40 @@
                                 class="form-control @error('updated_at') is-invalid @enderror"
                                 value="{{ old('updated_at', $school->updated_at ? $school->updated_at->format('Y-m-d\TH:i') : '') }}">
                             @error('updated_at') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            <small class="text-muted">By default this is auto-managed, but you can override it manually.</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editLinkInput" class="form-label fw-semibold">
+                                <i class="bi bi-link-45deg me-1 text-success"></i> Prefilled Edit Link
+                            </label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" value="{{ $school->prefilled_link }}" readonly id="editLinkInput">
+                                <button type="button" class="btn btn-outline-success" onclick="copyToClipboard()">Copy</button>
+                            </div>
+                            <small class="text-muted">This link allows editing the school form directly with prefilled values.</small>
                         </div>
                     </div>
-                    <small class="text-muted">By default this is auto-managed, but you can override it manually.</small>
                 </div>
             </div>
+
+            <!-- Prefilled Edit Link -->
+            <!-- <div class="card shadow-lg border-0 mb-4">
+                <div class="card-header bg-success text-white py-3">
+                    <i class="bi bi-link-45deg display-6 me-2"></i>
+                    <span class="fs-5 fw-bold">Prefilled Edit Link</span>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="{{ $school->prefilled_link }}" readonly id="editLinkInput">
+                        <button type="button" class="btn btn-outline-success" onclick="copyToClipboard()">Copy</button>
+                    </div>
+                    <small class="text-muted">This link allows editing the school form directly with prefilled values.</small>
+                </div>
+            </div> -->
+
+            <script>
+                
+            </script>
 
             <div class="d-flex justify-content-between mb-5">
                 <a href="{{ route('admin.schools') }}" class="btn btn-secondary btn-lg">
@@ -277,5 +306,13 @@
     document.getElementById("phone").addEventListener("input", function() {
         this.value = this.value.replace(/\D/g, "").slice(0, 10);
     });
+
+    function copyToClipboard() {
+        const input = document.getElementById('editLinkInput');
+        input.select();
+        input.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        // alert('Link copied to clipboard!');
+    }
 </script>
 @endsection

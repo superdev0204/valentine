@@ -3,6 +3,11 @@
 @section('title', 'User Management')
 
 @section('content')
+@if(session('success'))
+    <div class="alert alert-success text-center mt-3">
+        {{ session('success') }}
+    </div>
+@endif
 <div class="row justify-content-center">
     <div class="col-12">
         <div class="card shadow-lg border-0">
@@ -95,6 +100,11 @@
                                             <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-outline-primary btn-sm" title="Edit User">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
+
+                                            <a href="{{ route('admin.users.password.edit', $user) }}" class="btn btn-outline-warning btn-sm" title="Change Password">
+                                                <i class="bi bi-key"></i>
+                                            </a>
+
                                             <form action="{{ route('admin.users.delete', $user) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.');">
                                                 @csrf
                                                 @method('DELETE')
