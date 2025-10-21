@@ -15,6 +15,7 @@ use Google\Client;
 use Google\Service\Sheets;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class SchoolController extends Controller
@@ -123,6 +124,12 @@ class SchoolController extends Controller
 
         // Add prefilled link
         // $school->prefilled_link = url('/school/' . $school->id . '/edit');
+        do {
+            $token = Str::random(8);
+        } while (School::where('token', $token)->exists());
+
+        $school->token = $token;
+        $school->prefilled_link = url('/school/' . $token . '/edit');
         $school->save();
 
         return redirect()->route('admin.schools')->with('success', 'School updated successfully.');

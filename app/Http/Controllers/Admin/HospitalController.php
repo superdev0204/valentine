@@ -13,6 +13,7 @@ use Google\Client;
 use Google\Service\Sheets;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class HospitalController extends Controller

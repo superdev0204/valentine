@@ -8,6 +8,7 @@ use App\Models\School;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use App\Mail\SendEmail;
 
 class SchoolController extends Controller
@@ -117,8 +118,7 @@ class SchoolController extends Controller
         $school->update($allData);
 
         // $school->prefilled_link = url('/school/' . $school->id . '/edit');
-        $school->save();
-
+        
         $subject = 'Valentine notification';
         $message = 'Thank you, so much!  We have updated our database with your information.  
                     We usually send out the boxes of envelopes in December and the deadline for you to call Fedex for pickup is January 31. 
