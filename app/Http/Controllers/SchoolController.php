@@ -120,11 +120,12 @@ class SchoolController extends Controller
         // $school->prefilled_link = url('/school/' . $school->id . '/edit');
         
         $subject = 'Valentine notification';
-        $message = 'Thank you, so much!  We have updated our database with your information.  
-                    We usually send out the boxes of envelopes in December and the deadline for you to call Fedex for pickup is January 31. 
-                    The Teacher Instructions Card can be found here https://tinyurl.com/ValentineTeacherInstructions.  
-                    Any questions, just let us know.
-                    We will send you ' . $school->envelope_quantity . ' envelopes.';
+        $message = 'Dear ' . ($school->how_to_address ? $school->how_to_address : 'Friend') . ', our database has been successfully';
+        // $message = 'Thank you, so much!  We have updated our database with your information.  
+        //             We usually send out the boxes of envelopes in December and the deadline for you to call Fedex for pickup is January 31. 
+        //             The Teacher Instructions Card can be found here https://tinyurl.com/ValentineTeacherInstructions.  
+        //             Any questions, just let us know.
+        //             We will send you ' . $school->envelope_quantity . ' envelopes.';
 
         $data = array(
             'from_name' => env('MAIL_FROM_NAME'),
