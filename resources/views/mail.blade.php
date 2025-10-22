@@ -23,14 +23,25 @@
                                 <td style="padding-right:30px;">Phone for Fedex Use:</td>
                                 <td><?php echo $data->phone;?></td>
                             </tr>
-                            <tr>
-                                <td style="padding-right:30px;">Quantity of Envelopes:</td>
-                                <td><?php echo $data->envelope_quantity;?></td>
-                            </tr>
-                            <tr>
-                                <td style="padding-right:30px;">Quantity of Teacher Instructions Cards:</td>
-                                <td><?php echo $data->instructions_cards;?></td>
-                            </tr>
+                            @if(isset($data->envelope_quantity))
+                                <tr>
+                                    <td style="padding-right:30px;">Quantity of Envelopes:</td>
+                                    <td><?php echo $data->envelope_quantity;?></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-right:30px;">Quantity of Teacher Instructions Cards:</td>
+                                    <td><?php echo $data->instructions_cards;?></td>
+                                </tr>
+                            @else
+                                <tr>
+                                    <td style="padding-right:30px;">Qty of Cards for Residents/Patients:</td>
+                                    <td><?php echo $data->valentine_card_count;?></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-right:30px;">Qty of Cards for staff (subject to availability):</td>
+                                    <td><?php echo $data->extra_staff_cards;?></td>
+                                </tr>
+                            @endif
                             <tr>
                                 <td style="padding-right:30px;">Standing Order:</td>
                                 <td><?php echo ($data->standing_order) ? "Yes" : "No";?></td>
