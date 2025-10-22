@@ -39,7 +39,7 @@ class SendEmail extends Mailable
     {
         return new Content(
             view: 'mail',
-            with: ['messages' => $this->data['message']],
+            with: ['message' => $this->data['message']],
         );
     }
 
