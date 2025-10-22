@@ -117,11 +117,11 @@ class HospitalController extends Controller
         $hospital->save();
 
         $subject = 'Valentine notification';
-        $message = 'Dear ' . ($hospital->how_to_address ? $hospital->how_to_address : 'Friend') . ', our database has been successfully';
-        // $message = 'Thank you, so much!  We have updated our database with your information.  
-        //             We usually send out the Valentines for arrival the first week of February.  
-        //             These cards are made by hand, felt by hearts.  
-        //             Any questions you may have, just let us know.';
+        // $message = 'Dear ' . ($hospital->how_to_address ? $hospital->how_to_address : 'Friend') . ', our database has been successfully';
+        $message = 'Thank you, so much!  We have updated our database with your information.  
+                    We usually send out the Valentines for arrival the first week of February.  
+                    These cards are made by hand, felt by hearts.  
+                    Any questions you may have, just let us know.';
 
         $data = array(
             'from_name' => env('MAIL_FROM_NAME'),
