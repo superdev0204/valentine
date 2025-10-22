@@ -50,9 +50,9 @@
                     </table>
                 </p>
                 <p>
-                    If you need to update any information, you can click HERE 
-                    <a href='<?php echo $data->prefilled_link;?>' style='font-family:Arial;color:rgb(58, 115, 119);white-space:nowrap'><?php echo $data->prefilled_link;?></a><br/>
-                    if your email system blocks the link, you can copy this link to your browser: {!! str_replace(['.', '/'], ['&#8203;.', '&#8203;/'], e($data->prefilled_link)) !!}
+                    If you need to update any information, you can click 
+                    <a href='<?php echo $data->prefilled_link;?>' style='font-family:Arial;color:rgb(58, 115, 119);white-space:nowrap'>HERE</a><br/>
+                    If your email system blocks the link, you can copy this link to your browser: {!! str_replace(['.', '/'], ['&#8203;.', '&#8203;/'], e($data->prefilled_link)) !!}
                 </p>
                 <p>Thank you.</p>
                 <p>Patrick</p>
