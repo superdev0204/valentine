@@ -9,39 +9,39 @@
         </tr>
         <tr>
             <td>
-                <p>Dear <?php echo ($message->how_to_address) ? $message->how_to_address : "Friend";?>, our database has been successfully updated to reflect this:</p>
+                <p>Dear <?php echo ($data->how_to_address) ? $data->how_to_address : "Friend";?>, our database has been successfully updated to reflect this:</p>
                 <p>
-                    <?php echo "$message->organization_name<br/>
-                    $message->street<br/>
-                    $message->city, $message->state $message->zip<br/>
-                    Attn: $message->contact_person_name <a href='mailto:$message->email' style='font-family:Arial;color:rgb(58, 115, 119);white-space:nowrap'>$message->email</a>";?>
+                    <?php echo "$data->organization_name<br/>
+                    $data->street<br/>
+                    $data->city, $data->state $data->zip<br/>
+                    Attn: $data->contact_person_name <a href='mailto:$data->email' style='font-family:Arial;color:rgb(58, 115, 119);white-space:nowrap'>$data->email</a>";?>
                 </p>
                 <p>
                     <table>
                         <tbody>
                             <tr>
                                 <td style="padding-right:30px;">Phone for Fedex Use:</td>
-                                <td><?php echo $message->phone;?></td>
+                                <td><?php echo $data->phone;?></td>
                             </tr>
                             <tr>
                                 <td style="padding-right:30px;">Quantity of Envelopes:</td>
-                                <td><?php echo $message->envelope_quantity;?></td>
+                                <td><?php echo $data->envelope_quantity;?></td>
                             </tr>
                             <tr>
                                 <td style="padding-right:30px;">Quantity of Teacher Instructions Cards:</td>
-                                <td><?php echo $message->instructions_cards;?></td>
+                                <td><?php echo $data->instructions_cards;?></td>
                             </tr>
                             <tr>
                                 <td style="padding-right:30px;">Standing Order:</td>
-                                <td><?php echo ($message->standing_order) ? "Yes" : "No";?></td>
+                                <td><?php echo ($data->standing_order) ? "Yes" : "No";?></td>
                             </tr>
                         </tbody>                        
                     </table>
                 </p>
                 <p>
                     If you need to update any information, you can click HERE 
-                    <a href='<?php echo $message->prefilled_link;?>' style='font-family:Arial;color:rgb(58, 115, 119);white-space:nowrap'><?php echo $message->prefilled_link;?></a><br/>
-                    if your email system blocks the link, you can copy this link to your browser: <?php echo $message->prefilled_link;?>
+                    <a href='<?php echo $data->prefilled_link;?>' style='font-family:Arial;color:rgb(58, 115, 119);white-space:nowrap'><?php echo $data->prefilled_link;?></a><br/>
+                    if your email system blocks the link, you can copy this link to your browser: <?php echo $data->prefilled_link;?>
                 </p>
                 <p>Thank you.</p>
                 <p>Patrick</p>
