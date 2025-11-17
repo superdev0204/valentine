@@ -43,6 +43,9 @@ class HospitalReportController extends Controller
         if ($standing = $request->get('standing_order')) {
             $q->where('hospitals.standing_order', $standing === 'yes');
         }
+        if ($update_status = $request->get('update_status')) {
+            $q->where('hospitals.update_status', $update_status === 'update');
+        }
 
         return $q->orderBy('reference');
     }
@@ -55,7 +58,7 @@ class HospitalReportController extends Controller
                 // ->with('volunteer')
                 ->select([
                     'hospitals.id','hospitals.organization_name','hospitals.contact_person_name','hospitals.how_to_address',
-                    'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.state','hospitals.zip',
+                    'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.county','hospitals.state','hospitals.zip',
                     'hospitals.valentine_card_count','hospitals.extra_staff_cards','hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status','hospitals.updated_at',
                     'hospitals.public_notes','hospitals.internal_notes','hospitals.contact_title',
                     'hb.box_style','hb.length','hb.width','hb.height','hb.empty_weight','hb.full_weight',
@@ -78,7 +81,7 @@ class HospitalReportController extends Controller
             // ->with('volunteer')
             ->select([
                 'hospitals.id','hospitals.organization_name','hospitals.contact_person_name','hospitals.how_to_address',
-                'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.state','hospitals.zip',
+                'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.county','hospitals.state','hospitals.zip',
                 'hospitals.valentine_card_count','hospitals.extra_staff_cards','hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status','hospitals.updated_at',
                 'hospitals.public_notes','hospitals.internal_notes','hospitals.contact_title',
                 'hb.box_style','hb.length','hb.width','hb.height','hb.empty_weight','hb.full_weight',
@@ -103,8 +106,9 @@ class HospitalReportController extends Controller
                         $r->organization_name,
                         $r->contact_person_name,
                         $r->email,
+                        $r->how_to_address,
                         $r->phone,
-                        $r->street, $r->city, $r->state, $r->zip,
+                        $r->street, $r->city, $r->county, $r->state, $r->zip,
                         $r->valentine_card_count,
                         $r->extra_staff_cards,
                         ($r->valentine_card_count + $r->extra_staff_cards),
@@ -116,6 +120,7 @@ class HospitalReportController extends Controller
                         $r->public_notes,
                         $r->internal_notes,
                         $r->standing_order ? 'Yes' : 'No',
+                        $r->update_status ? 'Update' : 'New',
                         $r->updated_at->format('Ymd')
                         // $r->prefilled_link,                        
                         // $r->update_status ? 'Updated' : '—',
@@ -125,9 +130,9 @@ class HospitalReportController extends Controller
             public function headings(): array {
                 return [
                     'ID','Organization','Contact','Email','Phone',
-                    'Street','City','State','ZIP',
+                    'Street','City','County','State','ZIP',
                     'Valentine Cards','Staff Cards','Total Cards','Box Style','Dimensions','Empty Box','Full Weight',
-                    'Prefilled Link','Notes from Hosp/Organization','Internal Notes','Standing Order','Last Updated'
+                    'Prefilled Link','Notes from Hosp/Organization','Internal Notes','Standing Order','New/Update','Last Updated'
                 ];
             }
         };
@@ -151,7 +156,7 @@ class HospitalReportController extends Controller
             // ->with('volunteer')
             ->select([
                 'hospitals.id','hospitals.organization_name','hospitals.contact_person_name','hospitals.how_to_address',
-                'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.state','hospitals.zip',
+                'hospitals.email','hospitals.phone','hospitals.street','hospitals.city','hospitals.county','hospitals.state','hospitals.zip',
                 'hospitals.valentine_card_count','hospitals.extra_staff_cards','hospitals.prefilled_link','hospitals.standing_order','hospitals.update_status','hospitals.updated_at',
                 'hospitals.public_notes','hospitals.internal_notes','hospitals.contact_title',
                 'hb.box_style','hb.length','hb.width','hb.height','hb.empty_weight','hb.full_weight',
@@ -172,7 +177,7 @@ class HospitalReportController extends Controller
         $values = [];
         $values[] = [
             'ID','Organization','Contact','Email','Phone',
-            'Street','City','State','ZIP',
+            'Street','City','County','State','ZIP',
             'Valentine Cards','Staff Cards','Total Cards','Box Style','Dimensions','Empty B','Full_weight',
             'Prefilled Link','Notes from Hosp/Organization','Internal Notes','Standing Order','Last Updated'
         ];
@@ -183,7 +188,7 @@ class HospitalReportController extends Controller
                 $r->contact_person_name,
                 $r->email,
                 $r->phone,
-                $r->street, $r->city, $r->state, $r->zip,
+                $r->street, $r->city, $r->county, $r->state, $r->zip,
                 $r->valentine_card_count,
                 $r->extra_staff_cards,
                 ($r->valentine_card_count + $r->extra_staff_cards),

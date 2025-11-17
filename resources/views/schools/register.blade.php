@@ -188,6 +188,17 @@
                         </div>
 
                         <div class="form-section">
+                            <label for="county" class="form-label">County</label>
+                            <input type="text" 
+                                class="form-control @error('county') is-invalid @enderror" 
+                                id="county" name="county" value="{{ old('county') }}" maxlength="35" pattern="[A-Za-z0-9 .-]+" placeholder="e.g., Mont">
+                            @error('county')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+
+                        <div class="form-section">
                             <label for="state" class="form-label">State/District <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('state') is-invalid @enderror" 
                                    id="state" name="state" value="{{ old('state') }}" pattern="[A-Za-z]{2}" placeholder="CA" maxlength="2">

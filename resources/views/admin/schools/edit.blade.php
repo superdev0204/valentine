@@ -101,7 +101,7 @@
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="city" class="form-label fw-semibold">
                                 <i class="bi bi-geo-alt me-1 text-primary"></i> City
                             </label>
@@ -110,7 +110,16 @@
                                    maxlength="35" pattern="[A-Za-z0-9 .-]+">
                             @error('city') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <label for="county" class="form-label fw-semibold">
+                                <i class="bi bi-geo me-1"></i> County
+                            </label>
+                            <input type="text" class="form-control @error('county') is-invalid @enderror"
+                                   id="county" name="county" value="{{ old('county', $school->county) }}" 
+                                   maxlength="35" pattern="[A-Za-z0-9 .-]+">
+                            @error('county') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-3">
                             <label for="state" class="form-label fw-semibold">
                                 <i class="bi bi-map me-1 text-secondary"></i> State
                             </label>
@@ -119,7 +128,7 @@
                                    pattern="[A-Za-z]{2}" maxlength="2">
                             @error('state') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="zip" class="form-label fw-semibold">
                                 <i class="bi bi-mailbox me-1 text-danger"></i> ZIP Code
                             </label>

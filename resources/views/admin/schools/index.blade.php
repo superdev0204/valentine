@@ -116,6 +116,9 @@
                                     <th scope="col" class="text-center" style="min-width: 200px;">
                                         <i class="bi bi-toggle-on me-1"></i>Status
                                     </th>
+                                    <th scope="col" style="min-width: 150px;">
+                                        <i class="bi bi-flag me-1"></i>New/Update
+                                    </th>
                                     <th scope="col" style="min-width: 200px;">
                                         <i class="bi bi-clock-history me-1"></i>Last Updated
                                     </th>
@@ -158,8 +161,11 @@
                                         <td>
                                             <div class="d-flex flex-column">
                                                 <small class="text-muted">{{ $school->street }}</small>
-                                                <small class="text-muted">{{ $school->city }}, {{ $school->state }}
-                                                    {{ $school->zip }}</small>
+                                                <small class="text-muted">
+                                                    {{ $school->city }}
+                                                    {{ $school->county ? ', ' . $school->county . ' County' : '' }},
+                                                    {{ $school->state }} {{ $school->zip }}
+                                                </small>
                                             </div>
                                         </td>
                                         <td class="text-center">
@@ -227,10 +233,14 @@
                                                         <i class="bi bi-x-circle me-1"></i>No Standing Order
                                                     </span>
                                                 @endif
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex flex-column align-items-center">
                                                 @if ($school->update_status)
-                                                    <span class="badge bg-warning text-dark mt-1">
-                                                        <i class="bi bi-envelope-check me-1"></i>Updated
-                                                    </span>
+                                                    <span>Update</span>
+                                                @else
+                                                    <span>New</span>
                                                 @endif
                                             </div>
                                         </td>
@@ -275,6 +285,7 @@
                                                 </a>
                                             </div>
                                         </td>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
@@ -406,7 +417,7 @@
                             <label class="form-label">State</label>
                             <input type="text" name="state" class="form-control" placeholder="CA">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label class="form-label">School Name</label>
                             <input type="text" name="name" class="form-control" placeholder="Search name">
                         </div>
@@ -418,12 +429,20 @@
                             <label class="form-label">Max Envelopes</label>
                             <input type="number" name="max_envelopes" class="form-control" min="0">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label class="form-label">Standing Order</label>
                             <select name="standing_order" class="form-select">
                                 <option value="">Any</option>
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">New/Update</label>
+                            <select name="update_status" class="form-select">
+                                <option value="">Any</option>
+                                <option value="new">New</option>
+                                <option value="update">Updated</option>
                             </select>
                         </div>
                     </form>
@@ -468,9 +487,9 @@
                                 <th style="min-width: 200px;">Prefilled Link</th>
                                 <th style="min-width: 200px;">Notes from School</th>
                                 <th style="min-width: 200px;">Internal Notes</th>
+                                <th style="min-width: 100px;">New/Update</th>
                                 <th style="min-width: 100px;">Last Updated</th>
-                                {{-- <th>Standing</th>
-                <th>Updated</th> --}}
+                                {{-- <th>Standing</th> --}}
                             </tr>
                         </thead>
                     </table>
@@ -605,6 +624,12 @@
                     },
                     { data: 'public_notes' },
                     { data: 'internal_notes' },
+                    {
+                        data: 'update_status',
+                        render: function (data) {
+                            return (!data) ? 'New' : 'Update';
+                        }
+                    },
                     {
                         data: 'updated_at',
                         render: function (data) {

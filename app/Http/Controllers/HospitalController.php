@@ -30,6 +30,7 @@ class HospitalController extends Controller
             'extra_staff_cards'     => 'nullable|integer|min:0',
             'street'                => 'required|string|max:255',
             'city'                  => 'required|string|max:255',
+            'county'                => ['nullable', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'state'                 => 'required|string|max:255',
             'zip'                   => 'required|string|max:20',
             'phone'                 => 'required|string|max:20',
@@ -40,6 +41,9 @@ class HospitalController extends Controller
 
         // Ensure standing_order is boolean
         $validated['standing_order'] = $request->has('standing_order');
+
+        // Mark the hospital as updated
+        $validated['update_status'] = true;
 
         // Merge the full form data (request->all) with validated data
         $allData = array_merge($request->all(), $validated);
@@ -85,19 +89,20 @@ class HospitalController extends Controller
         $hospital = Hospital::where('token', $token)->firstOrFail();
 
         $validated = $request->validate([
-            'organization_name' => 'required|string|max:255',
-            'organization_type' => 'required|string|max:255',
-            'contact_person_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'valentine_card_count' => 'required|integer|min:0',
-            'extra_staff_cards'  => 'nullable|integer|min:0',
-            'street' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:20',
-            'zip' => 'required|string|max:20',
-            'phone' => 'required|string|max:255',
-            'standing_order' => 'boolean',
-            'public_notes'            => 'nullable|string',
+            'organization_name'     => 'required|string|max:255',
+            'organization_type'     => 'required|string|max:255',
+            'contact_person_name'   => 'required|string|max:255',
+            'email'                 => 'required|email|max:255',
+            'valentine_card_count'  => 'required|integer|min:0',
+            'extra_staff_cards'     => 'nullable|integer|min:0',
+            'street'                => 'required|string|max:255',
+            'city'                  => 'required|string|max:255',
+            'county'                => ['nullable', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'state'                 => 'required|string|max:20',
+            'zip'                   => 'required|string|max:20',
+            'phone'                 => 'required|string|max:255',
+            'standing_order'        => 'boolean',
+            'public_notes'          => 'nullable|string',
             // 'internal_notes'          => 'nullable|string',
         ]);
 

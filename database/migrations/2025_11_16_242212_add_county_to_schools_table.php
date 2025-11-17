@@ -13,18 +13,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('schools', function (Blueprint $table) {
-            $table->string('token')->unique()->nullable()->after('id'); // nullable for now
+            $table->string('county')->nullable()->after('city');
         });
 
+        // Generate tokens for existing records
         $schools = \App\Models\School::all();
 
         foreach ($schools as $school) {
-            do {
-                $token = Str::random(8);
-            } while (\App\Models\School::where('token', $token)->exists());
-
-            $school->token = $token;
-            $school->prefilled_link = url('/school/' . $token . '/edit');
+            $school->timestamps = false;
+            $school->update_status = 1;
             $school->save();
         }
     }

@@ -19,6 +19,7 @@ class School extends Model
         'instructions_cards',
         'street',
         'city',
+        'county',
         'state',
         'zip',
         'phone',

@@ -36,6 +36,7 @@
         <th>Empty Weight</th>
         <th>Full Weight</th>
         <th>Standing Order</th>
+        <th>New/Update</th>
         {{-- <th>Volunteer</th>
         <th>Prefilled Link</th>
         <th>Notes from School</th>
@@ -49,10 +50,14 @@
           <td>{{ $r->id }}</td>
           <td class="org">{{ $r->organization_name }}</td>
           <td class="contact">
-            {{ $r->contact_person_name }}<br>{{ $r->email }}<br>{{ $r->phone }}
+            {{ $r->contact_person_name }}<br>{{ $r->how_to_address }}<br>{{ $r->email }}<br>{{ $r->phone }}
           </td>
           <td class="address">
-            {{ $r->street }}, {{ $r->city }}, {{ $r->state }} {{ $r->zip }}
+              {{ $r->street }}, {{ $r->city }}
+              @if($r->county)
+                  , {{ $r->county }}
+              @endif
+              , {{ $r->state }} {{ $r->zip }}
           </td>
           <td>{{ $r->envelope_quantity }}</td>
           <td>{{ $r->instructions_cards }}</td>
@@ -60,6 +65,7 @@
           <td>{{ $r->empty_weight }}</td>
           <td>{{ $r->full_weight }}</td>
           <td>{{ $r->standing_order ? 'Yes' : 'No' }}</td>
+          <td>{{ $r->update_status ? 'Update' : 'New' }}</td>
           {{-- <td>
             @if ($r->volunteer_name)
                 <div class="d-flex flex-column">

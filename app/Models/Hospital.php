@@ -20,6 +20,7 @@ class Hospital extends Model
         'extra_staff_cards',
         'street',
         'city',
+        'county',
         'state',
         'zip',
         'phone',

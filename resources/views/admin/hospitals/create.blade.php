@@ -94,7 +94,7 @@
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="city" class="form-label fw-semibold">
                                 <i class="bi bi-building me-1"></i>City
                             </label>
@@ -103,7 +103,18 @@
                                    maxlength="35" pattern="[A-Za-z0-9 .-]+" placeholder="City">
                             @error('city')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <label for="county" class="form-label fw-semibold">
+                                <i class="bi bi-geo me-1"></i> County
+                            </label>
+                            <input type="text" class="form-control @error('county') is-invalid @enderror" 
+                                   id="county" name="county" value="{{ old('county') }}" 
+                                   maxlength="35" pattern="[A-Za-z0-9 .-]+" placeholder="e.g., Mont">
+                            @error('county')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-3">
                             <label for="state" class="form-label fw-semibold">
                                 <i class="bi bi-map me-1"></i>State
                             </label>
@@ -112,7 +123,7 @@
                                    pattern="[A-Za-z]{2}" placeholder="CA" maxlength="2">
                             @error('state')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="zip" class="form-label fw-semibold">
                                 <i class="bi bi-pin-map me-1"></i>ZIP Code
                             </label>

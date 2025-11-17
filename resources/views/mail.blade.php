@@ -11,10 +11,14 @@
             <td>
                 <p>Dear <?php echo ($data->how_to_address) ? $data->how_to_address : "Friend";?>, our database has been successfully updated to reflect this:</p>
                 <p>
-                    <?php echo "$data->organization_name<br/>
-                    $data->street<br/>
-                    $data->city, $data->state $data->zip<br/>
-                    Attn: $data->contact_person_name <a href='mailto:$data->email' style='font-family:Arial;color:rgb(58, 115, 119);white-space:nowrap'>$data->email</a>";?>
+                    <?php
+                    echo $data->organization_name . "<br/>"
+                        . $data->street . "<br/>"
+                        . $data->city
+                        . (!empty($data->county) ? ", {$data->county} County" : "")
+                        . ", {$data->state} {$data->zip}<br/>"
+                        . "Attn: {$data->contact_person_name} <a href='mailto:{$data->email}' style='font-family:Arial;color:rgb(58, 115, 119);white-space:nowrap'>{$data->email}</a>";
+                    ?>
                 </p>
                 <p>
                     <table>

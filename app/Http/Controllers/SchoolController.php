@@ -23,12 +23,13 @@ class SchoolController extends Controller
         $validated = $request->validate([
             'organization_name'   => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'contact_person_name' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
-            'email'               => 'required|email|max:255',
+            'email'               => 'required|email|max:255|unique:schools,email',
             'how_to_address'      => 'required|string|max:255',
             'envelope_quantity'   => 'required|integer|min:0',
             'instructions_cards'  => 'nullable|integer|min:0',
             'street'              => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'city'                => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'county'              => ['nullable', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'state'               => ['required', 'size:2', 'alpha'],
             'zip'                 => 'required|string|max:20',
             'phone'               => ['required', 'digits:10'],
@@ -59,6 +60,8 @@ class SchoolController extends Controller
         $school->prefilled_link = url('/school/' . $token . '/edit');
         $school->save();
 
+        $school->full_greeting = ($school->how_to_address ? $school->how_to_address : "Friend") . ", our database has been successfully updated to reflect this:";
+
         $subject = 'Valentine notification';
         $message = $school;
 
@@ -71,9 +74,12 @@ class SchoolController extends Controller
 
         Mail::to($school->email)->send(new SendEmail($data));
 
-        return redirect()
-            ->back()
-            ->with('success', 'Thank you for registering! We will contact you soon.');
+        return redirect()->route('school.edit', $school->token)
+        // return redirect()
+        //     ->back()
+            ->with('success', 'Success! You have completed the registration process. 
+                    We will contact you when we are about to send you the envelopes. 
+                    Feel free to correct anything below, but remember to click “Submit” again at the end.');
     }
 
     public function edit($token)
@@ -95,6 +101,7 @@ class SchoolController extends Controller
             'instructions_cards'  => 'nullable|integer|min:0',
             'street'              => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'city'                => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'county'              => ['nullable', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
             'state'               => ['required', 'size:2', 'alpha'],
             'zip'                 => 'required|string|max:20',
             'phone'               => ['required', 'digits:10'],

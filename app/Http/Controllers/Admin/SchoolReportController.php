@@ -46,6 +46,9 @@ class SchoolReportController extends Controller
         if ($standing = $request->get('standing_order')) {
             $q->where('schools.standing_order', $standing === 'yes');
         }
+        if ($update_status = $request->get('update_status')) {
+            $q->where('schools.update_status', $update_status === 'update');
+        }
 
         return $q->orderBy('reference');
     }
@@ -58,7 +61,7 @@ class SchoolReportController extends Controller
                 ->with('volunteer')
                 ->select([
                     'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
-                    'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
+                    'schools.email','schools.phone','schools.street','schools.city','schools.county','schools.state','schools.zip',
                     'schools.envelope_quantity','schools.instructions_cards','schools.prefilled_link','schools.standing_order','schools.update_status','schools.updated_at',
                     'schools.public_notes','schools.internal_notes','schools.contact_title',
                     'sb.box_style','sb.length','sb.width','sb.height','sb.empty_weight','sb.full_weight',
@@ -82,7 +85,7 @@ class SchoolReportController extends Controller
             ->with('volunteer')
             ->select([
                 'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
-                'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
+                'schools.email','schools.phone','schools.street','schools.city','schools.county','schools.state','schools.zip',
                 'schools.envelope_quantity','schools.instructions_cards','schools.prefilled_link','schools.standing_order','schools.update_status','schools.updated_at',
                 'schools.public_notes','schools.internal_notes','schools.contact_title',
                 'sb.box_style','sb.length','sb.width','sb.height','sb.empty_weight','sb.full_weight',
@@ -108,8 +111,9 @@ class SchoolReportController extends Controller
                         $r->organization_name,
                         $r->contact_person_name,
                         $r->email,
+                        $r->how_to_address,
                         $r->phone,
-                        $r->street, $r->city, $r->state, $r->zip,
+                        $r->street, $r->city, $r->county, $r->state, $r->zip,
                         $r->envelope_quantity,
                         $r->instructions_cards,
                         $r->box_style,
@@ -121,6 +125,7 @@ class SchoolReportController extends Controller
                         $r->public_notes,
                         $r->internal_notes,
                         $r->standing_order ? 'Yes' : 'No',
+                        $r->update_status ? 'Update' : 'New',
                         $r->updated_at->format('Ymd')
                         // $r->prefilled_link,                        
                         // $r->update_status ? 'Updated' : '—',
@@ -129,10 +134,10 @@ class SchoolReportController extends Controller
             }
             public function headings(): array {
                 return [
-                    'ID','Organization','Contact','Email','Phone',
-                    'Street','City','State','ZIP',
+                    'ID','Organization','Contact','Email','Dear Whom','Phone',
+                    'Street','City','County','State','ZIP',
                     'Envelopes','Cards','Box Style','Dimensions','Empty Weight','Full Weight',
-                    'Volunteer','Prefilled Link','Notes from School','Internal Notes','Standing Order','Last Updated'
+                    'Volunteer','Prefilled Link','Notes from School','Internal Notes','Standing Order','New/Update','Last Updated'
                 ];
             }
         };
@@ -154,7 +159,7 @@ class SchoolReportController extends Controller
 
         $rows = $this->baseQuery($request)->select([
             'schools.id','schools.organization_name','schools.contact_person_name','schools.how_to_address',
-            'schools.email','schools.phone','schools.street','schools.city','schools.state','schools.zip',
+            'schools.email','schools.phone','schools.street','schools.city','schools.county','schools.state','schools.zip',
             'schools.envelope_quantity','schools.instructions_cards','schools.prefilled_link','schools.standing_order','schools.update_status','schools.updated_at',
             'schools.public_notes','schools.internal_notes','schools.contact_title',
             'sb.box_style','sb.length','sb.width','sb.height','sb.empty_weight','sb.full_weight',
@@ -173,10 +178,10 @@ class SchoolReportController extends Controller
 
         $values = [];
         $values[] = [
-            'ID','Organization','Contact','Email','Phone',
-            'Street','City','State','ZIP',
+            'ID','Organization','Contact','Email','Dear Whom','Phone',
+            'Street','City','County','State','ZIP',
             'Envelopes','Cards','Box Style','Dimensions','Empty Weight','Full Weight',
-            'Volunteer','Prefilled Link','Notes from School','Internal Notes','Standing Order','Last Updated'
+            'Volunteer','Prefilled Link','Notes from School','Internal Notes','Standing Order','New/Update','Last Updated'
         ];
         foreach ($rows as $r) {
             $values[] = [
@@ -184,6 +189,7 @@ class SchoolReportController extends Controller
                 $r->organization_name,
                 $r->contact_person_name,
                 $r->email,
+                $r->how_to_address,
                 $r->phone,
                 $r->street, $r->city, $r->state, $r->zip,
                 $r->envelope_quantity,
@@ -197,6 +203,7 @@ class SchoolReportController extends Controller
                 $r->public_notes,
                 $r->internal_notes,
                 $r->standing_order ? 'Yes' : 'No',
+                $r->update_status ? 'Update' : 'New',
                 $r->updated_at->format('Ymd')
                 // $r->prefilled_link,                
                 // $r->update_status ? 'Updated' : '—',
