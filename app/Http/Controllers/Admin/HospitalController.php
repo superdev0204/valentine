@@ -50,17 +50,17 @@ class HospitalController extends Controller
     public function storeHospital(Request $request)
     {
         $validated = $request->validate([
-            'organization_name' => 'required|string|max:255',
-            'organization_type' => 'required|string|max:255',
-            'contact_person_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'valentine_card_count' => 'required|integer|min:0',
-            'street' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:20',
-            'zip' => 'required|string|max:20',
-            'phone' => 'required|string|max:255',
-            'standing_order' => 'boolean',
+            'organization_name'     => 'required|string|max:255',
+            'organization_type'     => 'required|string|max:255',
+            'contact_person_name'   => 'required|string|max:255',
+            'email'                 => 'required|email|max:255|unique:hospitals,email',
+            'valentine_card_count'  => 'required|integer|min:0',
+            'street'                => 'required|string|max:255',
+            'city'                  => 'required|string|max:255',
+            'state'                 => 'required|string|max:20',
+            'zip'                   => 'required|string|max:20',
+            'phone'                 => 'required|string|max:255',
+            'standing_order'        => 'boolean',
             // 'prefilled_link' => 'nullable|string',
         ]);
 
@@ -114,6 +114,10 @@ class HospitalController extends Controller
         }
         else{
             $validated['updated_at'] = Carbon::createFromFormat('Y-m-d\TH:i', $validated['updated_at']);
+        }
+
+        if($hospital->email != $request->email){
+            $request->validate(['email' => 'required|email|max:255|unique:hospitals,email']);
         }
 
         // Merge the full form data (request->all) with validated data

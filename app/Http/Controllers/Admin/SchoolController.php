@@ -52,16 +52,16 @@ class SchoolController extends Controller
     public function storeSchool(Request $request)
     {
         $validated = $request->validate([
-            'organization_name' => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
-            'contact_person_name' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
-            'email' => 'required|email|max:255',
-            'envelope_quantity' => 'required|integer|min:0',
-            'street' => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
-            'city' => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
-            'state' => ['required', 'size:2', 'alpha'],
-            'zip' => 'required|string|max:20',
-            'phone' => ['required', 'digits:10'],
-            'standing_order' => 'boolean',
+            'organization_name'     => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'contact_person_name'   => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'email'                 => 'required|email|max:255|unique:schools,email',
+            'envelope_quantity'     => 'required|integer|min:0',
+            'street'                => ['required', 'max:30', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'city'                  => ['required', 'max:35', 'regex:/^[A-Za-z0-9 .-]+$/'],
+            'state'                 => ['required', 'size:2', 'alpha'],
+            'zip'                   => 'required|string|max:20',
+            'phone'                 => ['required', 'digits:10'],
+            'standing_order'        => 'boolean',
         ]);
 
         // Ensure standing_order is boolean
@@ -114,6 +114,10 @@ class SchoolController extends Controller
         }
         else{
             $validated['updated_at'] = Carbon::createFromFormat('Y-m-d\TH:i', $validated['updated_at']);
+        }
+
+        if($school->email != $request->email){
+            $request->validate(['email' => 'required|email|max:255|unique:schools,email']);
         }
 
         // Merge the full form data (request->all) with validated data

@@ -41,9 +41,6 @@ class SchoolController extends Controller
         // Ensure standing_order is boolean
         $validated['standing_order'] = $request->has('standing_order');
 
-        // Mark the school as updated
-        $validated['update_status'] = true;
-
         // Merge the full form data (request->all) with validated data
         $allData = array_merge($request->all(), $validated);
 
@@ -115,6 +112,10 @@ class SchoolController extends Controller
 
         // Mark the school as updated
         $validated['update_status'] = true;
+
+        if($school->email != $request->email){
+            $request->validate(['email' => 'required|email|max:255|unique:schools,email']);
+        }
         
         // Merge the full form data (request->all) with validated data
         $allData = array_merge($request->all(), $validated);
@@ -133,7 +134,7 @@ class SchoolController extends Controller
             'message' => $message,
         );
 
-        Mail::to($school->email)->send(new SendEmail($data));
+        // Mail::to($school->email)->send(new SendEmail($data));
         
         return redirect()
             ->back()

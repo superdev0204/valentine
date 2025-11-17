@@ -24,7 +24,7 @@ class HospitalController extends Controller
             'organization_name'     => 'required|string|max:255',
             'organization_type'     => 'required|string|max:255',
             'contact_person_name'   => 'required|string|max:255',
-            'email'                 => 'required|email|max:255',
+            'email'                 => 'required|email|max:255|unique:hospitals,email',
             'how_to_address'        => 'required|string|max:255',
             'valentine_card_count'  => 'required|integer|min:0',
             'extra_staff_cards'     => 'nullable|integer|min:0',
@@ -41,9 +41,6 @@ class HospitalController extends Controller
 
         // Ensure standing_order is boolean
         $validated['standing_order'] = $request->has('standing_order');
-
-        // Mark the hospital as updated
-        $validated['update_status'] = true;
 
         // Merge the full form data (request->all) with validated data
         $allData = array_merge($request->all(), $validated);
@@ -111,6 +108,10 @@ class HospitalController extends Controller
 
         // Mark the school as updated
         $validated['update_status'] = true;
+
+        if($hospital->email != $request->email){
+            $request->validate(['email' => 'required|email|max:255|unique:hospitals,email']);
+        }
 
         // Merge the full form data (request->all) with validated data
         $allData = array_merge($request->all(), $validated);
