@@ -5,7 +5,7 @@
 @section('content')
 @if(session('success'))
     <div class="alert alert-success text-center mt-3">
-        {{ session('success') }}
+        {!! session('success') !!}
     </div>
 @endif
 <div class="row justify-content-center">

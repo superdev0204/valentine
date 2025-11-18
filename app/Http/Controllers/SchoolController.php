@@ -204,7 +204,7 @@ class SchoolController extends Controller
             'message' => $message,
         );
 
-        // Mail::to($school->email)->send(new SendEmail($data));
+        Mail::to($school->email)->send(new SendEmail($data));
         
         return redirect()
             ->back()
