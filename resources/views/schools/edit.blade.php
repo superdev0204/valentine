@@ -59,12 +59,15 @@
 
                 <!-- Body -->
                 <div class="form-body">
-                    <div class="form-title">School Order Confirmation</div>
+                    <div class="form-title">School and Group Update Form</div>
                     <div class="form-desc">
-                        <p><strong>Valentines By Kids would like you to confirm how many envelopes you would like for the children to insert Valentine's Day cards.</strong></p>
-                        <p><strong>Please scroll down and confirm that we have the correct quantity to send to you, delivery information, etc.</strong></p>
-                        <p><strong>Don't forget to click "SUBMIT" at the bottom to make sure you get on our delivery list.</strong></p>
-                        <p><strong>Please reply soon.  This is the time for Advance Registration and we open it up to all schools in a week.  You have "first dibs" to participate (our funding will limit the number of schools we can bring on).</strong></p>
+                        @if( $isSchoolPaused )
+                            <p><strong>You may update the information below. <br>
+                                Remember to click “Submit” at the end. Thank you for participating with Valentines By Kids!</strong></p>
+                        @else
+                            <p><strong>You may update the information below. Remember to click “Submit” at the end. <br>
+                            Thank you for participating with Valentines By Kids!</strong></p>
+                        @endif
                     </div>
 
                     @if(session('success'))

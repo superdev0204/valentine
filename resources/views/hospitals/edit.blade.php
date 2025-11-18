@@ -59,10 +59,16 @@
 
                 <!-- Body -->
                 <div class="form-body">
-                    <div class="form-title">Hospital/Facility Order Confirmation</div>
+                    <div class="form-title">Hospital and Facility Update Form</div>
                     <div class="form-desc">
-                        <p><strong>Valentines By Kids will be sending you the Valentine's Day cards you requested.  Kindly scroll down to review that we have the correct quantity, delivery address, etc.  Don't forget to click "confirm" at the bottom to make sure you get on our delivery list.  Thank you!</strong></p>
-                        <p>This is where you either confirm or update your delivery information.<br>Please check all the data below and confirm.</p>
+                        @if( $isHospitalPaused )
+                            <p><strong>You may update the information below. 
+                                Remember to click “Submit” at the end. 
+                                Thank you for participating with Valentines By Kids!</strong></p>
+                        @else
+                            <p><strong>You may update the information below. Remember to click “Submit” at the end. 
+                                Thank you for participating with Valentines By Kids!</strong></p>
+                        @endif
                     </div>
 
                     @if(session('success'))

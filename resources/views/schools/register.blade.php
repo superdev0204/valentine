@@ -48,7 +48,7 @@
             <!-- Logo -->
             <div class="text-center mb-4">
                 <h1 class="fw-bold text-danger" style="font-family: 'Pacifico', cursive; font-size: 3rem;">
-                    Valentines By Kids
+                    Valentines By Kids{{ $isSchoolPaused }}
                 </h1>
             </div>
 
@@ -61,11 +61,21 @@
                 <div class="form-body">
                     <div class="form-title">School and Group Sign-Up Form</div>
                     <div class="form-desc">
-                        <strong>You have found the place to sign up your school or organization to participate in Valentines By Kids for 2026. 
-                        But don’t put it off – when we hit 170 schools (limited by our funding), we will close registration.   
-                        We have about 18 slots left.</strong>
-                        <br><br>
-                        Schools, Scouts, churches, and other groups can sign up here to draw Valentine's Day cards for hospitals/hospices/charities and Food & Friends.
+                        @if( $isSchoolPaused )
+                            <strong>You have found the place to sign up your school or organization to participate in Valentines By Kids. 
+                                Unfortunately, it is too late for us to send you envelopes for this coming Valentine’s Day (we have already ordered the printed envelopes).<br>
+                                BUT, we would love you to:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a) Sign up below for next year and<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b) Join us this year by making Valentines and sending them to us. Click <a href='https://valentinesbykids.org/single-cards/' target='_blank' style='font-family:Arial;color:rgb(58, 115, 119);white-space:nowrap'>HERE</a> for instructions.</strong>
+                            <br><br>
+                            In the meantime, Schools, Scouts, churches, and other groups can sign up here to draw Valentine&#39;s Day cards for hospitals/hospices/charities and Food &amp; Friends and we will send you envelopes starting next year.
+                        @else
+                            <strong>You have found the place to sign up your school or organization to participate in Valentines By Kids for 2026. 
+                                But don’t put it off – when we hit 170 schools (limited by our funding), we will close registration.   
+                                We have about 18 slots left.</strong>
+                                <br><br>
+                                Schools, Scouts, churches, and other groups can sign up here to draw Valentine's Day cards for hospitals/hospices/charities and Food & Friends.
+                        @endif
                     </div>
 
                     @if(session('success'))

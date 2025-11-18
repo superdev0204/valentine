@@ -10,9 +10,29 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+    protected $filePath, $pauseData;
+
+    public function __construct()
+    {
+        $filePath = storage_path('app/pause_dates.json');
+        
+        if (!file_exists($filePath)) {
+            // Create file if missing
+            $this->pauseData = [
+                'school_start'   => '',
+                'hospital_start' => '',
+                'end_date'       => ''
+            ];
+        } else {
+            $this->pauseData = json_decode(file_get_contents($filePath), true);
+        }
+    }
+
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $pauseData = $this->pauseData;
+
+        return view('admin.dashboard', compact('pauseData'));
     }
 
     public function userList()

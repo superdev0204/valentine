@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\SchoolOutgoingFedexFieldMappingController;
 use App\Http\Controllers\Admin\SchoolReturnFedexFieldMappingController;
 use App\Http\Controllers\Admin\HospitalOutgoingFedexFieldMappingController;
 use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\Admin\PausePeriodController;
 use App\Http\Controllers\PasswordController;
 
 Route::get('/', function () {
@@ -57,52 +58,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/hospitals/{hospital}', [HospitalController::class, 'updateHospital'])->name('admin.hospitals.update');
     Route::delete('/admin/hospitals/{hospital}', [HospitalController::class, 'deleteHospital'])->name('admin.hospitals.delete');
     Route::post('/admin/hospitals/import', [HospitalController::class, 'importHospitals'])->name('admin.hospitals.import');
-});
 
-
-// Export routes
-Route::get('/admin/schools/sendgrid/export', [SchoolController::class, 'exportSendgridCsv'])->name('admin.schools.sendgrid.export');
-Route::get('/admin/schools/fedex/export/{type}', [SchoolController::class, 'exportFedexCsv'])->whereIn('type', ['outgoing', 'return'])->name('admin.schools.fedex.export');
-Route::get('/admin/hospitals/sendgrid/export', [HospitalController::class, 'exportSendgridCsv'])->name('admin.hospitals.sendgrid.export');
-Route::get('/admin/hospitals/fedex/export', [HospitalController::class, 'exportFedexCsv'])->name('admin.hospitals.fedex.export');
-
-Route::prefix('admin/schools')->name('admin.schools.')->group(function () {
-    Route::get('reports', [SchoolReportController::class, 'index'])
-        ->name('reports'); // page (or modal content)
-    Route::get('reports/data', [SchoolReportController::class, 'data'])
-        ->name('reports.data'); // JSON for DataTables
-    Route::get('reports/export/{type}', [SchoolReportController::class, 'export'])
-        ->whereIn('type', ['csv','xlsx','pdf'])
-        ->name('reports.export');
-    Route::post('reports/export/sheets', [SchoolReportController::class, 'exportToSheets'])
-        ->name('reports.export.sheets'); // optional Google Sheets
-});
-
-Route::prefix('admin/hospitals')->name('admin.hospitals.')->group(function () {
-    Route::get('reports', [HospitalReportController::class, 'index'])
-        ->name('reports'); // page (or modal content)
-    Route::get('reports/data', [HospitalReportController::class, 'data'])
-        ->name('reports.data'); // JSON for DataTables
-    Route::get('reports/export/{type}', [HospitalReportController::class, 'export'])
-        ->whereIn('type', ['csv','xlsx','pdf'])
-        ->name('reports.export');
-    Route::post('reports/export/sheets', [HospitalReportController::class, 'exportToSheets'])
-        ->name('reports.export.sheets'); // optional Google Sheets
-});
-
-// Volunteers routes
-Route::get('/admin/volunteers', [VolunteerController::class, 'volunteerList'])->name('admin.volunteers');
-Route::get('/admin/volunteers/create', [VolunteerController::class, 'create'])->name('admin.volunteers.create');
-Route::post('/admin/volunteers', [VolunteerController::class, 'store'])->name('admin.volunteers.store');
-Route::get('/admin/volunteers/{volunteer}/edit', [VolunteerController::class, 'edit'])->name('admin.volunteers.edit');
-Route::put('/admin/volunteers/{volunteer}', [VolunteerController::class, 'update'])->name('admin.volunteers.update');
-Route::delete('/admin/volunteers/{volunteer}', [VolunteerController::class, 'delete'])->name('admin.volunteers.delete');
-
-Route::post('/admin/password/update', [PasswordController::class, 'update'])
-    ->middleware('auth')
-    ->name('admin.password.update');
-
-Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/users', [AdminController::class, 'userList'])->name('admin.users');
     Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
@@ -167,6 +123,50 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/download/{file}', [BackupController::class, 'download'])->name('admin.backups.download');
         Route::delete('/delete/{file}', [BackupController::class, 'delete'])->name('admin.backups.delete');
     });
-    
-    
+
+    Route::post('/admin/pause-period', [PausePeriodController::class, 'update'])->name('admin.pause.update');
+
 });
+
+
+// Export routes
+Route::get('/admin/schools/sendgrid/export', [SchoolController::class, 'exportSendgridCsv'])->name('admin.schools.sendgrid.export');
+Route::get('/admin/schools/fedex/export/{type}', [SchoolController::class, 'exportFedexCsv'])->whereIn('type', ['outgoing', 'return'])->name('admin.schools.fedex.export');
+Route::get('/admin/hospitals/sendgrid/export', [HospitalController::class, 'exportSendgridCsv'])->name('admin.hospitals.sendgrid.export');
+Route::get('/admin/hospitals/fedex/export', [HospitalController::class, 'exportFedexCsv'])->name('admin.hospitals.fedex.export');
+
+Route::prefix('admin/schools')->name('admin.schools.')->group(function () {
+    Route::get('reports', [SchoolReportController::class, 'index'])
+        ->name('reports'); // page (or modal content)
+    Route::get('reports/data', [SchoolReportController::class, 'data'])
+        ->name('reports.data'); // JSON for DataTables
+    Route::get('reports/export/{type}', [SchoolReportController::class, 'export'])
+        ->whereIn('type', ['csv','xlsx','pdf'])
+        ->name('reports.export');
+    Route::post('reports/export/sheets', [SchoolReportController::class, 'exportToSheets'])
+        ->name('reports.export.sheets'); // optional Google Sheets
+});
+
+Route::prefix('admin/hospitals')->name('admin.hospitals.')->group(function () {
+    Route::get('reports', [HospitalReportController::class, 'index'])
+        ->name('reports'); // page (or modal content)
+    Route::get('reports/data', [HospitalReportController::class, 'data'])
+        ->name('reports.data'); // JSON for DataTables
+    Route::get('reports/export/{type}', [HospitalReportController::class, 'export'])
+        ->whereIn('type', ['csv','xlsx','pdf'])
+        ->name('reports.export');
+    Route::post('reports/export/sheets', [HospitalReportController::class, 'exportToSheets'])
+        ->name('reports.export.sheets'); // optional Google Sheets
+});
+
+// Volunteers routes
+Route::get('/admin/volunteers', [VolunteerController::class, 'volunteerList'])->name('admin.volunteers');
+Route::get('/admin/volunteers/create', [VolunteerController::class, 'create'])->name('admin.volunteers.create');
+Route::post('/admin/volunteers', [VolunteerController::class, 'store'])->name('admin.volunteers.store');
+Route::get('/admin/volunteers/{volunteer}/edit', [VolunteerController::class, 'edit'])->name('admin.volunteers.edit');
+Route::put('/admin/volunteers/{volunteer}', [VolunteerController::class, 'update'])->name('admin.volunteers.update');
+Route::delete('/admin/volunteers/{volunteer}', [VolunteerController::class, 'delete'])->name('admin.volunteers.delete');
+
+Route::post('/admin/password/update', [PasswordController::class, 'update'])
+    ->middleware('auth')
+    ->name('admin.password.update');

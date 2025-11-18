@@ -61,7 +61,15 @@
                 <div class="form-body">
                     <div class="form-title">Sign-up For Hospitals/Care Facilities</div>
                     <div class="form-desc">
-                        Please let me know if you would like me to send you some Valentine's Day cards for your patients/clients/residents and staff!  The earlier you sign up, the better to make sure we have enough Valentine's cards to go around.  Sign-ups after January 31 will be effective for the following year. 
+                        @if( $isHospitalPaused )
+                            <p>This is the place to sign up if you would like us to send you some Valentine&#39;s Day cards for your patients/clients/residents and staff! 
+                                Because January 5 has passed, we can only send you Valentines if we have enough from the children, but do give us delivery information below. 
+                                We will certainly have you covered in future years.</p>
+                        @else
+                            <p>This is the place to sign up if you would like us to send you some Valentine&#39;s Day cards for your patients/clients/residents and staff! 
+                                The earlier you sign up, the better to make sure we have enough Valentine&#39;s cards to go around. 
+                                Sign-ups after January 5 may only be honored if we have enough cards from the children to distribute.</p>
+                        @endif
                     </div>
 
                     @if(session('success'))

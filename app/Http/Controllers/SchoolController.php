@@ -10,12 +10,38 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\SendEmail;
+use Carbon\Carbon;
 
 class SchoolController extends Controller
 {
+    protected $pauseData;
+
+    public function __construct()
+    {
+        $filePath = storage_path('app/pause_dates.json');
+        
+        if (!file_exists($filePath)) {
+            // Create file if missing
+            $this->pauseData = [
+                'school_start'   => '',
+                'hospital_start' => '',
+                'end_date'       => ''
+            ];
+        } else {
+            $this->pauseData = json_decode(file_get_contents($filePath), true);
+        }
+    }
+
     public function create()
     {
-        return view('schools.register');
+        $pauseData = $this->pauseData;
+        $today = Carbon::today();
+        $isSchoolPaused = $today->between(
+            Carbon::parse($pauseData['school_start']),
+            Carbon::parse($pauseData['end_date'])
+        );
+
+        return view('schools.register', compact('isSchoolPaused'));
     }
 
     public function store(Request $request)
@@ -36,6 +62,8 @@ class SchoolController extends Controller
             'standing_order'      => 'boolean',
             'public_notes'            => 'nullable|string',
             // 'internal_notes'          => 'nullable|string',
+        ], [
+            'email.unique' => 'The email has already been taken. You can use a different address or email us at Patrick@ValentinesByKids.org to ask us to either delete the old record or to send you a link to update your information.',
         ]);
 
         // Ensure standing_order is boolean
@@ -57,7 +85,23 @@ class SchoolController extends Controller
         $school->prefilled_link = url('/school/' . $token . '/edit');
         $school->save();
 
-        $school->full_greeting = ($school->how_to_address ? $school->how_to_address : "Friend") . ", our database has been successfully updated to reflect this:";
+        $pauseData = $this->pauseData;
+        $today = Carbon::today();
+        $isSchoolPaused = $today->between(
+            Carbon::parse($pauseData['school_start']),
+            Carbon::parse($pauseData['end_date'])
+        );
+
+        if($isSchoolPaused){
+            $school->full_greeting = ($school->how_to_address ? $school->how_to_address : "Friend") . ", thank you for registering to participate in Valentines By Kids! Even though we won’t be able to send you envelopes for this coming Valentine’s Day, please don’t forget that you can still join the fun! Click <a href='https://valentinesbykids.org/single-cards/' target='_blank' style='font-family:Arial;color:rgb(58, 115, 119);white-space:nowrap'>HERE</a> for details.<br/>Our database now reflects (for future years):";
+            $success = "Success! You have completed the registration process for future years, but please participate this coming Valentines by clicking <a href='https://valentinesbykids.org/single-cards/' target='_blank' style='font-family:Arial;color:rgb(58, 115, 119);white-space:nowrap'>HERE</a>.";
+        }
+        else{
+            $school->full_greeting = ($school->how_to_address ? $school->how_to_address : "Friend") . ", thank you for registering to participate in Valentines By Kids! Our database now reflects:";
+            $success = 'Success! You have completed the registration process. 
+                        We will contact you when we are about to send you the envelopes. 
+                        Feel free to correct anything below, but remember to click “Submit” again at the end.';
+        }
 
         $subject = 'Valentine notification';
         $message = $school;
@@ -74,15 +118,19 @@ class SchoolController extends Controller
         return redirect()->route('school.edit', $school->token)
         // return redirect()
         //     ->back()
-            ->with('success', 'Success! You have completed the registration process. 
-                    We will contact you when we are about to send you the envelopes. 
-                    Feel free to correct anything below, but remember to click “Submit” again at the end.');
+            ->with('success', $success);
     }
 
     public function edit($token)
     {
         $school = School::where('token', $token)->firstOrFail();
-        return view('schools.edit', compact('school'));
+        $pauseData = $this->pauseData;
+        $today = Carbon::today();
+        $isSchoolPaused = $today->between(
+            Carbon::parse($pauseData['school_start']),
+            Carbon::parse($pauseData['end_date'])
+        );
+        return view('schools.edit', compact('school', 'isSchoolPaused'));
     }
 
     public function update(Request $request, $token)
@@ -114,7 +162,11 @@ class SchoolController extends Controller
         $validated['update_status'] = true;
 
         if($school->email != $request->email){
-            $request->validate(['email' => 'required|email|max:255|unique:schools,email']);
+            $request->validate([
+                'email' => 'required|email|max:255|unique:schools,email'
+            ], [
+                'email.unique' => 'The email has already been taken. You can use a different address or email us at Patrick@ValentinesByKids.org to ask us to either delete the old record or to send you a link to update your information.',
+            ]);
         }
         
         // Merge the full form data (request->all) with validated data
@@ -123,6 +175,24 @@ class SchoolController extends Controller
         $school->update($allData);
 
         // $school->prefilled_link = url('/school/' . $school->id . '/edit');
+
+        $pauseData = $this->pauseData;
+        $today = Carbon::today();
+        $isSchoolPaused = $today->between(
+            Carbon::parse($pauseData['school_start']),
+            Carbon::parse($pauseData['end_date'])
+        );
+
+        if($isSchoolPaused){
+            $school->full_greeting = ($school->how_to_address ? $school->how_to_address : "Friend") . ", thank you for updating your information.";
+            $success = "Success! You have updated your information. 
+                        Feel free to correct anything, but remember to click “Submit” again at the end.";
+        }
+        else{
+            $school->full_greeting = ($school->how_to_address ? $school->how_to_address : "Friend") . ", thank you for updating your information.";
+            $success = 'Success! You have updated your information. 
+                        Feel free to correct anything, but remember to click “Submit” again at the end.';
+        }
         
         $subject = 'Valentine notification';
         $message = $school;
@@ -138,7 +208,7 @@ class SchoolController extends Controller
         
         return redirect()
             ->back()
-            ->with('success', 'School updated successfully.');
+            ->with('success', $success);
     }
 
 }

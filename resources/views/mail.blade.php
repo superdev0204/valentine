@@ -9,7 +9,7 @@
         </tr>
         <tr>
             <td>
-                <p>Dear <?php echo ($data->how_to_address) ? $data->how_to_address : "Friend";?>, our database has been successfully updated to reflect this:</p>
+                <p><?php echo $data->full_greeting;?></p>
                 <p>
                     <?php
                     echo $data->organization_name . "<br/>"

@@ -87,12 +87,6 @@
                 <div class="card shadow-lg border-info rounded-4">
                     <div class="card-header bg-info text-white fw-bold rounded-top-4 d-flex align-items-center justify-content-between">
                         <div><i class="bi bi-cloud-arrow-down me-2 fs-4"></i> Backups</div>
-                        {{-- <form action="{{ route('admin.backups.create') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-light btn-sm fw-bold">
-                                <i class="bi bi-plus-circle me-1"></i> Create
-                            </button>
-                        </form> --}}
                     </div>
                     <div class="card-body text-center">
                         <a href="{{ route('admin.backups') }}" class="btn btn-outline-info btn-lg w-100">
@@ -137,7 +131,40 @@
                 </div>
             </div>
 
+            {{-- Pause Period --}}
+            <div class="card shadow-lg border-success rounded-4">
+                <div class="card-header bg-success text-white fw-bold rounded-top-4 d-flex align-items-center">
+                    <i class="bi bi-calendar-event me-2 fs-4"></i> Pause Period
+                </div>
+                <div class="card-body" style="background-color: #e9f7ef;">
+                    <form method="POST" action="{{ route('admin.pause.update') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="school_pause_date" class="form-label">School Pause Date</label>
+                            <input type="date" name="school_pause_date" id="school_pause_date" class="form-control"
+                                value="{{ old('school_pause_date', $pauseData['school_start'] ?? '') }}">
+                            @error('school_pause_date') <div class="text-danger">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="hospital_pause_date" class="form-label">Hospital Pause Date</label>
+                            <input type="date" name="hospital_pause_date" id="hospital_pause_date" class="form-control"
+                                value="{{ old('hospital_pause_date', $pauseData['hospital_start'] ?? '') }}">
+                            @error('hospital_pause_date') <div class="text-danger">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="end_pause_date" class="form-label">End Pause Date</label>
+                            <input type="date" name="end_pause_date" id="end_pause_date" class="form-control"
+                                value="{{ old('end_pause_date', $pauseData['end_date'] ?? '') }}">
+                            @error('end_pause_date') <div class="text-danger">{{ $message }}</div> @enderror
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 fw-semibold">
+                            <i class="bi bi-check-circle me-2"></i> Update Pause Period
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
+
 
     </div>
 </div>
