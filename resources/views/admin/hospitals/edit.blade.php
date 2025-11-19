@@ -244,7 +244,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="updated_at" class="form-label fw-semibold">
                                 <i class="bi bi-calendar-date me-1 text-info"></i> Last Updated Date
                             </label>
@@ -253,7 +253,24 @@
                                 name="updated_at"
                                 class="form-control @error('updated_at') is-invalid @enderror"
                                 value="{{ old('updated_at', $hospital->updated_at ? $hospital->updated_at->format('Y-m-d\TH:i') : '') }}">
-                            @error('updated_at') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            @error('updated_at')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted">By default this is auto-managed, but you can override it manually.</small>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold" for="status_flag">
+                                <i class="bi bi-flag me-1"></i> New/Updated
+                            </label>
+                            <select name="update_status" id="update_status"
+                                    class="form-select @error('update_status') is-invalid @enderror">
+                                <option value="0" {{ old('update_status', $hospital->update_status ?? '') == 0 ? 'selected' : '' }}>New</option>
+                                <option value="1" {{ old('update_status', $hospital->update_status ?? '') == 1 ? 'selected' : '' }}>Updated</option>
+                            </select>
+                            @error('update_status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted">Choose whether this record is new or recently updated.</small>
                         </div>
                         <div class="col-md-6">
                             <label for="editLinkInput" class="form-label fw-semibold">
@@ -266,7 +283,6 @@
                             <small class="text-muted">This link allows editing the hospital form directly with prefilled values.</small>
                         </div>
                     </div>
-                    <small class="text-muted">By default this is auto-managed, but you can override it manually.</small>
                 </div>
             </div>
                     
